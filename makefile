@@ -8,10 +8,13 @@
 #
 
 
-all: nanokontrol2.js core.js nanokontrol2.midi.xml
+SCRIPTS = nanokontrol2.js nanokontrol2.midi.xml
+FRAMEWORK = core.js
+
+all: $(SCRIPTS)
 
 %.js: %.coffee
 	coffee -c $<
 
-nanokontrol2.midi.xml: nanokontrol2.coffee
+%.midi.xml: %.coffee $(FRAMEWORK)
 	coffee $^ -g > $@
