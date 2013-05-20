@@ -2,7 +2,6 @@
 #  File:       core.coffee
 #  Author:     Juan Pedro Bolívar Puente <raskolnikov@es.gnu.org>
 #  Date:       Mon May 20 16:23:45 2013
-#  Time-stamp: <2013-05-20 19:21:12 raskolnikov>
 #
 #  Scripting engine core utilities.
 #
