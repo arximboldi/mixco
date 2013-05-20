@@ -25,6 +25,7 @@
 
 core = require "./core.nodejs"
 
+
 class NanoKontrol2 extends core.Script
 
     codename: 'NanoKontrol2'
@@ -42,17 +43,16 @@ class NanoKontrol2 extends core.Script
 
     constructor: ->
         filters = [
-            new core.Knob(0x10, "filterLow"),
-            new core.Knob(0x11, "filterMid"),
+            new core.Knob(0x10, "filterLow")
+            new core.Knob(0x11, "filterMid")
             new core.Knob(0x12, "filterHigh") ]
         decks = [
             new core.Knob(0x00, "volume") ]
         @groups = [
-            new core.MidinoGroup(0, decks, "[Channel1]"),
-            new core.MidinoGroup(1, decks, "[Channel2]"),
-            new core.MidinoGroup(0, filters, "[Channel1]"),
+            new core.MidinoGroup(0, decks, "[Channel1]")
+            new core.MidinoGroup(1, decks, "[Channel2]")
+            new core.MidinoGroup(0, filters, "[Channel1]")
             new core.MidinoGroup(filters.length, filters, "[Channel2]") ]
-
 
 
 exports.nanokontrol2 = new NanoKontrol2

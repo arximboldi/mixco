@@ -42,29 +42,29 @@ indent = (depth) ->
 
 
 hexStr = (number) ->
-    "0x#{number.toString(16)}"
+    "0x#{number.toString 16}"
 
 class Group
 
     constructor: (@controls, @group) ->
 
     configInputs: (depth) ->
-        (@configControl(control, depth) for control in @controls).join('\n')
+        (@configControl control, depth for control in @controls).join('\n')
 
     configControl: (control, depth) ->
         channel = @updateChannel control.channel
         midino = @updateMidino control.midino
         status = (control.message << 4) | channel
         """
-        #{indent(depth)}<control>
-        #{indent(depth+1)}<group>#{@group}</group>
-        #{indent(depth+1)}<key>#{control.key}</key>
-        #{indent(depth+1)}<status>#{hexStr(status)}</status>
-        #{indent(depth+1)}<midino>#{hexStr(midino)}</midino>
-        #{indent(depth+1)}<options>
-        #{control.configOptions(depth+2)}
-        #{indent(depth+1)}</options>
-        #{indent(depth)}</control>
+        #{indent depth}<control>
+        #{indent depth+1}<group>#{@group}</group>
+        #{indent depth+1}<key>#{control.key}</key>
+        #{indent depth+1}<status>#{hexStr status}</status>
+        #{indent depth+1}<midino>#{hexStr midino}</midino>
+        #{indent depth+1}<options>
+        #{control.configOptions depth+2}
+        #{indent depth+1}</options>
+        #{indent depth}</control>
         """
 
     updateMidino: (midino) -> midino
@@ -72,11 +72,11 @@ class Group
 
     init: (script) ->
         for control in @controls
-            control.init(script)
+            control.init script
 
     shutdown: (script) ->
         for control in @controls
-            control.shutdown(script)
+            control.shutdown script
 
 
 class MidinoGroup extends Group
@@ -99,7 +99,7 @@ class Control
     shutdown: (script) ->
 
     configOptions: (depth) ->
-        "#{indent(depth)}<normal/>"
+        "#{indent depth}<normal/>"
 
 
 class Knob extends Control
@@ -153,37 +153,37 @@ class Script
 
     init: ->
         for group in @groups
-            @groups.init(this)
+            @groups.init this
 
     shutdown: ->
         for group in @groups
-            @groups.shutdown(this)
+            @groups.shutdown this
 
     config: ->
         """
         <?xml version='1.0' encoding='utf-8'?>
         <MixxxControllerPreset mixxxVersion=\"1.11.0+\" schemaVersion=\"1\">
-        #{indent(1)}<info>
-        #{indent(2)}<name>#{xmlEscape(@info.name)}</name>
-        #{indent(2)}<author>#{xmlEscape(@info.author)}</author>
-        #{indent(2)}<description>#{xmlEscape(@info.description)}</description>
-        #{indent(2)}<wiki>#{xmlEscape(@info.wiki)}</wiki>
-        #{indent(2)}<forums>#{xmlEscape(@info.forums)}</forums>
-        #{indent(1)}</info>
-        #{indent(1)}<controller id=\"#{@codename}\">
-        #{indent(2)}<scriptfiles>
-        #{indent(3)}<file functionprefix=\"#{@codename.toLowerCase()}\"
-        #{indent(3)}      filename=\"#{@codename.toLowerCase()}.js\"/>
-        #{indent(2)}</scriptfiles>
-        #{indent(2)}<controls>
-        #{@configInputs(3)}
-        #{indent(2)}</controls>
-        #{indent(1)}</controller>
+        #{indent 1}<info>
+        #{indent 2}<name>#{xmlEscape(@info.name)}</name>
+        #{indent 2}<author>#{xmlEscape(@info.author)}</author>
+        #{indent 2}<description>#{xmlEscape(@info.description)}</description>
+        #{indent 2}<wiki>#{xmlEscape(@info.wiki)}</wiki>
+        #{indent 2}<forums>#{xmlEscape(@info.forums)}</forums>
+        #{indent 1}</info>
+        #{indent 1}<controller id=\"#{@codename}\">
+        #{indent 2}<scriptfiles>
+        #{indent 3}<file functionprefix=\"#{@codename.toLowerCase()}\"
+        #{indent 3}      filename=\"#{@codename.toLowerCase()}.js\"/>
+        #{indent 2}</scriptfiles>
+        #{indent 2}<controls>
+        #{@configInputs 3}
+        #{indent 2}</controls>
+        #{indent 1}</controller>
         </MixxxControllerPreset>
         """
 
     configInputs: (depth) ->
-        (group.configInputs(depth) for group in @groups).join('\n')
+        (group.configInputs depth for group in @groups).join('\n')
 
 
 exports.Script = Script
