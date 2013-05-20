@@ -47,7 +47,7 @@ class NanoKontrol2 extends core.Script
             new core.Knob(0x11, "filterMid")
             new core.Knob(0x12, "filterHigh") ]
         decks = [
-            new core.Knob(0x00, "volume") ]
+            new core.Slider(0x00, "volume") ]
         @groups = [
             new core.MidinoGroup(0, decks, "[Channel1]")
             new core.MidinoGroup(1, decks, "[Channel2]")

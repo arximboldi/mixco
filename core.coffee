@@ -110,6 +110,9 @@ class Knob extends Control
         super args...
 
 
+Slider = Knob
+
+
 class Script
 
     codename: 'Script'
@@ -188,5 +191,6 @@ class Script
 
 exports.Script = Script
 exports.Knob = Knob
+exports.Slider = Slider
 exports.MidinoGroup = MidinoGroup
 
