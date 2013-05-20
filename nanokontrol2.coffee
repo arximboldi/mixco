@@ -74,10 +74,10 @@ class Script
         <MixxxControllerPreset mixxxVersion=\"1.11.0+\" schemaVersion=\"1\">
             <info>
                 <name>#{@info.name}</name>
-                <author>#{@info.autho}</author>
-                <description>#{@info.name.description}</description>
-                <wiki>#{@info.name.wiki}</wiki>
-                <forums>#{@info.name.forums}</forums>
+                <author>#{@info.author}</author>
+                <description>#{@info.description}</description>
+                <wiki>#{@info.wiki}</wiki>
+                <forums>#{@info.forums}</forums>
             </info>
             <controller id=\"#{@codename}\">
                 <scriptfiles>
