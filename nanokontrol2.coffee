@@ -23,8 +23,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-core = require "./core.js"
-
+core = require "./core.nodejs"
 
 class NanoKontrol2 extends core.Script
     codename: 'NanoKontrol2'
@@ -39,7 +38,5 @@ class NanoKontrol2 extends core.Script
         forums: 'Not yet'
         wiki: 'Not yet'
 
-
-root = exports ? this
-root.nanokontrol2 = new NanoKontrol2
-root.nanokontrol2.main()
+exports.nanokontrol2 = new NanoKontrol2
+exports.nanokontrol2.main()

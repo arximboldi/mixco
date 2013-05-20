@@ -9,12 +9,16 @@
 
 
 SCRIPTS = nanokontrol2.js nanokontrol2.midi.xml
-FRAMEWORK = core.js
+FRAMEWORK = core.nodejs
 
 all: $(SCRIPTS)
 
-%.js: %.coffee
-	coffee -c $<
+%.nodejs: %.coffee
+	coffee -c -p $< > $@
+
+%.js: %.nodejs $(FRAMEWORK)
+	browserify -r ./$< $< > $@
+	echo ";$*=require('./$<').$*" >> $@
 
 %.midi.xml: %.coffee $(FRAMEWORK)
 	coffee $^ -g > $@
