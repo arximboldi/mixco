@@ -68,16 +68,23 @@ class Script
     shutdown: ->
         null
 
+    escape: (str) ->
+        str
+            .replace('&', '&amp;')
+            .replace('"', '&quot;')
+            .replace('>', '&gt;')
+            .replace('<', '&lt;')
+
     config: ->
         """
         <?xml version='1.0' encoding='utf-8'?>
         <MixxxControllerPreset mixxxVersion=\"1.11.0+\" schemaVersion=\"1\">
             <info>
-                <name>#{@info.name}</name>
-                <author>#{@info.author}</author>
-                <description>#{@info.description}</description>
-                <wiki>#{@info.wiki}</wiki>
-                <forums>#{@info.forums}</forums>
+                <name>#{@escape(@info.name)}</name>
+                <author>#{@escape(@info.author)}</author>
+                <description>#{@escape(@info.description)}</description>
+                <wiki>#{@escape(@info.wiki)}</wiki>
+                <forums>#{@escape(@info.forums)}</forums>
             </info>
             <controller id=\"#{@codename}\">
                 <scriptfiles>
