@@ -8,10 +8,10 @@
 #
 
 
-all: nanokontrol2.js nanokontrol2.midi.xml
+all: nanokontrol2.js core.js nanokontrol2.midi.xml
 
-nanokontrol2.js: nanokontrol2.coffee
-	coffee -c $^
+%.js: %.coffee
+	coffee -c $<
 
 nanokontrol2.midi.xml: nanokontrol2.coffee
 	coffee $^ -g > $@

@@ -23,82 +23,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-class Script
-
-    codename: 'Script'
-
-    info:
-        name: "Generic Mixxx Controller script"
-        author: "Juan Pedro Bolivar Puente"
-        description: ""
-        forums: ""
-        wiki: ""
-
-    main: ->
-        for arg in process.argv
-            if arg in ['-h', '--help']
-                console.info @help()
-                break
-            if arg in ['-g', '--generate-config']
-                console.info @config()
-                break
-
-    help: ->
-        """
-        Mixxx Controller Script
-        =======================
-
-        Name: #{@info.name}
-        Author: #{@info.author}
-        Description: #{@info.description}
-        Forums: #{@info.description}
-
-        Usage
-        -----
-        1. Generate Mixxx config:
-            coffee #{@codename.toLowerCase()}.coffee -g > #{@codename.toLowerCase()}.xml
-
-        2. Generate Mixxx script:
-            coffee -c #{@codename.toLowerCase()}.coffee
-        """
-
-    init: ->
-        null
-
-    shutdown: ->
-        null
-
-    escape: (str) ->
-        str
-            .replace('&', '&amp;')
-            .replace('"', '&quot;')
-            .replace('>', '&gt;')
-            .replace('<', '&lt;')
-
-    config: ->
-        """
-        <?xml version='1.0' encoding='utf-8'?>
-        <MixxxControllerPreset mixxxVersion=\"1.11.0+\" schemaVersion=\"1\">
-            <info>
-                <name>#{@escape(@info.name)}</name>
-                <author>#{@escape(@info.author)}</author>
-                <description>#{@escape(@info.description)}</description>
-                <wiki>#{@escape(@info.wiki)}</wiki>
-                <forums>#{@escape(@info.forums)}</forums>
-            </info>
-            <controller id=\"#{@codename}\">
-                <scriptfiles>
-                    <file functionprefix=\"#{@codename.toLowerCase()}\"
-                          filename=\"#{@codename.toLowerCase()}.js\"/>
-                </scriptfiles>
-                <controls>
-                </controls>
-            </controller>
-        </MixxxControllerPreset>
-        """
+core = require "./core.js"
 
 
-class NanoKontrol2 extends Script
+class NanoKontrol2 extends core.Script
     codename: 'NanoKontrol2'
     info:
         name: 'Korg Nanokontrol 2 - JPB'
