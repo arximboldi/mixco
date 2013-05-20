@@ -104,5 +104,7 @@ class NanoKontrol2 extends Script
         forums: 'Not yet'
         wiki: 'Not yet'
 
-nanokontrol2 = new NanoKontrol2
-nanokontrol2.main()
+
+root = exports ? this
+root.nanokontrol2 = new NanoKontrol2
+root.nanokontrol2.main()
