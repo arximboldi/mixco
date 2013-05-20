@@ -26,7 +26,9 @@
 core = require "./core.nodejs"
 
 class NanoKontrol2 extends core.Script
+
     codename: 'NanoKontrol2'
+
     info:
         name: 'Korg Nanokontrol 2 - JPB'
         author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
@@ -37,6 +39,21 @@ class NanoKontrol2 extends core.Script
             """
         forums: 'Not yet'
         wiki: 'Not yet'
+
+    constructor: ->
+        filters = [
+            new core.Knob(0x10, "filterLow"),
+            new core.Knob(0x11, "filterMid"),
+            new core.Knob(0x12, "filterHigh") ]
+        decks = [
+            new core.Knob(0x00, "volume") ]
+        @groups = [
+            new core.MidinoGroup(0, decks, "[Channel1]"),
+            new core.MidinoGroup(1, decks, "[Channel2]"),
+            new core.MidinoGroup(0, filters, "[Channel1]"),
+            new core.MidinoGroup(filters.length, filters, "[Channel2]") ]
+
+
 
 exports.nanokontrol2 = new NanoKontrol2
 exports.nanokontrol2.main()

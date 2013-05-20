@@ -24,6 +24,92 @@
 #
 
 
+MIDI_NOTE_ON  = 0x8
+MIDI_NOTE_OFF = 0x9
+MIDI_CC       = 0xB
+
+
+xmlEscape = (str) ->
+    str
+        .replace('&', '&amp;')
+        .replace('"', '&quot;')
+        .replace('>', '&gt;')
+        .replace('<', '&lt;')
+
+
+indent = (depth) ->
+    Array(depth*4).join(" ")
+
+
+hexStr = (number) ->
+    "0x#{number.toString(16)}"
+
+class Group
+
+    constructor: (@controls, @group) ->
+
+    configInputs: (depth) ->
+        (@configControl(control, depth) for control in @controls).join('\n')
+
+    configControl: (control, depth) ->
+        channel = @updateChannel control.channel
+        midino = @updateMidino control.midino
+        status = (control.message << 4) | channel
+        """
+        #{indent(depth)}<control>
+        #{indent(depth+1)}<group>#{@group}</group>
+        #{indent(depth+1)}<key>#{control.key}</key>
+        #{indent(depth+1)}<status>#{hexStr(status)}</status>
+        #{indent(depth+1)}<midino>#{hexStr(midino)}</midino>
+        #{indent(depth+1)}<options>
+        #{control.configOptions(depth+2)}
+        #{indent(depth+1)}</options>
+        #{indent(depth)}</control>
+        """
+
+    updateMidino: (midino) -> midino
+    updateChannel: (channel) -> channel
+
+    init: (script) ->
+        for control in @controls
+            control.init(script)
+
+    shutdown: (script) ->
+        for control in @controls
+            control.shutdown(script)
+
+
+class MidinoGroup extends Group
+
+    constructor: (@midinoOffset, more...) ->
+        super more...
+
+    updateMidino: (midino) ->
+        midino + @midinoOffset
+
+
+class Control
+
+    constructor: (@midino, @key=null, @takeover=true, @channel=0) ->
+
+    message: null
+
+    init: (script) ->
+
+    shutdown: (script) ->
+
+    configOptions: (depth) ->
+        "#{indent(depth)}<normal/>"
+
+
+class Knob extends Control
+
+    message: MIDI_CC
+
+    constructor: (args...) ->
+        super args...
+
+
 class Script
 
     codename: 'Script'
@@ -63,39 +149,44 @@ class Script
             coffee -c #{@codename.toLowerCase()}.coffee
         """
 
+    groups: []
+
     init: ->
-        null
+        for group in @groups
+            @groups.init(this)
 
     shutdown: ->
-        null
-
-    escape: (str) ->
-        str
-            .replace('&', '&amp;')
-            .replace('"', '&quot;')
-            .replace('>', '&gt;')
-            .replace('<', '&lt;')
+        for group in @groups
+            @groups.shutdown(this)
 
     config: ->
         """
         <?xml version='1.0' encoding='utf-8'?>
         <MixxxControllerPreset mixxxVersion=\"1.11.0+\" schemaVersion=\"1\">
-            <info>
-                <name>#{@escape(@info.name)}</name>
-                <author>#{@escape(@info.author)}</author>
-                <description>#{@escape(@info.description)}</description>
-                <wiki>#{@escape(@info.wiki)}</wiki>
-                <forums>#{@escape(@info.forums)}</forums>
-            </info>
-            <controller id=\"#{@codename}\">
-                <scriptfiles>
-                    <file functionprefix=\"#{@codename.toLowerCase()}\"
-                          filename=\"#{@codename.toLowerCase()}.js\"/>
-                </scriptfiles>
-                <controls>
-                </controls>
-            </controller>
+        #{indent(1)}<info>
+        #{indent(2)}<name>#{xmlEscape(@info.name)}</name>
+        #{indent(2)}<author>#{xmlEscape(@info.author)}</author>
+        #{indent(2)}<description>#{xmlEscape(@info.description)}</description>
+        #{indent(2)}<wiki>#{xmlEscape(@info.wiki)}</wiki>
+        #{indent(2)}<forums>#{xmlEscape(@info.forums)}</forums>
+        #{indent(1)}</info>
+        #{indent(1)}<controller id=\"#{@codename}\">
+        #{indent(2)}<scriptfiles>
+        #{indent(3)}<file functionprefix=\"#{@codename.toLowerCase()}\"
+        #{indent(3)}      filename=\"#{@codename.toLowerCase()}.js\"/>
+        #{indent(2)}</scriptfiles>
+        #{indent(2)}<controls>
+        #{@configInputs(3)}
+        #{indent(2)}</controls>
+        #{indent(1)}</controller>
         </MixxxControllerPreset>
         """
 
+    configInputs: (depth) ->
+        (group.configInputs(depth) for group in @groups).join('\n')
+
+
 exports.Script = Script
+exports.Knob = Knob
+exports.MidinoGroup = MidinoGroup
+
