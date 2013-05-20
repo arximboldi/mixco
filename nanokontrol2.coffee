@@ -94,7 +94,7 @@ class Script
 class NanoKontrol2 extends Script
     codename: 'NanoKontrol2'
     info:
-        name: 'Korg Nanokontrol 2'
+        name: 'Korg Nanokontrol 2 - JPB'
         author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
         description:
             """
