@@ -80,6 +80,8 @@ class Control
     configOptions: (depth) ->
         "#{indent depth}<normal/>"
 
+    configOutputs: (depth) -> ""
+
 
 class Knob extends Control
 
@@ -92,6 +94,24 @@ class Button extends Control
 
     configOptions: (depth) ->
         "#{indent depth}<button/>"
+
+
+class LedButton extends Button
+
+    onValue: 0x7f
+    offValue: 0x00
+
+    configOutputs: (depth) ->
+        """
+        #{indent depth}<output>
+        #{indent depth+1}<group>#{@group}</group>
+        #{indent depth+1}<key>#{@key}</key>
+        #{@id.configMidi @message, depth+1}
+        #{indent depth+1}<on>#{hexStr @onValue}</on>
+		#{indent depth+1}<off>#{hexStr @offValue}</off>
+        #{indent depth}<minimum>1</minimum>
+        #{indent depth}</output>
+        """
 
 
 Slider = Knob
@@ -169,6 +189,9 @@ class Script
         #{indent 2}<controls>
         #{@configInputs 3}
         #{indent 2}</controls>
+        #{indent 2}<outputs>
+        #{@configOutputs 3}
+        #{indent 2}</outputs>
         #{indent 1}</controller>
         </MixxxControllerPreset>
         """
@@ -176,9 +199,13 @@ class Script
     configInputs: (depth) ->
         (control.configInputs depth for control in @controls).join('\n')
 
+    configOutputs: (depth) ->
+        (control.configOutputs depth for control in @controls).join('\n')
+
 
 exports.Script = Script
 exports.Knob = Knob
 exports.Slider = Slider
 exports.Button = Button
+exports.LedButton = LedButton
 
