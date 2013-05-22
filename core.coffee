@@ -29,8 +29,22 @@ MIDI_NOTE_OFF = 0x9
 MIDI_CC       = 0xB
 
 
+printer = (args...) ->
+    try
+        print args.toString()
+    catch _
+        console.error args.toString()
+
+
 Function::property = (prop, desc) ->
   Object.defineProperty @prototype, prop, desc
+
+
+catching = (f) -> ->
+    try
+        f.apply @, arguments
+    catch err
+        printer "ERROR: #{err}"
 
 
 xmlEscape = (str) ->
@@ -167,13 +181,13 @@ class Script
             coffee -c #{@name}.coffee
         """
 
-    init: ->
+    init: catching ->
         for control in @controls
-            @controls.init this
+            control.init this
 
-    shutdown: ->
+    shutdown: catching ->
         for control in @controls
-            @controls.shutdown this
+            control.shutdown this
 
     config: ->
         """
