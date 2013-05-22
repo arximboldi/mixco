@@ -31,7 +31,7 @@ class NanoKontrol2 extends core.Script
     codename: 'NanoKontrol2'
 
     info:
-        name: 'Korg Nanokontrol 2 - JPB'
+        name: '[CSF] Korg Nanokontrol 2'
         author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
         description:
             """
