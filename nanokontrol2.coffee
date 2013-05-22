@@ -28,8 +28,6 @@ core = require "./core.nodejs"
 
 class NanoKontrol2 extends core.Script
 
-    codename: 'NanoKontrol2'
-
     info:
         name: '[CSF] Korg Nanokontrol 2'
         author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'

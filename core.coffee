@@ -29,6 +29,10 @@ MIDI_NOTE_OFF = 0x9
 MIDI_CC       = 0xB
 
 
+Function::property = (prop, desc) ->
+  Object.defineProperty @prototype, prop, desc
+
+
 xmlEscape = (str) ->
     str
         .replace('&', '&amp;')
@@ -119,14 +123,15 @@ Slider = Knob
 
 class Script
 
-    codename: 'Script'
-
     info:
         name: "Generic Mixxx Controller script"
         author: "Juan Pedro Bolivar Puente"
         description: ""
         forums: ""
         wiki: ""
+
+    @property 'name'
+        get: -> @constructor.name.toLowerCase()
 
     constructor: ->
         @controls = []
@@ -156,10 +161,10 @@ class Script
         Usage
         -----
         1. Generate Mixxx config:
-            coffee #{@codename.toLowerCase()}.coffee -g > #{@codename.toLowerCase()}.xml
+            coffee #{@name}.coffee -g > #{@name}.xml
 
         2. Generate Mixxx script:
-            coffee -c #{@codename.toLowerCase()}.coffee
+            coffee -c #{@name}.coffee
         """
 
     init: ->
@@ -183,8 +188,8 @@ class Script
         #{indent 1}</info>
         #{indent 1}<controller id=\"#{@codename}\">
         #{indent 2}<scriptfiles>
-        #{indent 3}<file functionprefix=\"#{@codename.toLowerCase()}\"
-        #{indent 3}      filename=\"#{@codename.toLowerCase()}.js\"/>
+        #{indent 3}<file functionprefix=\"#{@name}\"
+        #{indent 3}      filename=\"#{@name}.js\"/>
         #{indent 2}</scriptfiles>
         #{indent 2}<controls>
         #{@configInputs 3}
