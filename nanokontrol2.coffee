@@ -42,17 +42,17 @@ class NanoKontrol2 extends core.Script
         wiki: 'Not yet'
 
     constructor: ->
-        filters = [
-            new core.Knob(0x10, "filterLow")
-            new core.Knob(0x11, "filterMid")
-            new core.Knob(0x12, "filterHigh") ]
-        decks = [
-            new core.Slider(0x00, "volume") ]
-        @groups = [
-            new core.MidinoGroup(0, decks, "[Channel1]")
-            new core.MidinoGroup(1, decks, "[Channel2]")
-            new core.MidinoGroup(0, filters, "[Channel1]")
-            new core.MidinoGroup(filters.length, filters, "[Channel2]") ]
+        super
+        @addDeck 0
+        @addDeck 1
+
+    addDeck: (i) ->
+        group = "[Channel#{i+1}]"
+        @add new core.Knob(0x10 + 4*i, group, "filterLow"),
+             new core.Knob(0x11 + 4*i, group, "filterMid"),
+             new core.Knob(0x12 + 4*i, group, "filterHigh"),
+             new core.Knob(0x13 + 4*i, group, "pregain"),
+             new core.Slider(0x00 + i, group, "volume")
 
 
 exports.nanokontrol2 = new NanoKontrol2

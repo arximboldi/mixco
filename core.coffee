@@ -44,59 +44,38 @@ indent = (depth) ->
 hexStr = (number) ->
     "0x#{number.toString 16}"
 
-class Group
 
-    constructor: (@controls, @group) ->
-
-    configInputs: (depth) ->
-        (@configControl control, depth for control in @controls).join('\n')
-
-    configControl: (control, depth) ->
-        channel = @updateChannel control.channel
-        midino = @updateMidino control.midino
-        status = (control.message << 4) | channel
+midi = (midino = 0, channel = 0) ->
+    midino: midino
+    channel: channel
+    status: (message) -> (message << 4) | @channel
+    configMidi: (message, depth) ->
         """
-        #{indent depth}<control>
-        #{indent depth+1}<group>#{@group}</group>
-        #{indent depth+1}<key>#{control.key}</key>
-        #{indent depth+1}<status>#{hexStr status}</status>
-        #{indent depth+1}<midino>#{hexStr midino}</midino>
-        #{indent depth+1}<options>
-        #{control.configOptions depth+2}
-        #{indent depth+1}</options>
-        #{indent depth}</control>
+        #{indent depth}<status>#{hexStr @status(message)}</status>
+        #{indent depth}<midino>#{hexStr @midino}</midino>
         """
-
-    updateMidino: (midino) -> midino
-    updateChannel: (channel) -> channel
-
-    init: (script) ->
-        for control in @controls
-            control.init script
-
-    shutdown: (script) ->
-        for control in @controls
-            control.shutdown script
-
-
-class MidinoGroup extends Group
-
-    constructor: (@midinoOffset, more...) ->
-        super more...
-
-    updateMidino: (midino) ->
-        midino + @midinoOffset
-
 
 class Control
 
-    constructor: (@midino, @key=null, @takeover=true, @channel=0) ->
-
-    message: null
+    constructor: (@id=midi(), @group="[Channel1]", @key=null) ->
+        if not (@id instanceof Object)
+            @id = midi @id
 
     init: (script) ->
 
     shutdown: (script) ->
+
+    configInputs: (depth) ->
+        """
+        #{indent depth}<control>
+        #{indent depth+1}<group>#{@group}</group>
+        #{indent depth+1}<key>#{@key}</key>
+        #{@id.configMidi @message, depth+1}
+        #{indent depth+1}<options>
+        #{@configOptions depth+2}
+        #{indent depth+1}</options>
+        #{indent depth}</control>
+        """
 
     configOptions: (depth) ->
         "#{indent depth}<normal/>"
@@ -105,9 +84,6 @@ class Control
 class Knob extends Control
 
     message: MIDI_CC
-
-    constructor: (args...) ->
-        super args...
 
 
 Slider = Knob
@@ -123,6 +99,12 @@ class Script
         description: ""
         forums: ""
         wiki: ""
+
+    constructor: ->
+        @controls = []
+
+    add: (controls...) ->
+        @controls.push controls...
 
     main: ->
         for arg in process.argv
@@ -152,15 +134,13 @@ class Script
             coffee -c #{@codename.toLowerCase()}.coffee
         """
 
-    groups: []
-
     init: ->
-        for group in @groups
-            @groups.init this
+        for control in @controls
+            @controls.init this
 
     shutdown: ->
-        for group in @groups
-            @groups.shutdown this
+        for control in @controls
+            @controls.shutdown this
 
     config: ->
         """
@@ -186,11 +166,10 @@ class Script
         """
 
     configInputs: (depth) ->
-        (group.configInputs depth for group in @groups).join('\n')
+        (control.configInputs depth for control in @controls).join('\n')
 
 
 exports.Script = Script
 exports.Knob = Knob
 exports.Slider = Slider
-exports.MidinoGroup = MidinoGroup
 
