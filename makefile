@@ -13,6 +13,8 @@ FRAMEWORK = core.nodejs
 
 all: $(SCRIPTS)
 
+.SECONDARY:
+
 %.nodejs: %.coffee
 	coffee -c -p $< > $@
 
@@ -21,4 +23,4 @@ all: $(SCRIPTS)
 	echo ";$*=require('./$<').$*" >> $@
 
 %.midi.xml: %.coffee $(FRAMEWORK)
-	coffee $^ -g > $@
+	coffee $< -g > $@
