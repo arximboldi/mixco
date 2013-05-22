@@ -47,6 +47,10 @@ catching = (f) -> ->
         printer "ERROR: #{err}"
 
 
+mangle = (str) ->
+    str.replace(' ', '_').replace('[', '__C__').replace(']', '__D__')
+
+
 xmlEscape = (str) ->
     str
         .replace('&', '&amp;')
@@ -73,6 +77,14 @@ midi = (midino = 0, channel = 0) ->
         #{indent depth}<midino>#{hexStr @midino}</midino>
         """
 
+event = (channel, control, value, status, group) ->
+    channel: channel
+    control: control
+    value: value
+    status: status
+    group: group
+
+
 class Control
 
     constructor: (@id=midi(), @group="[Channel1]", @key=null) ->
@@ -80,14 +92,28 @@ class Control
             @id = midi @id
 
     init: (script) ->
+        if @_scripted
+            script.registerScripted this, @_scriptedId()
 
     shutdown: (script) ->
 
-    configInputs: (depth) ->
+    scripted: ->
+        @_scripted = true
+        this
+
+    onScript: (ev) ->
+        printer "received event"
+
+    configInputs: (depth, script) ->
+        actualKey =
+            if @_scripted
+                script.scriptedKey(@_scriptedId())
+            else
+                @key
         """
         #{indent depth}<control>
         #{indent depth+1}<group>#{@group}</group>
-        #{indent depth+1}<key>#{@key}</key>
+        #{indent depth+1}<key>#{actualKey}</key>
         #{@id.configMidi @message, depth+1}
         #{indent depth+1}<options>
         #{@configOptions depth+2}
@@ -96,9 +122,15 @@ class Control
         """
 
     configOptions: (depth) ->
-        "#{indent depth}<normal/>"
+        if @_scripted
+            "#{indent depth}<script-binding/>"
+        else
+            "#{indent depth}<normal/>"
 
     configOutputs: (depth) -> ""
+
+    _scripted: false
+    _scriptedId: -> mangle("_#{@group}_#{@id.midino}_#{@id.status @message}")
 
 
 class Knob extends Control
@@ -216,10 +248,17 @@ class Script
         """
 
     configInputs: (depth) ->
-        (control.configInputs depth for control in @controls).join('\n')
+        (control.configInputs depth, this for control in @controls).join('\n')
 
     configOutputs: (depth) ->
-        (control.configOutputs depth for control in @controls).join('\n')
+        (control.configOutputs depth, this for control in @controls).join('\n')
+
+    scriptedKey: (id) ->
+        "#{@name}._handle#{id}"
+
+    registerScripted: (control, id) ->
+        this["_handle#{id}"] = (args...) -> control.onScript(event args...)
+        this
 
 
 exports.Script = Script
