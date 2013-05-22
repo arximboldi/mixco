@@ -86,6 +86,14 @@ class Knob extends Control
     message: MIDI_CC
 
 
+class Button extends Control
+
+    message: MIDI_CC
+
+    configOptions: (depth) ->
+        "#{indent depth}<button/>"
+
+
 Slider = Knob
 
 
@@ -172,4 +180,5 @@ class Script
 exports.Script = Script
 exports.Knob = Knob
 exports.Slider = Slider
+exports.Button = Button
 
