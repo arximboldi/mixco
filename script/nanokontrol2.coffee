@@ -23,10 +23,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-core = require "../mixco/core"
+script = require "../mixco/script"
+control = require "../mixco/control"
 
 
-class NanoKontrol2 extends core.Script
+class NanoKontrol2 extends script.Script
 
     info:
         name: '[CSF] Korg Nanokontrol 2'
@@ -46,14 +47,13 @@ class NanoKontrol2 extends core.Script
 
     addDeck: (i) ->
         group = "[Channel#{i+1}]"
-        @add new core.Knob(0x10 + 4*i, group, "filterLow"),
-             new core.Knob(0x11 + 4*i, group, "filterMid"),
-             new core.Knob(0x12 + 4*i, group, "filterHigh"),
-             new core.Knob(0x13 + 4*i, group, "pregain").soft(),
-             new core.Slider(0x00 + i, group, "volume"),
-             new core.LedButton(0x40 + i, group, "play"),
-             new core.Slider(0x02 + i, group, "rate").soft()
-
+        @add new control.Knob(0x10 + 4*i, group, "filterLow"),
+             new control.Knob(0x11 + 4*i, group, "filterMid"),
+             new control.Knob(0x12 + 4*i, group, "filterHigh"),
+             new control.Knob(0x13 + 4*i, group, "pregain").soft(),
+             new control.Slider(0x00 + i, group, "volume"),
+             new control.LedButton(0x40 + i, group, "play"),
+             new control.Slider(0x02 + i, group, "rate").soft()
 
 exports.nanokontrol2 = new NanoKontrol2
 exports.nanokontrol2.main()

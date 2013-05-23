@@ -9,7 +9,12 @@
 
 
 SCRIPTS    = out/nanokontrol2.js out/nanokontrol2.midi.xml
-FRAMEWORK  = tmp/mixco/core.js
+FRAMEWORK  = \
+	tmp/mixco/util.js \
+	tmp/mixco/transform.js \
+	tmp/mixco/script.js \
+	tmp/mixco/control.js
+
 
 all: $(SCRIPTS)
 
@@ -31,3 +36,4 @@ out/%.midi.xml: script/%.coffee $(FRAMEWORK)
 clean:
 	rm -rf ./out
 	rm -rf ./tmp
+	find . -name ~ -exec rm -f {} \;
