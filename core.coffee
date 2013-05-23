@@ -163,7 +163,7 @@ class Knob extends Control
 
     init: ->
         super
-        engine.softTakeover(@group, @key, true)
+        engine.softTakeover(@group, @key, @_soft)
 
 
 class Button extends Control
