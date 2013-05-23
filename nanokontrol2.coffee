@@ -49,9 +49,10 @@ class NanoKontrol2 extends core.Script
         @add new core.Knob(0x10 + 4*i, group, "filterLow"),
              new core.Knob(0x11 + 4*i, group, "filterMid"),
              new core.Knob(0x12 + 4*i, group, "filterHigh"),
-             new core.Knob(0x13 + 4*i, group, "pregain"),
-             new core.Slider(0x00 + i, group, "volume")
-             new core.LedButton(0x40 + i, group, "play")
+             new core.Knob(0x13 + 4*i, group, "pregain").soft(),
+             new core.Slider(0x00 + i, group, "volume"),
+             new core.LedButton(0x40 + i, group, "play"),
+             new core.Slider(0x02 + i, group, "rate").soft()
 
 
 exports.nanokontrol2 = new NanoKontrol2

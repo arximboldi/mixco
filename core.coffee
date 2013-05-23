@@ -85,6 +85,24 @@ event = (channel, control, value, status, group) ->
     group: group
 
 
+linear = (v, min, max) -> min + v * (max - min)
+centered = (v, min, center, max) ->
+    if v < .5 then linear v*2, min, center else linear (v-.5)*2, center, max
+
+transform = (f, args...) -> (v) -> f v / 127.0, args...
+linearT = -> transform linear, arguments...
+centeredT = -> transform centered, arguments...
+defaultT = linearT 0.0, 1.0
+
+DEFAULT_TRANSFORMS =
+    rate:       linearT -1.0, 1.0
+    volume:     defaultT
+    filterLow:  centeredT 0.0, 1.0, 4.0
+    filterMid:  centeredT 0.0, 1.0, 4.0
+    filterHigh: centeredT 0.0, 1.0, 4.0
+    pregain:    centeredT 0.0, 1.0, 4.0
+
+
 class Control
 
     constructor: (@id=midi(), @group="[Channel1]", @key=null) ->
@@ -102,7 +120,8 @@ class Control
         this
 
     onScript: (ev) ->
-        printer "received event"
+        value = DEFAULT_TRANSFORMS[@key](ev.value)
+        engine.setValue @group, @key, value
 
     configInputs: (depth, script) ->
         actualKey =
@@ -136,6 +155,15 @@ class Control
 class Knob extends Control
 
     message: MIDI_CC
+
+    soft: ->
+        @_soft = true
+        @scripted()
+    _soft: false
+
+    init: ->
+        super
+        engine.softTakeover(@group, @key, true)
 
 
 class Button extends Control
