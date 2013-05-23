@@ -57,8 +57,8 @@ class Script
         ###
         Script metadata that is displayed in the Mixxx preferences
         ###
-        name: "Generic Mixxx Controller script"
-        author: "Juan Pedro Bolivar Puente"
+        name: "[MixCo] Generic Script"
+        author: "Juan Pedro Bolivar Puente <raskolnikov@gnu.org>"
         description: ""
         forums: ""
         wiki: ""

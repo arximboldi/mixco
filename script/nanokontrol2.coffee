@@ -30,15 +30,15 @@ control = require "../mixco/control"
 script.register class NanoKontrol2 extends script.Script
 
     info:
-        name: '[CSF] Korg Nanokontrol 2'
+        name: '[MixCo] Korg Nanokontrol 2'
         author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
         description:
             """
             Controller mapping for Korg Nanokontrol 2 that is
             targetted at being used as main interface for Mixxx.
             """
-        forums: 'Not yet'
-        wiki: 'Not yet'
+        forums: ''
+        wiki: ''
 
     constructor: ->
         super
@@ -54,4 +54,3 @@ script.register class NanoKontrol2 extends script.Script
              new control.Slider(0x00 + i, group, "volume"),
              new control.LedButton(0x40 + i, group, "play"),
              new control.Slider(0x02 + i, group, "rate").soft()
-
