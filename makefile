@@ -8,19 +8,26 @@
 #
 
 
-SCRIPTS = nanokontrol2.js nanokontrol2.midi.xml
-FRAMEWORK = core.nodejs
+SCRIPTS    = out/nanokontrol2.js out/nanokontrol2.midi.xml
+FRAMEWORK  = tmp/mixco/core.js
 
 all: $(SCRIPTS)
 
 .SECONDARY:
 
-%.nodejs: %.coffee
+tmp/%.js: %.coffee
+	@mkdir -p $(@D)
 	coffee -c -p $< > $@
 
-%.js: %.nodejs $(FRAMEWORK)
+out/%.js: tmp/script/%.js $(FRAMEWORK)
+	@mkdir -p $(@D)
 	browserify -r ./$< $< > $@
 	echo ";$*=require('./$<').$*" >> $@
 
-%.midi.xml: %.coffee $(FRAMEWORK)
+out/%.midi.xml: script/%.coffee $(FRAMEWORK)
+	@mkdir -p $(@D)
 	coffee $< -g > $@
+
+clean:
+	rm -rf ./out
+	rm -rf ./tmp

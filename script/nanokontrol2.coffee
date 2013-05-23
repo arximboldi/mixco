@@ -23,7 +23,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-core = require "./core.nodejs"
+core = require "../mixco/core"
 
 
 class NanoKontrol2 extends core.Script
