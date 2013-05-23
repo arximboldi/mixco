@@ -135,5 +135,13 @@ class Script
         this
 
 
+register = (scriptType, targetModule) ->
+        instance = new scriptType
+        targetModule.exports[instance.name] = instance
+        if targetModule == require.main
+            instance.main()
+
+
 exports.Script = Script
+exports.register = register
 

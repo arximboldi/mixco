@@ -55,5 +55,4 @@ class NanoKontrol2 extends script.Script
              new control.LedButton(0x40 + i, group, "play"),
              new control.Slider(0x02 + i, group, "rate").soft()
 
-exports.nanokontrol2 = new NanoKontrol2
-exports.nanokontrol2.main()
+script.register(NanoKontrol2, module)
