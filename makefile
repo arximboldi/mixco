@@ -42,4 +42,4 @@ out/%.midi.xml: script/%.coffee $(FRAMEWORK)
 clean:
 	rm -rf ./out
 	rm -rf ./tmp
-	find . -name ~ -exec rm -f {} \;
+	find . -name "*~" -exec rm -f {} \;
