@@ -27,7 +27,7 @@ script = require "../mixco/script"
 control = require "../mixco/control"
 
 
-class NanoKontrol2 extends script.Script
+script.register class NanoKontrol2 extends script.Script
 
     info:
         name: '[CSF] Korg Nanokontrol 2'
@@ -55,4 +55,3 @@ class NanoKontrol2 extends script.Script
              new control.LedButton(0x40 + i, group, "play"),
              new control.Slider(0x02 + i, group, "rate").soft()
 
-script.register(NanoKontrol2, module)
