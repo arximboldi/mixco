@@ -1,7 +1,7 @@
 #
 #  File:       core.coffee
 #  Author:     Juan Pedro Bolívar Puente <raskolnikov@es.gnu.org>
-#  Date:       Mon May 23 18:39:40 2013 
+#  Date:       Mon May 23 18:39:40 2013
 #
 #  Scripting engine controls.
 #
@@ -33,6 +33,9 @@ MIDI_NOTE_OFF = 0x9
 MIDI_CC       = 0xB
 
 midi = (midino = 0, channel = 0) ->
+    ###
+    Returns an object representing a MIDI identifier for a control.
+    ###
     midino: midino
     channel: channel
     status: (message) -> (message << 4) | @channel
@@ -44,24 +47,38 @@ midi = (midino = 0, channel = 0) ->
 
 
 class Control
+    ###
+    Base class for all control types.
+    ###
 
     constructor: (@id=midi(), @group="[Channel1]", @key=null) ->
         if not (@id instanceof Object)
             @id = midi @id
+
+    scripted: ->
+        ###
+        Call this method to turn on handling the control via the
+        script, instead of being directly mapped.  Note that this has
+        to be called before the XML mappings are generated to take
+        effect.
+        ###
+        @_scripted = true
+        this
+
+    onScript: (ev) ->
+        ###
+        Called when the control received a MIDI event and is
+        processed via the script. By default, tries to do the same as
+        if the control were mapped directly.
+        ###
+        value = transform.mappings[@key](ev.value)
+        engine.setValue @group, @key, value
 
     init: (script) ->
         if @_scripted
             script.registerScripted this, @_scriptedId()
 
     shutdown: (script) ->
-
-    scripted: ->
-        @_scripted = true
-        this
-
-    onScript: (ev) ->
-        value = transform.mappings[@key](ev.value)
-        engine.setValue @group, @key, value
 
     configInputs: (depth, script) ->
         actualKey =
@@ -93,10 +110,17 @@ class Control
 
 
 class Knob extends Control
+    ###
+    Represents a basic hardware element for setting continuous
+    parameters -- e.g, a knob or slider.
+    ###
 
     message: MIDI_CC
 
     soft: ->
+        ###
+        Enables soft takeover.
+        ###
         @_soft = true
         @scripted()
     _soft: false
@@ -107,6 +131,9 @@ class Knob extends Control
 
 
 class Button extends Control
+    ###
+    Represents a hardware button.
+    ###
 
     message: MIDI_CC
 
@@ -115,6 +142,10 @@ class Button extends Control
 
 
 class LedButton extends Button
+    ###
+    Represents a hardware button with a LED that should be turned on
+    to represent the boolean property that it is mapped to.
+    ###
 
     onValue: 0x7f
     offValue: 0x00

@@ -25,6 +25,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+
 linear = (v, min, max) -> min + v * (max - min)
 centered = (v, min, center, max) ->
     if v < .5 then linear v*2, min, center else linear (v-.5)*2, center, max
@@ -35,11 +36,16 @@ centeredT = -> transform centered, arguments...
 defaultT = linearT 0.0, 1.0
 
 mappings =
+    ###
+    Set of functions that convert a MIDI value to the value ranges
+    that Mixxx controls expect.
+    ###
     rate:       linearT -1.0, 1.0
     volume:     defaultT
     filterLow:  centeredT 0.0, 1.0, 4.0
     filterMid:  centeredT 0.0, 1.0, 4.0
     filterHigh: centeredT 0.0, 1.0, 4.0
     pregain:    centeredT 0.0, 1.0, 4.0
+
 
 exports.mappings = mappings

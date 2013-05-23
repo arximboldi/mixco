@@ -30,6 +30,9 @@ catching = util.catching
 
 
 event = (channel, control, value, status, group) ->
+    ###
+    Returns an object representing an script event coming from Mixxx
+    ###
     channel: channel
     control: control
     value: value
@@ -38,8 +41,22 @@ event = (channel, control, value, status, group) ->
 
 
 class Script
+    ###
+    Inherit from this class to define your own controller mappings.
+
+    These scripts can be used to both generate de XML configuration
+    file for Mixxx and also as the script itself, when properly
+    compiled to Javascript.
+
+    To work properly, the script name must the the same as the class
+    name but in lowercase, and it must be registered using the
+    `register` function.
+    ###
 
     info:
+        ###
+        Script metadata that is displayed in the Mixxx preferences
+        ###
         name: "Generic Mixxx Controller script"
         author: "Juan Pedro Bolivar Puente"
         description: ""
@@ -47,13 +64,36 @@ class Script
         wiki: ""
 
     @property 'name'
-        get: -> @constructor.name.toLowerCase()
+        get: ->
+            ###
+            Returns the most derived class name in lowercase,
+            which is how the script instance is registered in the
+            target module, and how the script file should be called.
+            ###
+            @constructor.name.toLowerCase()
+
+    add: (controls...) ->
+        ###
+        Adds the passed in `controls` to the script,.
+        ###
+        @controls.push controls...
+
+    init: catching ->
+        ###
+        Called by Mixxx when the script instance is loaded.
+        ###
+        for control in @controls
+            control.init this
+
+    shutdown: catching ->
+        ###
+        Called by Mixxx when the script instance is unloaded.
+        ###
+        for control in @controls
+            control.shutdown this
 
     constructor: ->
         @controls = []
-
-    add: (controls...) ->
-        @controls.push controls...
 
     main: ->
         for arg in process.argv
@@ -82,14 +122,6 @@ class Script
         2. Generate Mixxx script:
             coffee -c #{@name}.coffee
         """
-
-    init: catching ->
-        for control in @controls
-            control.init this
-
-    shutdown: catching ->
-        for control in @controls
-            control.shutdown this
 
     config: ->
         """
@@ -136,6 +168,12 @@ class Script
 
 
 register = (scriptType) ->
+    ###
+    Registers a instance of the class `scriptType` instance into the
+    parent module.  The script instance will be exported as
+    `Script.name`, and if the parent module is main, it will be
+    executed.  In CoffeeScript class definition is a expresion, thus
+    ###
     instance = new scriptType
     target = module.parent
     target.exports[instance.name] = instance
@@ -145,4 +183,3 @@ register = (scriptType) ->
 
 exports.Script = Script
 exports.register = register
-
