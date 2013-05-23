@@ -146,7 +146,7 @@ class Control
         else
             "#{indent depth}<normal/>"
 
-    configOutputs: (depth) -> ""
+    configOutputs: (depth, script) ->
 
     _scripted: false
     _scriptedId: -> mangle("_#{@group}_#{@id.midino}_#{@id.status @message}")
@@ -179,15 +179,15 @@ class LedButton extends Button
     onValue: 0x7f
     offValue: 0x00
 
-    configOutputs: (depth) ->
+    configOutputs: (depth, script) ->
         """
         #{indent depth}<output>
         #{indent depth+1}<group>#{@group}</group>
         #{indent depth+1}<key>#{@key}</key>
         #{@id.configMidi @message, depth+1}
         #{indent depth+1}<on>#{hexStr @onValue}</on>
-		#{indent depth+1}<off>#{hexStr @offValue}</off>
-        #{indent depth}<minimum>1</minimum>
+        #{indent depth+1}<off>#{hexStr @offValue}</off>
+        #{indent depth+1}<minimum>1</minimum>
         #{indent depth}</output>
         """
 
@@ -276,10 +276,14 @@ class Script
         """
 
     configInputs: (depth) ->
-        (control.configInputs depth, this for control in @controls).join('\n')
+        (control.configInputs depth, this for control in @controls)
+            .filter((x) -> x)
+            .join('\n')
 
     configOutputs: (depth) ->
-        (control.configOutputs depth, this for control in @controls).join('\n')
+        (control.configOutputs depth, this for control in @controls)
+            .filter((x) -> x)
+            .join('\n')
 
     scriptedKey: (id) ->
         "#{@name}._handle#{id}"
