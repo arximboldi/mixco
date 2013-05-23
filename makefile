@@ -25,11 +25,17 @@ tmp/%.js: %.coffee
 	coffee -c -p $< > $@
 
 out/%.js: tmp/script/%.js $(FRAMEWORK)
+	@echo
+	@echo \*\*\* Building $* JS script file
+	@echo
 	@mkdir -p $(@D)
 	browserify -r ./$< $< > $@
 	echo ";$*=require('./$<').$*" >> $@
 
 out/%.midi.xml: script/%.coffee $(FRAMEWORK)
+	@echo
+	@echo \*\*\* Building $* XML mapping file
+	@echo
 	@mkdir -p $(@D)
 	coffee $< -g > $@
 
