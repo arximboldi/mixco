@@ -34,7 +34,7 @@ The script is based on the *MixCo* framework.
 Implementation
 --------------
 
-    script.register class NanoKontrol2 extends script.Script
+    script.register module, class NanoKontrol2 extends script.Script
 
 ### Metadata
 

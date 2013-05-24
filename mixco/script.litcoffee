@@ -53,11 +53,10 @@ instance into the parent module.  The script instance will be exported
 as `Script.name`, and if the parent module is main, it will be
 executed.
 
-    exports.register = (scriptType) ->
+    exports.register = (targetModule, scriptType) ->
         instance = new scriptType
-        target = module.parent
-        target.exports[instance.name] = instance
-        if target == require.main
+        targetModule.exports[instance.name] = instance
+        if targetModule == require.main
             instance.main()
 
 
