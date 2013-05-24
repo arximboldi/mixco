@@ -26,6 +26,7 @@ Dependencies
 ------------
 
     util = require('./util')
+    behaviour = require('./behaviour')
     indent = util.indent
     hexStr = util.hexStr
 
@@ -68,8 +69,12 @@ Base class for all control types.
 
 Define the behaviour of the control.
 
-        does: (behaviour) ->
-            @_behaviour = behaviour
+        does: (todo, mapping...) ->
+            @_behaviour =
+                if mapping.length
+                    behaviour.map todo, mapping...
+                else
+                    todo
             this
 
 Called when the control received a MIDI event and is processed via the

@@ -62,10 +62,10 @@ The script adds the following controls per deck
 The top 8 knobs are mapped to the two decks mixer filter section (low,
 mid, high, gain).
 
-            @add c.knob(0x10 + 4*i).does b.map(g, "filterLow")
-            @add c.knob(0x11 + 4*i).does b.map(g, "filterMid")
-            @add c.knob(0x12 + 4*i).does b.map(g, "filterHigh")
-            @add c.knob(0x13 + 4*i).does b.map(g, "pregain").soft()
+            @add c.knob(0x10 + 4*i).does g, "filterLow"
+            @add c.knob(0x11 + 4*i).does g, "filterMid"
+            @add c.knob(0x12 + 4*i).does g, "filterHigh"
+            @add c.knob(0x13 + 4*i).does b.soft g, "pregain"
 
 Then the two first "control sections" are mapped like:
 
@@ -74,16 +74,16 @@ Then the two first "control sections" are mapped like:
   * R: Play button for the deck.
   * The fader controls the volume of the deck.
 
-            @add c.ledButton(0x40 + i).does b.map(g, "play")
-            @add c.ledButton(0x30 + i).does b.map(g, "cue_default")
-            @add c.ledButton(0x20 + i).does b.map(g, "pfl")
-            @add c.slider(0x00 + i).does b.map(g, "volume")
+            @add c.ledButton(0x40 + i).does g, "play"
+            @add c.ledButton(0x30 + i).does g, "cue_default"
+            @add c.ledButton(0x20 + i).does g, "pfl"
+            @add c.slider(0x00 + i).does g, "volume"
 
 The next two control sections control the pitch related stuff.
 
   * The fader controls the pitch of the deck.
 
-            @add c.slider(0x02 + i).does b.map(g, "rate").soft()
+            @add c.slider(0x02 + i).does b.soft g, "rate"
 
 ### Constructor
 
