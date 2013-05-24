@@ -162,8 +162,12 @@ class LedButton extends Button
         #{indent depth}</output>
         """
 
-
 exports.Knob = Knob
-exports.Slider = Knob
+exports.knob = -> new Knob arguments...
+exports.slider = exports.knob
+
 exports.Button = Button
+exports.button = -> new Button arguments...
+
 exports.LedButton = LedButton
+exports.ledButton = -> new LedButton arguments...

@@ -47,10 +47,10 @@ script.register class NanoKontrol2 extends script.Script
 
     addDeck: (i) ->
         group = "[Channel#{i+1}]"
-        @add new control.Knob(0x10 + 4*i, group, "filterLow"),
-             new control.Knob(0x11 + 4*i, group, "filterMid"),
-             new control.Knob(0x12 + 4*i, group, "filterHigh"),
-             new control.Knob(0x13 + 4*i, group, "pregain").soft(),
-             new control.Slider(0x00 + i, group, "volume"),
-             new control.LedButton(0x40 + i, group, "play"),
-             new control.Slider(0x02 + i, group, "rate").soft()
+        @add control.knob(0x10 + 4*i, group, "filterLow"),
+             control.knob(0x11 + 4*i, group, "filterMid"),
+             control.knob(0x12 + 4*i, group, "filterHigh"),
+             control.knob(0x13 + 4*i, group, "pregain").soft(),
+             control.slider(0x00 + i, group, "volume"),
+             control.ledButton(0x40 + i, group, "play"),
+             control.slider(0x02 + i, group, "rate").soft()
