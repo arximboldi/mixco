@@ -25,6 +25,7 @@ License
 Dependencies
 ------------
 
+    transform = require('./transform')
     util = require('./util')
     indent = util.indent
     hexStr = util.hexStr
