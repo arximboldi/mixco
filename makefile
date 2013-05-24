@@ -22,7 +22,9 @@ DOCS      = \
 	doc/mixco/util.html \
 	doc/mixco/transform.html
 
-all: $(DOCS) $(SCRIPTS)
+all: $(SCRIPTS)
+
+doc: $(DOCS)
 
 .SECONDARY:
 
