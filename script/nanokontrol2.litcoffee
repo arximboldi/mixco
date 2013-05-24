@@ -27,8 +27,9 @@ Dependencies
 
 The script is based on the *MixCo* framework.
 
-    script = require "../mixco/script"
-    control = require "../mixco/control"
+    script    = require "../mixco/script"
+    control   = require "../mixco/control"
+    behaviour = require "../mixco/behaviour"
 
 
 Implementation
@@ -51,24 +52,38 @@ Implementation
 
 ### Basic deck controls
 
-The top 8 knobs are mapped to the two decks mixer knobs (low, mid,
-high, gain). Then the two first "control sections" are mapped like:
+The script adds the following controls per deck
+
+        addDeck: (i) ->
+            c = control
+            b = behaviour
+            g = "[Channel#{i+1}]"
+
+The top 8 knobs are mapped to the two decks mixer filter section (low,
+mid, high, gain).
+
+            @add c.knob(0x10 + 4*i).does b.map(g, "filterLow")
+            @add c.knob(0x11 + 4*i).does b.map(g, "filterMid")
+            @add c.knob(0x12 + 4*i).does b.map(g, "filterHigh")
+            @add c.knob(0x13 + 4*i).does b.map(g, "pregain").soft()
+
+Then the two first "control sections" are mapped like:
 
   * S: Selects the deck as "main".
   * M: Cue button for the deck.
   * R: Play button for the deck.
   * The fader controls the volume of the deck.
 
-        addDeck: (i) ->
-            group = "[Channel#{i+1}]"
-            @add \
-                control.knob(0x10 + 4*i, group, "filterLow"),
-                control.knob(0x11 + 4*i, group, "filterMid"),
-                control.knob(0x12 + 4*i, group, "filterHigh"),
-                control.knob(0x13 + 4*i, group, "pregain").soft(),
-                control.slider(0x00 + i, group, "volume"),
-                control.ledButton(0x40 + i, group, "play"),
-                control.slider(0x02 + i, group, "rate").soft()
+            @add c.ledButton(0x40 + i).does b.map(g, "play")
+            @add c.ledButton(0x30 + i).does b.map(g, "cue_default")
+            @add c.ledButton(0x20 + i).does b.map(g, "pfl")
+            @add c.slider(0x00 + i).does b.map(g, "volume")
+
+The next two control sections control the pitch related stuff.
+
+  * The fader controls the pitch of the deck.
+
+            @add c.slider(0x02 + i).does b.map(g, "rate").soft()
 
 ### Constructor
 

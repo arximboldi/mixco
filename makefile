@@ -10,11 +10,14 @@
 
 SCRIPTS   = \
 	out/nanokontrol2.js out/nanokontrol2.midi.xml
+
 FRAMEWORK = \
 	tmp/mixco/util.js \
 	tmp/mixco/transform.js \
 	tmp/mixco/script.js \
-	tmp/mixco/control.js
+	tmp/mixco/control.js \
+	tmp/mixco/behaviour.js
+
 DOCS      = \
 	doc/script/nanokontrol2.html \
 	doc/mixco/control.html \

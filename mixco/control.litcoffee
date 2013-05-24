@@ -25,7 +25,6 @@ License
 Dependencies
 ------------
 
-    transform = require('./transform')
     util = require('./util')
     indent = util.indent
     hexStr = util.hexStr
@@ -62,16 +61,15 @@ Base class for all control types.
 
     class exports.Control
 
-        constructor: (@id=midi(), @group="[Channel1]", @key=null) ->
+        constructor: (@id=midi()) ->
             if not (@id instanceof Object)
                 @id = midi @id
 
-Call this method to turn on handling the control via the script,
-instead of being directly mapped.  Note that this has to be called
-before the XML mappings are generated to take effect.
 
-        scripted: ->
-            @_scripted = true
+Define the behaviour of the control.
+
+        does: (behaviour) ->
+            @_behaviour = behaviour
             this
 
 Called when the control received a MIDI event and is processed via the
@@ -79,43 +77,49 @@ script. By default, tries to do the same as if the control were mapped
 directly.
 
         onScript: (ev) ->
-            value = transform.mappings[@key](ev.value)
-            engine.setValue @group, @key, value
+            @_behaviour.onScript ev
 
         init: (script) ->
-            if @_scripted
+            if @_isScripted()
                 script.registerScripted this, @_scriptedId()
+            @_behaviour.enable()
 
         shutdown: (script) ->
+            @_behaviour.disable()
 
         configInputs: (depth, script) ->
-            actualKey =
-                if @_scripted
-                    script.scriptedKey(@_scriptedId())
-                else
-                    @key
+            if @_isScripted()
+                mapping =
+                    group: ""
+                    key:   script.scriptedKey(@_scriptedId())
+            else
+                mapping = @_behaviour.directInMapping()
             """
             #{indent depth}<control>
-            #{indent depth+1}<group>#{@group}</group>
-            #{indent depth+1}<key>#{actualKey}</key>
+            #{indent depth+1}<group>#{mapping.group}</group>
+            #{indent depth+1}<key>#{mapping.key}</key>
             #{@id.configMidi @message, depth+1}
             #{indent depth+1}<options>
-            #{@configOptions depth+2}
+            #{@_configOptions depth+2}
             #{indent depth+1}</options>
             #{indent depth}</control>
             """
 
-        configOptions: (depth) ->
-            if @_scripted
-                "#{indent depth}<script-binding/>"
-            else
-                "#{indent depth}<normal/>"
-
         configOutputs: (depth, script) ->
 
-        _scripted: false
-        _scriptedId: -> util.mangle(
-            "_#{@group}_#{@id.midino}_#{@id.status @message}")
+        configOptions: (depth) ->
+            "#{indent depth}<normal/>"
+
+        _configOptions: (depth) ->
+            if @_isScripted()
+                "#{indent depth}<script-binding/>"
+            else
+                @configOptions depth
+
+        _isScripted: -> not @_behaviour?.directInMapping()
+
+        _scriptedId: -> util.mangle \
+            "_#{@group}_#{@id.midino}_#{@id.status @message}"
 
 
 ### Knob
@@ -127,22 +131,12 @@ Represents a basic hardware element for setting continuous parameters
 
         message: MIDI_CC
 
-Enables soft takeover.
-
-        soft: ->
-            @_soft = true
-            @scripted()
-        _soft: false
-
-        init: ->
-            super
-            engine.softTakeover(@group, @key, @_soft)
-
 I hate using the **new** operator, thus for every concrete control
 we'll provide some factory functions.
 
     exports.knob = -> new exports.Knob arguments...
     exports.slider = exports.knob
+
 
 ### Button
 
@@ -156,6 +150,7 @@ Represents a hardware button.
 
     exports.button = -> new exports.Button arguments...
 
+
 ### LedButton
 
 Represents a hardware button with a LED that should be turned on to
@@ -167,15 +162,18 @@ represent the boolean property that it is mapped to.
         offValue: 0x00
 
         configOutputs: (depth, script) ->
-            """
-            #{indent depth}<output>
-            #{indent depth+1}<group>#{@group}</group>
-            #{indent depth+1}<key>#{@key}</key>
-            #{@id.configMidi @message, depth+1}
-            #{indent depth+1}<on>#{hexStr @onValue}</on>
-            #{indent depth+1}<off>#{hexStr @offValue}</off>
-            #{indent depth+1}<minimum>1</minimum>
-            #{indent depth}</output>
-            """
+            if @_behaviour
+                mapping = @_behaviour.directOutMapping()
+                if mapping
+                    """
+                    #{indent depth}<output>
+                    #{indent depth+1}<group>#{mapping.group}</group>
+                    #{indent depth+1}<key>#{mapping.key}</key>
+                    #{@id.configMidi @message, depth+1}
+                    #{indent depth+1}<on>#{hexStr @onValue}</on>
+                    #{indent depth+1}<off>#{hexStr @offValue}</off>
+                    #{indent depth+1}<minimum>1</minimum>
+                    #{indent depth}</output>
+                    """
 
     exports.ledButton = -> new exports.LedButton arguments...
