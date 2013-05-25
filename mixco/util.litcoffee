@@ -50,7 +50,7 @@ standalone.
 
 
     exports.mangle = (str) ->
-        str.replace(' ', '_').replace('[', '__C__').replace(']', '__D__')
+        str.replace(' ', '_').replace('[', '_C_').replace(']', '_D_')
 
 
     exports.xmlEscape = (str) ->

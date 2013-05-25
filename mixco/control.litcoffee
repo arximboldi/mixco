@@ -124,7 +124,7 @@ directly.
         _isScripted: -> not @_behaviour?.directInMapping()
 
         _scriptedId: -> util.mangle \
-            "_#{@group}_#{@id.midino}_#{@id.status @message}"
+            "_#{@id.midino}_#{@id.status @message}"
 
 
 ### Knob
