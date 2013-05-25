@@ -25,8 +25,22 @@ License
 Dependencies
 ------------
 
-    util = require('./util')
     transform = require('./transform')
+    util = require('./util')
+    indent = util.indent
+
+
+Outputs
+-------
+
+Outputs are provided by controls and used by behaviours to define the
+state if LEDs and so on.
+
+
+    class exports.Output
+
+        send: (state) ->
+
 
 Behaviours
 ----------
@@ -47,12 +61,22 @@ determined after the XML configuration is generated.
         directInMapping: -> null
         directOutMapping: -> null
 
+The output of the behaviour is set by the controls that it is
+associated to.
+
+        output: new exports.Output
+
+        configOutput: (depth) ->
+
+
 ### Map
 
 The **map** behaviours maps the control directly to a control in
 Mixxx.
 
     class exports.Map extends exports.Behaviour
+
+        minimum: 1
 
         constructor: (@group, @key) ->
 
@@ -65,10 +89,21 @@ Enables soft takeover.
         enable: ->
             super
             engine.softTakeover(@group, @key, @_soft)
+            @update()
 
         disable: ->
             super
             engine.softTakeover(@group, @key, false)
+
+Update the output to match the current value in the engine.
+
+        update: ->
+            value = engine.getValue(@group, @key)
+            @output.send \
+                if value >= @minimum
+                    @output.onValue
+                else
+                    @output.offValue
 
 When soft takeover is enabled we have to process the events through
 the script.
@@ -86,5 +121,9 @@ the script.
             value = transform.mappings[@key](ev.value)
             engine.setValue @group, @key, value
 
+        configOutput: (depth) ->
+            "#{indent depth}<minimum>#{@minimum}</minimum>"
 
-    exports.map = -> new exports.Map arguments...
+
+    exports.map  = -> new exports.Map arguments...
+    exports.soft = -> exports.map(arguments...).soft()

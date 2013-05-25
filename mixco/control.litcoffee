@@ -60,7 +60,7 @@ Controls
 
 Base class for all control types.
 
-    class exports.Control
+    class exports.Control extends behaviour.Output
 
         constructor: (@id=midiId()) ->
             if not (@id instanceof Object)
@@ -75,7 +75,7 @@ Define the behaviour of the control.
                     behaviour.map todo, mapping...
                 else
                     todo
-            this
+            @_behaviour.output = this
 
 Called when the control received a MIDI event and is processed via the
 script. By default, tries to do the same as if the control were mapped
@@ -148,6 +148,7 @@ we'll provide some factory functions.
 Represents a hardware button.
 
     class exports.Button extends exports.Control
+
         message: MIDI_CC
 
         configOptions: (depth) ->
@@ -166,19 +167,21 @@ represent the boolean property that it is mapped to.
         onValue: 0x7f
         offValue: 0x00
 
+        send: (value) ->
+            midi.sendShortMsg @id.status(@message), @id.midino, value
+
         configOutputs: (depth, script) ->
-            if @_behaviour
-                mapping = @_behaviour.directOutMapping()
-                if mapping
-                    """
-                    #{indent depth}<output>
-                    #{indent depth+1}<group>#{mapping.group}</group>
-                    #{indent depth+1}<key>#{mapping.key}</key>
-                    #{@id.configMidi @message, depth+1}
-                    #{indent depth+1}<on>#{hexStr @onValue}</on>
-                    #{indent depth+1}<off>#{hexStr @offValue}</off>
-                    #{indent depth+1}<minimum>1</minimum>
-                    #{indent depth}</output>
-                    """
+            mapping = @_behaviour?.directOutMapping()
+            if mapping
+                """
+                #{indent depth}<output>
+                #{indent depth+1}<group>#{mapping.group}</group>
+                #{indent depth+1}<key>#{mapping.key}</key>
+                #{@id.configMidi @message, depth+1}
+                #{indent depth+1}<on>#{hexStr @onValue}</on>
+                #{indent depth+1}<off>#{hexStr @offValue}</off>
+                #{@_behaviour.configOutput depth+1}
+                #{indent depth}</output>
+                """
 
     exports.ledButton = -> new exports.LedButton arguments...
