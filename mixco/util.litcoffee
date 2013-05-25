@@ -46,7 +46,7 @@ standalone.
         try
             f.apply @, arguments
         catch err
-            printer "ERROR: #{err}"
+            exports.printer "ERROR: #{err}"
 
 
     exports.mangle = (str) ->
