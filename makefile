@@ -19,11 +19,13 @@ FRAMEWORK = \
 	tmp/mixco/behaviour.js
 
 DOCS      = \
+	doc/index.html \
 	doc/script/nanokontrol2.html \
 	doc/mixco/control.html \
 	doc/mixco/script.html \
 	doc/mixco/util.html \
-	doc/mixco/transform.html
+	doc/mixco/transform.html \
+	doc/mixco/behaviour.html
 
 all: $(SCRIPTS)
 
@@ -50,6 +52,11 @@ out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	coffee $< -g > $@
 
+doc/index.html: README.md
+	@mkdir -p $(@D)
+	docco -l linear -o $(@D) $<
+	mv $(@D)/README.html $@
+
 doc/%.html: %.litcoffee
 	@mkdir -p $(@D)
 	docco -l linear -o $(@D) $<
@@ -59,3 +66,6 @@ clean:
 	rm -rf ./out
 	rm -rf ./tmp
 	find . -name "*~" -exec rm -f {} \;
+
+upload-doc: doc
+	ncftpput -R -m -u u48595320 sinusoid.es /mixco doc/*
