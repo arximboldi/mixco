@@ -127,3 +127,50 @@ the script.
 
     exports.map  = -> new exports.Map arguments...
     exports.soft = -> exports.map(arguments...).soft()
+
+
+### Actions
+
+Actions let you set a callback.  Still, they are map, so you can
+associate a value that can be associated to it.
+
+    class Action extends exports.Map
+
+        constructor: (@action, args...) ->
+            super args...
+
+        onScript: (ev) ->
+            if ev.value
+                @action()
+
+        directInMapping: ->
+
+
+### Chooser
+
+The **Chooser* lets you select a 'binary' proparty of the decks that
+are registered exclusively, such that is enabled only in one at a
+time.
+
+    class exports.Chooser
+
+        constructor: (@_key, @_groupN = (n) -> "[Channel#{n+1}]") ->
+            @_decks = []
+            @_selected = null
+
+**choose** retuns a behaviour that selects the Pfl of the Nth channel,
+starting from zero.
+
+        choose: (n) ->
+            result = @_decks[n]
+            if not result
+                result = new Action (=> @select n), @_groupN(n), @_key
+                @_decks[n] = result
+            result
+
+        select: (n) ->
+            @_selected = n
+            for _, n in @_decks
+                engine.setValue @_groupN(n), @_key, (@_selected == n)
+
+    exports.chooser = -> new exports.Chooser arguments...

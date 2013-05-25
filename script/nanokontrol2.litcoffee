@@ -52,6 +52,15 @@ Implementation
 
 ### Basic deck controls
 
+Build the script object. We select exclusively the prehear, which will
+serve as a notion of "selected deck" for certain actions.
+
+        constructor: ->
+            super
+            @decks = behaviour.chooser "pfl"
+            @addDeck 0
+            @addDeck 1
+
 The script adds the following controls per deck
 
         addDeck: (i) ->
@@ -69,14 +78,14 @@ mid, high, gain).
 
 Then the two first "control sections" are mapped like:
 
-  * S: Selects the deck as "main".
+  * S: Selects the deck for prehear.
   * M: Cue button for the deck.
   * R: Play button for the deck.
   * The fader controls the volume of the deck.
 
             @add c.ledButton(0x40 + i).does g, "play"
             @add c.ledButton(0x30 + i).does g, "cue_default"
-            @add c.ledButton(0x20 + i).does g, "pfl"
+            @add c.ledButton(0x20 + i).does @decks.choose i
             @add c.slider(0x00 + i).does g, "volume"
 
 The next two control sections control the pitch related stuff.
@@ -84,12 +93,3 @@ The next two control sections control the pitch related stuff.
   * The fader controls the pitch of the deck.
 
             @add c.slider(0x02 + i).does b.soft g, "rate"
-
-### Constructor
-
-Builds the script object.
-
-        constructor: ->
-            super
-            @addDeck 0
-            @addDeck 1
