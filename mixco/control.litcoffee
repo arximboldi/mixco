@@ -45,7 +45,7 @@ Utilities
 The **midi** function returns an object representing a MIDI identifier
 for a control.
 
-    midi = (midino = 0, channel = 0) ->
+    midiId = (midino = 0, channel = 0) ->
         midino: midino
         channel: channel
         status: (message) -> (message << 4) | @channel
@@ -62,9 +62,9 @@ Base class for all control types.
 
     class exports.Control
 
-        constructor: (@id=midi()) ->
+        constructor: (@id=midiId()) ->
             if not (@id instanceof Object)
-                @id = midi @id
+                @id = midiId @id
 
 
 Define the behaviour of the control.
