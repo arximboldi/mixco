@@ -25,6 +25,7 @@ License
 Utilities
 ---------
 
+    binary   = (v) -> if v > 0 then 1 else 0
     linear   = (v, min, max) -> min + v * (max - min)
     centered = (v, min, center, max) ->
         if v < .5
@@ -34,6 +35,7 @@ Utilities
 
     transform = (f, args...) -> (v) -> f v / 127.0, args...
 
+    binaryT   = -> transform binary, arguments...
     linearT   = -> transform linear, arguments...
     centeredT = -> transform centered, arguments...
     defaultT  = linearT 0.0, 1.0
@@ -45,9 +47,12 @@ The **mappings** table defines a set of functions that convert a MIDI
 value to the value ranges that Mixxx controls expect.
 
     exports.mappings =
-        rate:       linearT -1.0, 1.0
-        volume:     defaultT
-        filterLow:  centeredT 0.0, 1.0, 4.0
-        filterMid:  centeredT 0.0, 1.0, 4.0
-        filterHigh: centeredT 0.0, 1.0, 4.0
-        pregain:    centeredT 0.0, 1.0, 4.0
+        cue_default: binary
+        filterHigh:  centeredT 0.0, 1.0, 4.0
+        filterLow:   centeredT 0.0, 1.0, 4.0
+        filterMid:   centeredT 0.0, 1.0, 4.0
+        play:        binary
+        plf:         binary
+        pregain:     centeredT 0.0, 1.0, 4.0
+        volume:      defaultT
+        rate:        linearT -1.0, 1.0
