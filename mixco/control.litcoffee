@@ -55,6 +55,16 @@ for a control.
             #{indent depth}<midino>#{hexStr @midino}</midino>
             """
 
+The **event** function returns an object representing an script event
+coming from Mixxx.
+
+    event = (channel, control, value, status, group) ->
+        channel: channel
+        control: control
+        value: value
+        status: status
+        group: group
+
 Controls
 --------
 
@@ -78,25 +88,31 @@ Define the behaviour of the control.
             @_behaviour.output = this
 
 Called when the control received a MIDI event and is processed via the
-script. By default, tries to do the same as if the control were mapped
-directly.
+script.  It is defined in terms of the behaviours.
 
-        onScript: (ev) ->
-            @_behaviour.onScript ev
+        onEvent: (ev) ->
+            @_behaviour.onEvent ev
+
+        @property 'needsHandler', get: -> not @_behaviour?.directInMapping()
+
+        handlerId: -> util.mangle \
+            "#{@id.midino}_#{@id.status @message}"
 
         init: (script) ->
-            if @_isScripted()
-                script.registerScripted this, @_scriptedId()
+            if @needsHandler
+                script.registerHandler \
+                    ((args...) => @onEvent event args...),
+                    @handlerId()
             @_behaviour.enable()
 
         shutdown: (script) ->
             @_behaviour.disable()
 
         configInputs: (depth, script) ->
-            if @_isScripted()
+            if @needsHandler
                 mapping =
                     group: "[Master]"
-                    key:   script.scriptedKey(@_scriptedId())
+                    key:   script.handlerKey(@handlerId())
             else
                 mapping = @_behaviour.directInMapping()
             """
@@ -116,15 +132,10 @@ directly.
             "#{indent depth}<normal/>"
 
         _configOptions: (depth) ->
-            if @_isScripted()
+            if @needsHandler
                 "#{indent depth}<script-binding/>"
             else
                 @configOptions depth
-
-        _isScripted: -> not @_behaviour?.directInMapping()
-
-        _scriptedId: -> util.mangle \
-            "_#{@id.midino}_#{@id.status @message}"
 
 
 ### Knob

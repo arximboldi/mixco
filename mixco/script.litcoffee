@@ -29,21 +29,7 @@ Dependencies
     indent = util.indent
     xmlEscape = util.xmlEscape
     catching = util.catching
-
-
-Utilities
----------
-
-The **event** function returns an object representing an script event
-coming from Mixxx.
-
-    event = (channel, control, value, status, group) ->
-        channel: channel
-        control: control
-        value: value
-        status: status
-        group: group
-
+    assert = util.assert
 
 Script
 ------
@@ -113,7 +99,6 @@ Use **add** to add controls to your script instance.
 
         constructor: ->
             @controls = []
-
 
 ### Standalone execution
 
@@ -187,13 +172,24 @@ XML file and display some help.
                 .filter((x) -> x)
                 .join('\n')
 
-        scriptedKey: (id) ->
-            "#{@name}._handle#{id}"
 
+The **registerHandler** method is called during initialization by the
+controls to register a handler callback in the script.  If `id` is not
+passed, one is generated for them. When `id` is passed, the handler
+key is constant and can be queried even before registering the
+handler, using the **handlerKey** method.  Otherwise, the handler can
+still be known from the return value of `registerHandler`.
 
-This method is called during initialization by the controls to
-register a handler callback in the script.
+        _nextCallbackId: 1
+        registerHandler: (callback, id=undefined) ->
+            if not id
+                id = @_nextCallbackId++
+            handlerName = "__handle_#{id}"
 
-        registerScripted: (control, id) ->
-            this["_handle#{id}"] = (args...) -> control.onScript(event args...)
-            this
+            assert not this["handlerName"],
+                "Handlers can be registered only once"
+            this[handlerName] = -> callback arguments...
+            return @handlerKey id
+
+        handlerKey: (id) ->
+            "#{@name}.__handle_#{id}"

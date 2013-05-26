@@ -50,7 +50,7 @@ circunstances.
 
     class exports.Behaviour
 
-        onScript: (ev) ->
+        onEvent: (ev) ->
         enable: ->
         disable: ->
 
@@ -107,10 +107,10 @@ Update the output to match the current value in the engine.
 
 While in general mappings are done directly, bypassing the script,
 under some circunstances it might happen that they are proccessed in
-the script.  In this case, we define `onScript` to emulate the
+the script.  In this case, we define `onEvent` to emulate the
 behaviour of a direct mapping.
 
-        onScript: (ev) ->
+        onEvent: (ev) ->
             value = transform.mappings[@key](ev.value)
             engine.setValue @group, @key, value
 
@@ -151,7 +151,7 @@ associate a value that can be associated to it.
         constructor: (@action, args...) ->
             super args...
 
-        onScript: (ev) ->
+        onEvent: (ev) ->
             if ev.value
                 @action()
 
