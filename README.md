@@ -1,41 +1,34 @@
 mixco
 =====
 
-**mixco** is a framework for creating hardware controller scripts for
-the amazing [Mixxx][mixxx] DJ software using [Literate CoffeeScript][lcs].
+**Mixco** is a framework for creating hardware controller scripts for
+the amazing [Mixxx][mixxx] DJ software using [Literate
+CoffeeScript][lcs]. Find more information [in the *Mixco*
+webpage][mixco]. And remember, this is [Free Software][gnu].
 
-Find more information [in the **mixco** webpage][mixco]. And remember,
-**mixco** is [Free Software][gnu].
-
-  [gnu]: http://www.gnu.org/philosophy/philosophy.html
-  [mixxx]: http://www.gnu.org/philosophy/philosophy.html
+  [gnu]: http://www.gnu.org/philosophy/free-sw.html
+  [mixxx]: http://www.mixxx.org
   [lcs]: http://coffeescript.org/#literate
   [mixco]: http://sinusoid.es/mixco
 
-Download
---------
-
-**mixco** is still on development, but you can try it out grabbing the
-source code from [Gitorious][git]. Note that the project is still
-***very experimental*** and thus the API will change every single
-minute.
-
-  [git]: https://gitorious.org/mixco
 
 Features
 --------
 
-  * Your script file is a single [Literate CoffeeScript][lcs] file
+  * Your script file is a single [Literate CoffeeScript][lcs] file.
   * The file can be executed to generate the XML mapping and converted
-    to JS to be used as the script.
-  * Direct-mappings to controls whenever possible, but this is transparent
-    to the script writer.
-  * Most of the API is very declarative.
+    to JS to be used as the controller script.
+  * It will create direct mappings to controls whenever possible, but
+    this is transparent to the script writer.
+  * The API is very [fluent][fluent] and
+    [declarative][declarative].
   * Because of [Literate CoffeeScript][lcs], the mappings are well
-    documented, and they include the documentations contains the code
-    itself, encouraging DJs to modify them and remove the artist/coder
-    dicotomy. [See an example of it][script.nanokontrol2]
+    documented, and the code itself is interleaved with the
+    documentation, encouraging DJs to modify them and remove the
+    artist/coder dicotomy. [See an example of it][script.nanokontrol2]
 
+  [declarative]: http://en.wikipedia.org/wiki/Declarative_programming
+  [fluent]: http://en.wikipedia.org/wiki/Fluent_interface
   [lcs]: http://coffeescript.org/#literate
   [script.nanokontrol2]: script/nanokontrol2.html
 
@@ -48,10 +41,34 @@ Supported hardware
   [script.nanokontrol2]: script/nanokontrol2.html
 
 
+Download
+--------
+
+**Mixco** is still on development, but you can try it out grabbing the
+source code from [Gitorious][git]. Note that the project is still
+***very experimental*** and thus the provided API will change every
+single minute.
+
+  [git]: https://gitorious.org/mixco
+
+### Depedencies
+
+Required dependencies to compile the Mixxx scripts:
+
+  - [CoffeeScript](http://coffeescript.org/) >= 1.5
+  - [Node.js](http://nodejs.org/) >= 0.8
+  - [Browserify](http://browserify.org/) >= 2.0
+  - [GNU make](http://www.gnu.org/software/make/)
+
+Optional dependencies to compile documentation:
+
+  - [Docco](http://jashkenas.github.io/docco/) >= 0.5
+
+
 Installation
 ------------
 
-To install the *mixco* First, [grab the sources][git]. Then, from the
+To install the *Mixco* First, [grab the sources][git]. Then, from the
 project folder, execute:
 
 > make
