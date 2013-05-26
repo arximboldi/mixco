@@ -47,12 +47,12 @@ The **mappings** table defines a set of functions that convert a MIDI
 value to the value ranges that Mixxx controls expect.
 
     exports.mappings =
-        cue_default: binary
+        cue_default: binaryT
         filterHigh:  centeredT 0.0, 1.0, 4.0
         filterLow:   centeredT 0.0, 1.0, 4.0
         filterMid:   centeredT 0.0, 1.0, 4.0
-        play:        binary
-        plf:         binary
+        play:        binaryT
+        plf:         binaryT
         pregain:     centeredT 0.0, 1.0, 4.0
         volume:      defaultT
         rate:        linearT -1.0, 1.0
