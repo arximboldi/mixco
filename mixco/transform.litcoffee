@@ -44,7 +44,11 @@ Mappings
 --------
 
 The **mappings** table defines a set of functions that convert a MIDI
-value to the value ranges that Mixxx controls expect.
+value to the value ranges that Mixxx controls expect.  Extend as
+needed. Please make sure to keep it in sync with the official
+[Mixxx controls documentation][mixxxcontrols].
+
+  [mixxxcontrols]: http://www.mixxx.org/wiki/doku.php/mixxxcontrols
 
     exports.mappings =
         cue_default: binaryT
