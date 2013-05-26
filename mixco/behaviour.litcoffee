@@ -80,20 +80,12 @@ Mixxx.
 
         constructor: (@group, @key) ->
 
-Enables soft takeover.
-
-        soft: ->
-            @_soft = true
-            this
-
         enable: ->
             super
-            engine.softTakeover(@group, @key, @_soft)
             @update()
 
         disable: ->
             super
-            engine.softTakeover(@group, @key, false)
 
 Update the output to match the current value in the engine.
 
@@ -105,17 +97,18 @@ Update the output to match the current value in the engine.
                 else
                     @output.offValue
 
-When soft takeover is enabled we have to process the events through
-the script.
-
         directInMapping: ->
-            if not @_soft
-                group: @group
-                key:   @key
+            group: @group
+            key:   @key
 
         directOutMapping: ->
             group: @group
             key:   @key
+
+While in general mappings are done directly, bypassing the script,
+under some circunstances it might happen that they are proccessed in
+the script.  In this case, we define `onScript` to emulate the
+behaviour of a direct mapping.
 
         onScript: (ev) ->
             value = transform.mappings[@key](ev.value)
@@ -126,7 +119,26 @@ the script.
 
 
     exports.map  = -> new exports.Map arguments...
-    exports.soft = -> exports.map(arguments...).soft()
+
+
+The **Soft** behaviour defines a mapping with soft takeover enabled.
+
+    class exports.Soft extends exports.Map
+
+        enable: ->
+            super
+            engine.softTakeover(@group, @key, true)
+
+        disable: ->
+            super
+            engine.softTakeover(@group, @key, false)
+
+When soft takeover is enabled we have to process the events through
+the script.
+
+        directInMapping: -> null
+
+    exports.soft = -> new exports.Soft arguments...
 
 
 ### Actions
