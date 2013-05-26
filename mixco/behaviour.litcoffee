@@ -25,10 +25,31 @@ License
 Dependencies
 ------------
 
+    events = require('events')
     transform = require('./transform')
     util = require('./util')
     indent = util.indent
 
+
+Value
+-----
+
+The **Value** instances represent an active value that changes with
+time.  The actual value can be accessed via the `value` property.
+Whenever the value changes, a `value` event is notified, using the
+standard node.js event system.  To register a listener callback that
+is called whenever the value changes, use the `on` method from the
+`events.EventEmitter` interface.
+
+    class Value extends events.EventEmitter
+
+        @property 'value',
+            get: -> @_value
+            set: (newValue) ->
+                if @_value != newValue
+                    @_value = newValue
+                    @emit 'value'
+                @_value
 
 Outputs
 -------
@@ -46,9 +67,10 @@ Behaviours
 ----------
 
 A behaviour determines how a control should behave under some
-circunstances.
+circunstances. In general, behaviours are values also, so one can
+listen to them.
 
-    class exports.Behaviour
+    class exports.Behaviour extends Value
 
         onEvent: (ev) ->
         enable: ->
@@ -72,7 +94,7 @@ associated to.
 ### Map
 
 The **map** behaviours maps the control directly to a control in
-Mixxx.
+Mixxx.  If the value is listened to, then it will
 
     class exports.Map extends exports.Behaviour
 
@@ -80,19 +102,26 @@ Mixxx.
 
         constructor: (@group, @key) ->
 
-        enable: ->
+        enable: (script) ->
             super
+            @value = engine.getValue @group, @key
             @updateOutput()
+            if @listeners('value') > 0 and not @_valueHandlerConnected
+                @_valueHandler or= script.registerHandler (v) => @value = v
+                engine.connectControl @group, @key, @_valueHandler
+                @_valueHandlerConnected = true
 
-        disable: ->
+        disable: (script) ->
             super
+            if @_valueHandlerConnected?
+                engine.connectControl @group, @key, @_valueHandler, true
+
 
 Update the output to match the current value in the engine.
 
         updateOutput: ->
-            value = engine.getValue(@group, @key)
             @output.send \
-                if value >= @minimum
+                if @value >= @minimum
                     @output.onValue
                 else
                     @output.offValue

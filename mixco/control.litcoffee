@@ -103,10 +103,10 @@ script.  It is defined in terms of the behaviours.
                 script.registerHandler \
                     ((args...) => @onEvent event args...),
                     @handlerId()
-            @_behaviour.enable()
+            @_behaviour.enable script
 
         shutdown: (script) ->
-            @_behaviour.disable()
+            @_behaviour.disable script
 
         configInputs: (depth, script) ->
             if @needsHandler
