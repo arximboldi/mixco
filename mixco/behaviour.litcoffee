@@ -82,14 +82,14 @@ Mixxx.
 
         enable: ->
             super
-            @update()
+            @updateOutput()
 
         disable: ->
             super
 
 Update the output to match the current value in the engine.
 
-        update: ->
+        updateOutput: ->
             value = engine.getValue(@group, @key)
             @output.send \
                 if value >= @minimum
