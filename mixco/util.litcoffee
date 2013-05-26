@@ -67,3 +67,8 @@ standalone.
 
     exports.hexStr = (number) ->
         "0x#{number.toString 16}"
+
+
+    exports.assert = (value, error=undefined) ->
+        if not value
+           throw new Error(error if error? else "Assertion failed.")
