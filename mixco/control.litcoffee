@@ -95,7 +95,7 @@ directly.
         configInputs: (depth, script) ->
             if @_isScripted()
                 mapping =
-                    group: ""
+                    group: "[Master]"
                     key:   script.scriptedKey(@_scriptedId())
             else
                 mapping = @_behaviour.directInMapping()
