@@ -88,9 +88,16 @@ determined after the XML configuration is generated.
         directOutMapping: -> null
 
 The output of the behaviour is set by the controls that it is
-associated to.
+associated to.  We use this to check that we are not registered, since
+a behaviour can be registered only once.
 
-        output: new exports.Output
+        _output: new exports.Output
+        @property 'output',
+            get: @_output
+            set: (out) ->
+                util.assert @_output == exports.Behaviour::_output, \
+                    "Can not register a behaviour several times"
+                @_output = out
 
         configOutput: (depth) ->
 
