@@ -217,7 +217,6 @@ represent the boolean property that it is mapped to.
 
         configOutputs: (depth, script) ->
             mapping = @_behaviours.length == 1 and do @_behaviours[0].directOutMapping
-            util.printer "mapping #{mapping}"
             if mapping
                 @send = undefined
                 """
