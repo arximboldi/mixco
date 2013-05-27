@@ -1,7 +1,7 @@
-mixco.transform
-===============
+mixco.control
+=============
 
-Methods to transform MIDI values to Mixxx control values.
+Defines different hardware controls.
 
 License
 -------
