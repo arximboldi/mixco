@@ -120,7 +120,7 @@ Mixxx.  If the value is listened to, then it will
             super
             @value = engine.getValue @group, @key
             @updateOutput()
-            if @listeners('value') > 0 and not @_valueHandlerConnected
+            if @listeners('value').length > 0 and not @_valueHandlerConnected
                 @_valueHandler or= script.registerHandler (v) => @value = v
                 engine.connectControl @group, @key, @_valueHandler
                 @_valueHandlerConnected = true
