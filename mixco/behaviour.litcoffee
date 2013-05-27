@@ -161,6 +161,16 @@ behaviour of a direct mapping.
     exports.map  = -> new exports.Map arguments...
 
 
+The **toBehaviour** factory that builds a default behaviour from a set
+of arguments.  If the arguments is just a behaviour, returns it.
+
+    exports.toBehaviour = (behaviour, args...) ->
+        if not (behaviour instanceof exports.Behaviour)
+            exports.map behaviour, args...
+        else
+            behaviour
+
+
 The **Soft** behaviour defines a mapping with soft takeover enabled.
 
     class exports.Soft extends exports.Map

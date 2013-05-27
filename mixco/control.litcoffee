@@ -97,19 +97,12 @@ Thera are three kinds of behaviours we can associate to the control:
 
         does: (args...) ->
             assert not @_isInit
-            @_behaviour = @_toBehaviour args...
+            @_behaviour = behaviour.toBehaviour args...
             @_behaviour.output = this
 
         when: (condition, args...) ->
 
         else: (args...) ->
-
-        _toBehaviour: (b, args...) ->
-            if not (b instanceof behaviour.Behaviour)
-                behaviour.map b, args...
-            else
-                b
-
 
 Called when the control received a MIDI event and is processed via the
 script.  It is defined in terms of the behaviours.
