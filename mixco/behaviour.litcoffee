@@ -211,7 +211,7 @@ time.
             @_selected = null
 
 **choose** retuns a behaviour that selects the Pfl of the Nth channel,
-starting from zero.
+starting from zero.  These behaviours can also be used as condition.
 
         choose: (n) ->
             result = @_decks[n]
