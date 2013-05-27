@@ -30,6 +30,7 @@ DOCS      = \
 all: $(SCRIPTS)
 
 doc: $(DOCS)
+	cp -r ./pic ./doc/
 
 .SECONDARY:
 

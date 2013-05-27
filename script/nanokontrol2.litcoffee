@@ -3,6 +3,8 @@ script.nanokontrol2
 
 Mixxx script file for the **Korg NanoKontrol2** controller.
 
+  ![NanoKontrol2 Layout](../pic/nanokontrol2.jpg)
+
 License
 -------
 
