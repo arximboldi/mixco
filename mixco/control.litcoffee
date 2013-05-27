@@ -29,6 +29,7 @@ Dependencies
     behaviour = require('./behaviour')
     indent = util.indent
     hexStr = util.hexStr
+    assert = util.assert
 
 
 Constants
@@ -76,16 +77,39 @@ Base class for all control types.
             if not (@id instanceof Object)
                 @id = midiId @id
 
+The following set of methods define the behaviour of the control. A
+control can have several behaviours at the same time. Note that when
+passing behaviours to these methods (which is always the last
+parameter) you can either pass a *Behaviour* object or a *key* and
+*group* strings that will be puto directly into a `behaviour.map`.
 
-Define the behaviour of the control.
+Thera are three kinds of behaviours we can associate to the control:
 
-        does: (todo, mapping...) ->
-            @_behaviour =
-                if mapping.length
-                    behaviour.map todo, mapping...
-                else
-                    todo
+* With **does** we associate behaviours that are always *active*,
+  unconditionally.
+
+* With **when** we associate behaviours that are only *active* when some
+  condition is met.  This `condition` is a boolean `behaviour.Value`
+  object.
+
+* With **else** we associate behaviours that are only active when no
+  other *when* behaviour is *active*.
+
+        does: (args...) ->
+            assert not @_isInit
+            @_behaviour = @_toBehaviour args...
             @_behaviour.output = this
+
+        when: (condition, args...) ->
+
+        else: (args...) ->
+
+        _toBehaviour: (b, args...) ->
+            if not (b instanceof behaviour.Behaviour)
+                behaviour.map b, args...
+            else
+                b
+
 
 Called when the control received a MIDI event and is processed via the
 script.  It is defined in terms of the behaviours.
@@ -99,14 +123,18 @@ script.  It is defined in terms of the behaviours.
             "#{@id.midino}_#{@id.status @message}"
 
         init: (script) ->
+            assert not @_isInit
             if @needsHandler
                 script.registerHandler \
                     ((args...) => @onEvent event args...),
                     @handlerId()
             @_behaviour.enable script
+            @_isInit = true
 
         shutdown: (script) ->
+            assert @_isInit
             @_behaviour.disable script
+            @_isInit = false
 
         configInputs: (depth, script) ->
             if @needsHandler
