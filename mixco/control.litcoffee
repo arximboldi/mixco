@@ -71,7 +71,7 @@ Controls
 
 Base class for all control types.
 
-    class exports.Control extends behaviour.Output
+    class exports.Control extends behaviour.Actor
 
         constructor: (@id=midiId()) ->
             if not (@id instanceof Object)
@@ -98,7 +98,7 @@ Thera are three kinds of behaviours we can associate to the control:
         does: (args...) ->
             assert not @_isInit
             @_behaviour = behaviour.toBehaviour args...
-            @_behaviour.output = this
+            this
 
         when: (condition, args...) ->
 
@@ -106,9 +106,6 @@ Thera are three kinds of behaviours we can associate to the control:
 
 Called when the control received a MIDI event and is processed via the
 script.  It is defined in terms of the behaviours.
-
-        onEvent: (ev) ->
-            @_behaviour?.onEvent ev
 
         @property 'needsHandler', get: -> not @_behaviour?.directInMapping()
 
@@ -119,14 +116,14 @@ script.  It is defined in terms of the behaviours.
             assert not @_isInit
             if @needsHandler
                 script.registerHandler \
-                    ((args...) => @onEvent event args...),
+                    ((args...) => @emit 'event', event args...),
                     @handlerId()
-            @_behaviour?.enable script
+            @_behaviour?.enable script, this
             @_isInit = true
 
         shutdown: (script) ->
             assert @_isInit
-            @_behaviour?.disable script
+            @_behaviour?.disable script, this
             @_isInit = false
 
         configInputs: (depth, script) ->

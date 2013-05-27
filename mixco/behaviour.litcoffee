@@ -29,6 +29,7 @@ Dependencies
     transform = require('./transform')
     util = require('./util')
     indent = util.indent
+    assert = util.assert
 
 
 Value
@@ -55,51 +56,53 @@ is called whenever the value changes, use the `on` method from the
                     @emit 'value', newValue
                 @_value
 
-Outputs
--------
+Actor
+-----
 
-Outputs are provided by controls and used by behaviours to define the
-state if LEDs and so on.
+An **Actor** is the basic object that we want to add behaviours to.
+In general, they are *controls*, as defined by the `mixco.control`
+module.  They have an `event` event, however, it is not guaranteed to
+be emitted if the interface decides that direct mappings suffice.
 
-
-    class exports.Output
+    class exports.Actor extends events.EventEmitter
 
         send: (state) ->
+
 
 
 Behaviours
 ----------
 
-A behaviour determines how a control should behave under some
+A **Behaviour** determines how a control should behave under some
 circunstances. In general, behaviours are values also, so one can
 listen to them.
 
     class exports.Behaviour extends Value
 
-        onEvent: (ev) ->
-        enable: ->
-        disable: ->
+Behaviours can be enabled or disabled, to determine the behaviour of a
+given actor.
+
+        enable: (script, actor) ->
+            assert not @actor?
+            @actor = actor
+            @_eventListener = (ev) => @onEvent ev
+            actor.addListener 'event', @_eventListener
+
+        disable: (script, actor) ->
+            assert @actor == actor
+            actor.removeListener 'event', @_eventListener
+            @actor = undefined
 
 Define a **directMapping** when the Behaviour can be mapped directly
-to a Mixxx control. Note that this should not depend on conditions
+to a Mixxx actor. Note that this should not depend on conditions
 determined after the XML configuration is generated.
 
         directInMapping: -> null
         directOutMapping: -> null
 
-The output of the behaviour is set by the controls that it is
-associated to.  We use this to check that we are not registered, since
-a behaviour can be registered only once.
-
-        _output: new exports.Output
-        @property 'output',
-            get: -> @_output
-            set: (out) ->
-                util.assert @_output == exports.Behaviour::_output, \
-                    "Can not register a behaviour several times"
-                @_output = out
-
         configOutput: (depth) ->
+
+        onEvent: (ev) -> null
 
 
 ### Map
@@ -131,11 +134,7 @@ Mixxx.  If the value is listened to, then it will
 Update the output to match the current value in the engine.
 
         updateOutput: ->
-            @output.send \
-                if @value >= @minimum
-                    'on'
-                else
-                    'off'
+            @actor?.send if @value >= @minimum then 'on' else 'off'
 
         directInMapping: ->
             group: @group
