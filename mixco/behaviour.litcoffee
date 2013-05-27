@@ -43,12 +43,16 @@ is called whenever the value changes, use the `on` method from the
 
     class Value extends events.EventEmitter
 
+        constructor: (initial=undefined) ->
+            if initial?
+                @value = initial
+
         @property 'value',
             get: -> @_value
             set: (newValue) ->
                 if @_value != newValue
                     @_value = newValue
-                    @emit 'value'
+                    @emit 'value', newValue
                 @_value
 
 Outputs
