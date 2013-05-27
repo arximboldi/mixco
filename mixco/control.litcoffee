@@ -203,11 +203,12 @@ represent the boolean property that it is mapped to.
 
     class exports.LedButton extends exports.Button
 
-        onValue: 0x7f
-        offValue: 0x00
+        states:
+            on: 0x7f
+            off: 0x00
 
         send: (value) ->
-            midi.sendShortMsg @id.status(@message), @id.midino, value
+            midi.sendShortMsg @id.status(@message), @id.midino, @states[value]
 
         configOutputs: (depth, script) ->
             mapping = @_behaviour?.directOutMapping()
@@ -217,8 +218,8 @@ represent the boolean property that it is mapped to.
                 #{indent depth+1}<group>#{mapping.group}</group>
                 #{indent depth+1}<key>#{mapping.key}</key>
                 #{@id.configMidi @message, depth+1}
-                #{indent depth+1}<on>#{hexStr @onValue}</on>
-                #{indent depth+1}<off>#{hexStr @offValue}</off>
+                #{indent depth+1}<on>#{hexStr @states['on']}</on>
+                #{indent depth+1}<off>#{hexStr @states['off']}</off>
                 #{@_behaviour.configOutput depth+1}
                 #{indent depth}</output>
                 """

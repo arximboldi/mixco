@@ -133,9 +133,9 @@ Update the output to match the current value in the engine.
         updateOutput: ->
             @output.send \
                 if @value >= @minimum
-                    @output.onValue
+                    'on'
                 else
-                    @output.offValue
+                    'off'
 
         directInMapping: ->
             group: @group
