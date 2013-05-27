@@ -93,7 +93,7 @@ a behaviour can be registered only once.
 
         _output: new exports.Output
         @property 'output',
-            get: @_output
+            get: -> @_output
             set: (out) ->
                 util.assert @_output == exports.Behaviour::_output, \
                     "Can not register a behaviour several times"
