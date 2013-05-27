@@ -235,3 +235,38 @@ starting from zero.  These behaviours can also be used as condition.
                 engine.setValue @_groupN(n), @_key, (@_selected == n)
 
     exports.chooser = -> new exports.Chooser arguments...
+
+
+Conditionals
+------------
+
+    class exports.When extends exports.Behaviour
+
+        constructor: (@_condition, wrapped...) ->
+            @_wrapped = exports.toBehaviour wrapped...
+            @_condition.on 'value', () => do @_update
+
+        enable: (args...) ->
+            @_enableOn = args
+            @_enableRequested = true
+            do @_update
+
+        disable: ->
+            @_enableRequested = false
+            do @_update
+
+        _update: ->
+            mustEnable = @_enableRequested and @_condition.value
+            if @_wrapped.actor and not mustEnable
+                @_wrapped.disable @_enableOn...
+            if not @_wrapped.actor and mustEnable
+                @_wrapped.enable @_enableOn...
+
+
+Conditional behaviours can not be directly mapped, as they have to
+determine, in the script, wether they are enabled or not.
+
+        directOutMapping: -> null
+        directInMapping: -> null
+
+    exports.when = -> new exports.When arguments...

@@ -76,6 +76,7 @@ Base class for all control types.
         constructor: (@id=midiId()) ->
             if not (@id instanceof Object)
                 @id = midiId @id
+            @_behaviours = []
 
 The following set of methods define the behaviour of the control. A
 control can have several behaviours at the same time. Note that when
@@ -97,17 +98,22 @@ Thera are three kinds of behaviours we can associate to the control:
 
         does: (args...) ->
             assert not @_isInit
-            @_behaviour = behaviour.toBehaviour args...
+            @_behaviours.push behaviour.toBehaviour args...
             this
 
         when: (condition, args...) ->
+            assert not @_isInit
+            @_behaviours.push behaviour.when condition, args...
+            this
 
         else: (args...) ->
 
 Called when the control received a MIDI event and is processed via the
 script.  It is defined in terms of the behaviours.
 
-        @property 'needsHandler', get: -> not @_behaviour?.directInMapping()
+        @property 'needsHandler',
+            get: ->
+                 not (@_behaviours.length == 1 and do @_behaviours[0].directInMapping)
 
         handlerId: -> util.mangle \
             "#{@id.midino}_#{@id.status @message}"
@@ -118,21 +124,23 @@ script.  It is defined in terms of the behaviours.
                 script.registerHandler \
                     ((args...) => @emit 'event', event args...),
                     @handlerId()
-            @_behaviour?.enable script, this
+            for b in @_behaviours
+                b.enable script, this
             @_isInit = true
 
         shutdown: (script) ->
             assert @_isInit
-            @_behaviour?.disable script, this
+            for b in @_behaviours
+                b.disable script, this
             @_isInit = false
 
         configInputs: (depth, script) ->
             if @needsHandler
                 mapping =
                     group: "[Master]"
-                    key:   script.handlerKey(@handlerId())
+                    key:   script.handlerKey do @handlerId
             else
-                mapping = @_behaviour.directInMapping()
+                mapping = do @_behaviours[0].directInMapping
             """
             #{indent depth}<control>
             #{indent depth+1}<group>#{mapping.group}</group>
@@ -201,7 +209,7 @@ represent the boolean property that it is mapped to.
             midi.sendShortMsg @id.status(@message), @id.midino, @states[value]
 
         configOutputs: (depth, script) ->
-            mapping = @_behaviour?.directOutMapping()
+            mapping = @_behaviours.length == 1 and do @_behaviours[0].directOutMapping
             if mapping
                 """
                 #{indent depth}<output>
@@ -210,7 +218,7 @@ represent the boolean property that it is mapped to.
                 #{@id.configMidi @message, depth+1}
                 #{indent depth+1}<on>#{hexStr @states['on']}</on>
                 #{indent depth+1}<off>#{hexStr @states['off']}</off>
-                #{@_behaviour.configOutput depth+1}
+                #{@_behaviours[0].configOutput depth+1}
                 #{indent depth}</output>
                 """
 

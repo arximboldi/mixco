@@ -52,20 +52,26 @@ Implementation
 
 ### Basic deck controls
 
+Lets define these couple of shortcuts.
+
+        c = control
+        b = behaviour
+
 Build the script object. We select exclusively the prehear, which will
 serve as a notion of "selected deck" for certain actions.
 
         constructor: ->
             super
-            @decks = behaviour.chooser "pfl"
+            @decks = b.chooser "pfl"
+            @add @backButton = c.ledButton 0x2b
+            @add @fwdButton  = c.ledButton 0x2c
+
             @addDeck 0
             @addDeck 1
 
 The script adds the following controls per deck
 
         addDeck: (i) ->
-            c = control
-            b = behaviour
             g = "[Channel#{i+1}]"
 
 The top 8 knobs are mapped to the two decks mixer filter section (low,
@@ -93,3 +99,9 @@ The next two control sections control the pitch related stuff.
   * The fader controls the pitch of the deck.
 
             @add c.slider(0x02 + i).does b.soft g, "rate"
+
+Depending on the selected track we map some of the transport buttons.
+For example, the << and >> buttons control the selected track.
+
+            @fwdButton.when @decks.choose(i), g, "fwd"
+            @backButton.when @decks.choose(i), g, "back"
