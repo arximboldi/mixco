@@ -86,7 +86,7 @@ given actor.
             assert not @actor?
             @actor = actor
             @_eventListener = (ev) => @onEvent ev
-            actor.addListener 'event', @_eventListener
+            actor.on 'event', @_eventListener
 
         disable: (script, actor) ->
             assert @actor == actor
