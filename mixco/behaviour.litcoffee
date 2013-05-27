@@ -64,9 +64,12 @@ In general, they are *controls*, as defined by the `mixco.control`
 module.  They have an `event` event, however, it is not guaranteed to
 be emitted if the interface decides that direct mappings suffice.
 
+`send` should be defined with signature `(state) ->` when it is
+available.
+
     class exports.Actor extends events.EventEmitter
 
-        send: (state) ->
+        send: undefined
 
 
 
@@ -119,9 +122,11 @@ Mixxx.  If the value is listened to, then it will
         enable: (script) ->
             super
             @value = engine.getValue @group, @key
-            @updateOutput()
-            if @listeners('value').length > 0 and not @_valueHandlerConnected
-                @_valueHandler or= script.registerHandler (v) => @value = v
+            do @updateOutput
+            if @actor?.send? or @listeners('value').length > 0
+                @_valueHandler or= script.registerHandler (v) =>
+                    @value = v
+                    do @updateOutput
                 engine.connectControl @group, @key, @_valueHandler
                 @_valueHandlerConnected = true
 
@@ -129,12 +134,13 @@ Mixxx.  If the value is listened to, then it will
             super
             if @_valueHandlerConnected?
                 engine.connectControl @group, @key, @_valueHandler, true
+                @_valueHandlerConnected = false
 
 
 Update the output to match the current value in the engine.
 
         updateOutput: ->
-            @actor?.send if @value >= @minimum then 'on' else 'off'
+            @actor?.send? if @value >= @minimum then 'on' else 'off'
 
         directInMapping: ->
             group: @group
