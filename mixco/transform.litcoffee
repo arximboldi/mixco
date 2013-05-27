@@ -35,7 +35,7 @@ Utilities
 
     transform = (f, args...) -> (v) -> f v / 127.0, args...
 
-    binaryT   = -> transform binary, arguments...
+    binaryT   = transform binary, arguments...
     linearT   = -> transform linear, arguments...
     centeredT = -> transform centered, arguments...
     defaultT  = linearT 0.0, 1.0
@@ -51,12 +51,14 @@ needed. Please make sure to keep it in sync with the official
   [mixxxcontrols]: http://www.mixxx.org/wiki/doku.php/mixxxcontrols
 
     exports.mappings =
+        back:        binaryT
         cue_default: binaryT
         filterHigh:  centeredT 0.0, 1.0, 4.0
         filterLow:   centeredT 0.0, 1.0, 4.0
         filterMid:   centeredT 0.0, 1.0, 4.0
+        fwd:         binaryT
         play:        binaryT
         plf:         binaryT
         pregain:     centeredT 0.0, 1.0, 4.0
-        volume:      defaultT
         rate:        linearT -1.0, 1.0
+        volume:      defaultT
