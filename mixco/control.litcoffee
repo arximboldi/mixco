@@ -115,7 +115,7 @@ Called when the control received a MIDI event and is processed via the
 script.  It is defined in terms of the behaviours.
 
         onEvent: (ev) ->
-            @_behaviour.onEvent ev
+            @_behaviour?.onEvent ev
 
         @property 'needsHandler', get: -> not @_behaviour?.directInMapping()
 
@@ -128,12 +128,12 @@ script.  It is defined in terms of the behaviours.
                 script.registerHandler \
                     ((args...) => @onEvent event args...),
                     @handlerId()
-            @_behaviour.enable script
+            @_behaviour?.enable script
             @_isInit = true
 
         shutdown: (script) ->
             assert @_isInit
-            @_behaviour.disable script
+            @_behaviour?.disable script
             @_isInit = false
 
         configInputs: (depth, script) ->
