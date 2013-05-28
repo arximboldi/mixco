@@ -58,6 +58,41 @@ interface.
                     @emit 'value', newValue
                 @_value
 
+
+A **Reduce** value combines N values applying a reduction (i.e. fold)
+operation on them.  It updates whenever one of them changes.
+
+    class exports.Reduce extends exports.Value
+
+        constructor: (@reducer, @reduced...) ->
+            for v in @reduced
+                v.on 'value', => do @update
+            do @update
+
+        update: ->
+            @value = @reduced.reduce (a, b) => @reducer a.value, b.value
+
+    exports.reduce = -> new exports.Reduce arguments...
+    exports.and = -> exports.reduce ((a, b) -> a and b), arguments...
+    exports.or = -> exports.reduce ((a, b) -> a or b), arguments...
+
+
+A **Transform** value holds a transformation of some other value by a
+unary function.
+
+    class exports.Transform extends exports.Value
+
+        constructor: (@transformer, @transformed) ->
+            @transformed.on 'value', => do @update
+            do @update
+
+        update: ->
+            @value = @transformer @transformed.value
+
+    exports.transform = -> new exports.Transform arguments...
+    exports.not = -> exports.transform ((a) -> not a), arguments...
+
+
 Actor
 -----
 
@@ -73,7 +108,6 @@ behaviours to update it.
     class exports.Actor extends events.EventEmitter
 
         send: undefined
-
 
 
 Behaviours
