@@ -56,7 +56,7 @@ Then we fill out the metadata. This will be shown to the user in the
 preferences window in Mixxx when he selects the script.
 
         info:
-            name: '[MixCo] Korg Nanokontrol 2'
+            name: '[mixco] Korg Nanokontrol 2'
             author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
             description:
                 """
@@ -129,9 +129,11 @@ Then the two first "control sections" are mapped like:
             @add c.ledButton(0x20 + i).does @decks.choose i
             @add c.slider(0x00 + i).does g, "volume"
 
-The next two control sections control the pitch related stuff.
+The next two control sections control the pitch related stuff and
+effects.
 
   * The fader controls the pitch of the deck.
+
 
             @add c.slider(0x02 + i).does b.soft g, "rate"
 

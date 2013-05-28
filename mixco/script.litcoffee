@@ -73,7 +73,7 @@ This is the metadata that is displayed in the Mixx preferences
 panel. Overide it with your details.
 
         info:
-            name: "[MixCo] Generic Script"
+            name: "[mixco] Generic Script"
             author: "Juan Pedro Bolivar Puente <raskolnikov@gnu.org>"
             description: ""
             forums: ""
