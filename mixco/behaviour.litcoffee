@@ -44,7 +44,7 @@ system.  To register a listener callback that is called whenever the
 value changes, use the `on` method from the `events.EventEmitter`
 interface.
 
-    class Value extends events.EventEmitter
+    class exports.Value extends events.EventEmitter
 
         constructor: (initial=undefined) ->
             if initial?
@@ -83,7 +83,7 @@ A **Behaviour** determines how a control should behave under some
 circunstances. In general, behaviours are values also, so one can
 listen to them.
 
-    class exports.Behaviour extends Value
+    class exports.Behaviour extends exports.Value
 
 Behaviours can be enabled or disabled, to determine the behaviour of a
 given actor.
