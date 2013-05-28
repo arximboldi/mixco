@@ -215,14 +215,24 @@ represent the boolean property that it is mapped to.
         doSend: (state) ->
             midi.sendShortMsg @id.status(@message), @id.midino, @states[state]
 
+        init: ->
+
+We should remove the send function before enabling behaviours.
+
+            if not @needsSend
+                @send = undefined
+            super
+
         shutdown: ->
             super
             @doSend 'off'
 
+        @property 'needsSend',
+            get: -> not (@_behaviours.length == 1 and do @_behaviours[0].directOutMapping)
+
         configOutputs: (depth, script) ->
-            mapping = @_behaviours.length == 1 and do @_behaviours[0].directOutMapping
+            mapping = not @needsSend and do @_behaviours[0].directOutMapping
             if mapping
-                @send = undefined
                 """
                 #{indent depth}<output>
                 #{indent depth+1}<group>#{mapping.group}</group>
