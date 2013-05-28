@@ -212,12 +212,12 @@ represent the boolean property that it is mapped to.
         send: (value) ->
             @doSend value
 
-        doSend: (value) ->
-            midi.sendShortMsg @id.status(@message), @id.midino, @states[value]
+        doSend: (state) ->
+            midi.sendShortMsg @id.status(@message), @id.midino, @states[state]
 
         shutdown: ->
             super
-            @doSend @states['off']
+            @doSend 'off'
 
         configOutputs: (depth, script) ->
             mapping = @_behaviours.length == 1 and do @_behaviours[0].directOutMapping
