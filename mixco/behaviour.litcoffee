@@ -168,6 +168,24 @@ output of its actor based on their current `value`.
             @actor.send if @value >= @minimum then 'on' else 'off'
 
 
+### ToValue
+
+The simplest behaviour just transforms the input values into a value.
+It takes one of the transforms of the `mixco.transform` module to map
+the value.  It can take an *initial* value too.
+
+    class exports.ToValue extends exports.Output
+
+        constructor: (@transformer, initial=undefined) ->
+            super initial
+
+        onEvent: (ev) ->
+            @value = @transformer ev.value
+
+    exports.toValue = -> new exports.ToValue arguments...
+    exports.modifier = -> exports.toValue transform.binaryT, false
+
+
 ### Map
 
 The **map** behaviour maps the hardware control directly to a control
