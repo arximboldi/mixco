@@ -51,14 +51,18 @@ needed. Please make sure to keep it in sync with the official
   [mixxxcontrols]: http://www.mixxx.org/wiki/doku.php/mixxxcontrols
 
     exports.mappings =
-        back:        binaryT
-        cue_default: binaryT
-        filterHigh:  centeredT 0.0, 1.0, 4.0
-        filterLow:   centeredT 0.0, 1.0, 4.0
-        filterMid:   centeredT 0.0, 1.0, 4.0
-        fwd:         binaryT
-        play:        binaryT
-        plf:         binaryT
-        pregain:     centeredT 0.0, 1.0, 4.0
-        rate:        linearT -1.0, 1.0
-        volume:      defaultT
+        back:                 binaryT
+        cue_default:          binaryT
+        filterHigh:           centeredT 0.0, 1.0, 4.0
+        filterLow:            centeredT 0.0, 1.0, 4.0
+        filterMid:            centeredT 0.0, 1.0, 4.0
+        fwd:                  binaryT
+        play:                 binaryT
+        plf:                  binaryT
+        pregain:              centeredT 0.0, 1.0, 4.0
+        rate:                 linearT -1.0, 1.0
+        rate_temp_down:       binaryT
+        rate_temp_down_small: binaryT
+        rate_temp_up:         binaryT
+        rate_temp_up_small:   binaryT
+        volume:               defaultT

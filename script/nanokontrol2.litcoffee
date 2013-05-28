@@ -92,8 +92,10 @@ on which deck is *selected* -- i.e, has prehear enabled.
 Most of the transport controls will have their behaviour defined
 per-deck. We define them here and add the behaviours later.
 
-            @add @backButton = c.ledButton 0x2b
-            @add @fwdButton  = c.ledButton 0x2c
+            @add @backButton      = c.ledButton 0x3a
+            @add @fwdButton       = c.ledButton 0x3b
+            @add @nudgeDownButton = c.ledButton 0x2b
+            @add @nudgeUpButton   = c.ledButton 0x2c
 
 Note that we here abused the expresivity of CoffeeScript, where it can
 in many cases omit parentheses. Any of those was equivalent to writting:
@@ -124,21 +126,29 @@ Then the two first "control sections" are mapped like:
   * R: Play button for the deck.
   * The fader controls the volume of the deck.
 
-            @add c.ledButton(0x40 + i).does g, "play"
-            @add c.ledButton(0x30 + i).does g, "cue_default"
-            @add c.ledButton(0x20 + i).does @decks.choose i
-            @add c.slider(0x00 + i).does g, "volume"
+            @add c.ledButton(0x20 + 4*i).does @decks.choose i
+            @add c.ledButton(0x30 + 4*i).does g, "cue_default"
+            @add c.ledButton(0x40 + 4*i).does g, "play"
+            @add c.slider(0x00 + 4*i).does g, "volume"
 
 The next two control sections control the pitch related stuff and
 effects.
 
+  * S: Synchronises to the other track.
+  * M: Toggles key lock.
+  * R: Enables flanger.
   * The fader controls the pitch of the deck.
 
 
-            @add c.slider(0x02 + i).does b.soft g, "rate"
+            @add c.ledButton(0x21 + 4*i).does g, "beatsync"
+            @add c.ledButton(0x31 + 4*i).does g, "keylock"
+            @add c.ledButton(0x41 + 4*i).does g, "flanger"
+            @add c.slider(0x01 + 4*i).does b.soft g, "rate"
 
 Depending on the selected track we map some of the transport buttons.
 For example, the << and >> buttons control the selected track.
 
             @fwdButton.when @decks.choose(i), g, "fwd"
             @backButton.when @decks.choose(i), g, "back"
+            @nudgeUpButton.when @decks.choose(i), g, "rate_temp_up"
+            @nudgeDownButton.when @decks.choose(i), g, "rate_temp_down"
