@@ -40,6 +40,11 @@ Utilities
     centeredT = -> transform centered, arguments...
     defaultT  = linearT 0.0, 1.0
 
+    exports.binaryT = binaryT
+    exports.linearT = linearT
+    exports.ceneredT = centeredT
+    exports.defaultT = defaultT
+
 Mappings
 --------
 
