@@ -152,3 +152,13 @@ For example, the << and >> buttons control the selected track.
             @backButton.when @decks.choose(i), g, "back"
             @nudgeUpButton.when @decks.choose(i), g, "rate_temp_up"
             @nudgeDownButton.when @decks.choose(i), g, "rate_temp_down"
+
+### Initialization
+
+The **init** method is called by Mixxx when the script is loaded. Here
+we can initialize the state of Mixxx. In our case, we select the first
+deck, such that all transport buttons are directly functional.
+
+        init: ->
+            super
+            @decks.select 0
