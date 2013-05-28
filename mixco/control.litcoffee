@@ -108,8 +108,12 @@ Thera are three kinds of behaviours we can associate to the control:
 
         else: (args...) ->
 
-Called when the control received a MIDI event and is processed via the
-script.  It is defined in terms of the behaviours.
+The control will listen to the --via a *handler*-- only when the
+behaviours need it. If there is only one behaviour in the control and
+this can be directly mapped, the midi messages will be connected
+directly in the XML file.  Otherwise, the control will request to
+process the MIDI messages via the script, and it will emit a `event`
+signal when they are received.
 
         @property 'needsHandler',
             get: ->
