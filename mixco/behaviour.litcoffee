@@ -326,8 +326,7 @@ The **select** method enables the control on the Nth group.
     exports.chooser = -> new exports.Chooser arguments...
 
 
-Conditionals
-------------
+### Conditionals
 
 Conditional behaviours are used to enable a *wrapped* behaviour only
 under certain circumstances -- i.e. when some `behaviour.Value`
@@ -339,6 +338,18 @@ methods of the `control.Control` class.
         constructor: (@_condition, wrapped...) ->
             @_wrapped = exports.toBehaviour wrapped...
             @_condition.on 'value', () => do @_update
+            @_nextCondition = @_condition
+
+        elseWhen: (condition, args...) ->
+            assert @_nextCondition?, "Can not define more conditions after 'else'"
+            @_nextCondition = exports.and exports.not(@_nextCondition), condition
+            new exports.When @_nextCondition, args...
+
+        else: (condition, args...) ->
+            assert @_nextCondition?, "Can not define more conditions after 'else'"
+            nextCondition = exports.not @_nextCondition
+            @_nextCondition = undefined
+            new exports.When nextCondition, args...
 
         enable: (args...) ->
             @_enableOn = args

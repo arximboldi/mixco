@@ -101,12 +101,25 @@ Thera are three kinds of behaviours we can associate to the control:
             @_behaviours.push behaviour.toBehaviour args...
             this
 
-        when: (condition, args...) ->
+        when: (args...) ->
             assert not @_isInit
-            @_behaviours.push behaviour.when condition, args...
+            @_lastWhen = behaviour.when args...
+            @_behaviours.push @_lastWhen
+            this
+
+        elseWhen: (args...) ->
+            assert @_lastWhen?, "'else' must be preceded by 'when' or 'elseWhen'"
+            @_lastWhen = @_lastWhen.elseWhen args...
+            @_behaviours.push @_lastWhen
             this
 
         else: (args...) ->
+            assert @_lastWhen?, "'else' must be preceded by 'when' or 'elseWhen'"
+            @_lastWhen = @_lastWhen.else args...
+            @_behaviours.push @_lastWhen
+            @_lastWhen = undefined
+            this
+
 
 The control will listen to the --via a *handler*-- only when the
 behaviours need it. If there is only one behaviour in the control and
