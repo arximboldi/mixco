@@ -229,9 +229,8 @@ represent the boolean property that it is mapped to.
             midi.sendShortMsg @id.status(@message), @id.midino, @states[state]
 
         init: ->
-
-We should remove the send function before enabling behaviours.
-
+            # We should remove the send function before enabling
+            # behaviours.
             if not @needsSend
                 @send = undefined
             super
