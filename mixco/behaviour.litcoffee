@@ -145,15 +145,36 @@ determined after the XML configuration is generated.
         onEvent: (ev) -> null
 
 
+### Output
+
+Adds some common operations for behaviours that can update the
+output of its actor based on their current `value`.
+
+    class exports.Output extends exports.Behaviour
+
+        minimum: 1
+
+        enable: ->
+            super
+            if @actor?.send?
+                @_updateOutputCallback or= => do @updateOutput
+                @on 'value', @_updateOutputCallback
+
+        disable: ->
+            @removeListener 'value', @_updateOutputCallback
+            super
+
+        updateOutput: ->
+            @actor.send if @value >= @minimum then 'on' else 'off'
+
+
 ### Map
 
 The **map** behaviour maps the hardware control directly to a control
 in Mixxx. Note that its `value` property is guaranteed to be
 synchronised with Mixxx only there are listeners on it.
 
-    class exports.Map extends exports.Behaviour
-
-        minimum: 1
+    class exports.Map extends exports.Output
 
         constructor: (@group, @key) ->
 
@@ -164,7 +185,6 @@ It seems that Mixxx does not update the direct-mapped outputs upon
 initialization, so we have to update them manually unconditionally.
 
             @value = engine.getValue @group, @key
-            do @updateOutput
 
 Then, if the value of the mapped control is observed from the script
 or we need to manually send output to the actor, we register a handler
@@ -173,7 +193,6 @@ to listen to it.
             if @actor?.send? or @listeners('value').length > 0
                 @_valueHandler or= script.registerHandler (v) =>
                     @value = v
-                    do @updateOutput
                 engine.connectControl @group, @key, @_valueHandler
                 @_valueHandlerConnected = true
 
@@ -182,11 +201,6 @@ to listen to it.
             if @_valueHandlerConnected?
                 engine.connectControl @group, @key, @_valueHandler, true
                 @_valueHandlerConnected = false
-
-Update the output to match the current value in the engine.
-
-        updateOutput: ->
-            @actor?.send? if @value >= @minimum then 'on' else 'off'
 
         directInMapping: ->
             group: @group
