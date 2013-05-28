@@ -82,12 +82,15 @@ and define their behaviour.
         constructor: ->
             super
 
-First, we create a chooser object over the *pfl* (prehear) parameter,
-so we will have only one channel with prehear activated at a time.
-Also, this will let us change the behaviour of some controls depending
-on which deck is *selected* -- i.e, has prehear enabled.
+#### Transport section
 
-            @decks = b.chooser "pfl"
+All the buttons on the left side of the controllers is what we call
+the *transport section*. These are global buttons
+
+The *cycle* button will be used as modifier.
+
+            @cycle = do b.modifier
+            @add c.ledButton(0x2e).does @cycle
 
 Most of the transport controls will have their behaviour defined
 per-deck. We define them here and add the behaviours later.
@@ -102,6 +105,17 @@ in many cases omit parentheses. Any of those was equivalent to writting:
 
 >    this.backButton = c.ledButton(0x2b)
 >    this.add(this.backButton)
+
+
+Then, we create a chooser object over the *pfl* (prehear) parameter,
+so we will have only one channel with prehear activated at a time.
+Also, this will let us change the behaviour of some *transport*
+controls depending on which deck is *selected* -- i.e, has prehear
+enabled.
+
+            @decks = b.chooser "pfl"
+
+#### Deck controls
 
 Finally we add the per-deck controls, that are defined in `addDeck`.
 
@@ -146,12 +160,25 @@ effects.
             @add c.slider(0x01 + 4*i).does b.soft g, "rate"
 
 Depending on the selected track we map some of the transport buttons.
-For example, the << and >> buttons control the selected track.
+For example, the *track<* and *track>* buttons control the selected
+track *fast forward* and *fast rewind*.
 
             @fwdButton.when @decks.choose(i), g, "fwd"
             @backButton.when @decks.choose(i), g, "back"
-            @nudgeUpButton.when @decks.choose(i), g, "rate_temp_up"
-            @nudgeDownButton.when @decks.choose(i), g, "rate_temp_down"
+
+The << and >> buttons are a bit more complicated. We want them to
+behave as *nudge* buttons for the selected track, but we want the
+*cycle* modifier to change the nudge speed. We use the `behaviour.and`
+condition combinator to mix the conditions. We also use `control.elseWhen`
+to simplify the negative condition.
+
+            chooseCycle = b.and @cycle, @decks.choose i
+            @nudgeUpButton
+                .when(chooseCycle, g, "rate_temp_up")
+                .elseWhen @decks.choose(i), g, "rate_temp_up_small"
+            @nudgeDownButton
+                .when(chooseCycle, g, "rate_temp_down")
+                .elseWhen @decks.choose(i), g, "rate_temp_down_small"
 
 ### Initialization
 
