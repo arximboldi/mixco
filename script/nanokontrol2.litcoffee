@@ -1,7 +1,10 @@
 script.nanokontrol2
 ===================
 
-Mixxx script file for the **Korg NanoKontrol2** controller.
+Mixxx script file for the **Korg NanoKontrol2** controller.  The
+script is based on the [**Mixco** framework](../index.html).  This
+script description is a bit more verbose than others, at it tries to
+serve as **tutorial** on how to write your own controller scripts.
 
   ![NanoKontrol2 Layout](../pic/nanokontrol2.jpg)
 
@@ -27,19 +30,30 @@ License
 Dependencies
 ------------
 
-The script is based on the *MixCo* framework.
+First, we have to import he *Mixco* modules that we are going to use.
 
     script    = require "../mixco/script"
     control   = require "../mixco/control"
     behaviour = require "../mixco/behaviour"
 
 
-Implementation
---------------
+The script
+----------
+
+### Declaration
+
+We start defining the script by creating a class that is called like
+the file but with
+[*CamelCase*](http://en.wikipedia.org/wiki/CamelCase) and inherits
+from `script.Script`. We have to register it too, and in CoffeeScript
+we can do this all in one line.
 
     script.register module, class NanoKontrol2 extends script.Script
 
 ### Metadata
+
+Then we fill out the metadata. This will be shown to the user in the
+preferences window in Mixxx when he selects the script.
 
         info:
             name: '[MixCo] Korg Nanokontrol 2'
@@ -59,19 +73,38 @@ Lets define these couple of shortcuts.
         c = control
         b = behaviour
 
-Build the script object. We select exclusively the prehear, which will
-serve as a notion of "selected deck" for certain actions.
+### Constructor
+
+All the actual interesting stuff happens in the *constructor* of the
+script. Here we will create the controls and add them to the script
+and define their behaviour.
 
         constructor: ->
             super
+
+First, we create a chooser object over the *pfl* (prehear) parameter,
+so we will have only one channel with prehear activated at a time.
+Also, this will let us change the behaviour of some controls depending
+on which deck is *selected* -- i.e, has prehear enabled.
+
             @decks = b.chooser "pfl"
+
+Most of the transport controls will have their behaviour defined
+per-deck. We define them here and add the behaviours later.
+
             @add @backButton = c.ledButton 0x2b
             @add @fwdButton  = c.ledButton 0x2c
 
+Note that we here abused the expresivity of CoffeeScript, where it can
+in many cases omit parentheses. Any of those was equivalent to writting:
+
+>    this.backButton = c.ledButton(0x2b)
+>    this.add(this.backButton)
+
+Finally we add the per-deck controls, that are defined in `addDeck`.
+
             @addDeck 0
             @addDeck 1
-
-The script adds the following controls per deck
 
         addDeck: (i) ->
             g = "[Channel#{i+1}]"

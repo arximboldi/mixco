@@ -1,7 +1,7 @@
 mixco.util
 ============
 
-MixCo utility functions
+This module contains a series of utility functions
 
 License
 -------

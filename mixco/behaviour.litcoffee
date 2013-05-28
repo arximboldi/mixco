@@ -1,7 +1,8 @@
 mixco.behaviour
 ===============
 
-Set of classes determining what controls do.
+This module contains all the functionallity that lets you add
+*behaviour* to the hardware *controls* -- i.e. determine what they do.
 
 License
 -------
@@ -38,9 +39,10 @@ Value
 The **Value** instances represent an active value that changes with
 time.  The actual value can be accessed via the `value` property.
 Whenever the value changes, a `value` event is notified, using the
-standard node.js event system.  To register a listener callback that
-is called whenever the value changes, use the `on` method from the
-`events.EventEmitter` interface.
+standard [**node.js** *events*](http://nodejs.org/api/events.html)
+system.  To register a listener callback that is called whenever the
+value changes, use the `on` method from the `events.EventEmitter`
+interface.
 
     class Value extends events.EventEmitter
 
@@ -65,7 +67,8 @@ module.  They have an `event` event, however, it is not guaranteed to
 be emitted if the interface decides that direct mappings suffice.
 
 `send` should be defined with signature `(state) ->` when it is
-available.
+available -- i.e. the *Actor* has output and requires the associated
+behaviours to update it.
 
     class exports.Actor extends events.EventEmitter
 
@@ -110,8 +113,9 @@ determined after the XML configuration is generated.
 
 ### Map
 
-The **map** behaviours maps the control directly to a control in
-Mixxx.  If the value is listened to, then it will
+The **map** behaviour maps the hardware control directly to a control
+in Mixxx. Note that its `value` property is guaranteed to be
+synchronised with Mixxx only there are listeners on it.
 
     class exports.Map extends exports.Behaviour
 
@@ -121,8 +125,17 @@ Mixxx.  If the value is listened to, then it will
 
         enable: (script) ->
             super
+
+It seems that Mixxx does not update the direct-mapped outputs upon
+initialization, so we have to update them manually unconditionally.
+
             @value = engine.getValue @group, @key
             do @updateOutput
+
+Then, if the value of the mapped control is observed from the script
+or we need to manually send output to the actor, we register a handler
+to listen to it.
+
             if @actor?.send? or @listeners('value').length > 0
                 @_valueHandler or= script.registerHandler (v) =>
                     @value = v
@@ -135,7 +148,6 @@ Mixxx.  If the value is listened to, then it will
             if @_valueHandlerConnected?
                 engine.connectControl @group, @key, @_valueHandler, true
                 @_valueHandlerConnected = false
-
 
 Update the output to match the current value in the engine.
 
@@ -166,8 +178,8 @@ behaviour of a direct mapping.
     exports.map  = -> new exports.Map arguments...
 
 
-The **toBehaviour** factory that builds a default behaviour from a set
-of arguments.  If the arguments is just a behaviour, returns it.
+The **toBehaviour** factory builds a default behaviour from a set
+of arguments.  If the argument is just a behaviour, it returns it.
 
     exports.toBehaviour = (behaviour, args...) ->
         if not (behaviour instanceof exports.Behaviour)
@@ -215,9 +227,10 @@ associate a value that can be associated to it.
 
 ### Chooser
 
-The **Chooser* lets you select a 'binary' proparty of the decks that
-are registered exclusively, such that is enabled only in one at a
-time.
+The **Chooser** lets you select a toggle control of the groups
+(e.g. decks), such that is enabled only one at a time.  One clear
+use-case is selecting the pre-hear `pfl` track, such that only one
+track has pre-hear enabled at a time.
 
     class exports.Chooser
 
@@ -225,8 +238,10 @@ time.
             @_decks = []
             @_selected = null
 
-**choose** retuns a behaviour that selects the Pfl of the Nth channel,
-starting from zero.  These behaviours can also be used as condition.
+The **choose** method retuns a behaviour that enables the control of
+the Nth group, starting from zero.  These objects can also be used
+as *condition* to enable certain controls when this option is
+selected.
 
         choose: (n) ->
             result = @_decks[n]
@@ -234,6 +249,8 @@ starting from zero.  These behaviours can also be used as condition.
                 result = new Action (=> @select n), @_groupN(n), @_key
                 @_decks[n] = result
             result
+
+The **select** method enables the control on the Nth group.
 
         select: (n) ->
             @_selected = n
@@ -245,6 +262,11 @@ starting from zero.  These behaviours can also be used as condition.
 
 Conditionals
 ------------
+
+Conditional behaviours are used to enable a *wrapped* behaviour only
+under certain circumstances -- i.e. when some `behaviour.Value`
+evaluates to true.  They are used to implement the `when` and `else`
+methods of the `control.Control` class.
 
     class exports.When extends exports.Behaviour
 

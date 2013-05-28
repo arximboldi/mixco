@@ -1,7 +1,8 @@
 mixco.script
 ============
 
-Main interface for defining custom Mixx scripts.
+This module contains the main interface for defining custom Mixxx
+scripts.
 
 License
 -------
@@ -34,7 +35,7 @@ Dependencies
 Script
 ------
 
-The *register* function registers a instance of the class `scriptType`
+First, the *register* function registers a instance of the class `scriptType`
 instance into the parent module.  The script instance will be exported
 as `Script.name`, and if the parent module is main, it will be
 executed.
@@ -46,16 +47,23 @@ executed.
             instance.main()
 
 
-Inherit from the **Script** class to define your own controller mappings.
+Then, inherit from the **Script** class to define your own controller
+mappings. These scripts can be used to both generate de XML
+configuration file for Mixxx and also as the script itself, when
+properly compiled to Javascript.
 
-These scripts can be used to both generate de XML configuration
-file for Mixxx and also as the script itself, when properly
-compiled to Javascript.
-
-To work properly, the script name must the the same as the class
+To work properly, the script file name must the the same as the class
 name but in lowercase, and it must be registered using the
-**register** function.
+**register** function -- i.e. if you have a script called
+`MyGreatController`, it should be in a file called
+`mygreatcontroller.litcoffee`, and this file should contain a line
+like:
 
+>    script.register module, MyGreatController
+
+The `module` variable is [defined automatically by *node.js*](
+http://nodejs.org/api/modules.html#modules_the_module_object), you do
+not have to care about it.
 
     class exports.Script
 
@@ -86,6 +94,9 @@ Use **add** to add controls to your script instance.
             @controls.push controls...
 
 ### Mixxx protocol
+
+These methos are called by Mixxx when the script is loaded or
+unloaded.
 
         init: catching ->
             for control in @controls
