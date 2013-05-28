@@ -161,7 +161,9 @@ output of its actor based on their current `value`.
                 @on 'value', @_updateOutputCallback
 
         disable: ->
-            @removeListener 'value', @_updateOutputCallback
+            if @_updateOutputCallback?
+                @removeListener 'value', @_updateOutputCallback
+                @_updateOutputCallback = undefined
             super
 
         updateOutput: ->
