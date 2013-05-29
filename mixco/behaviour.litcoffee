@@ -26,71 +26,13 @@ License
 Dependencies
 ------------
 
-    events = require('events')
+    events    = require('events')
     transform = require('./transform')
-    util = require('./util')
+    util      = require('./util')
+    value     = require('./value')
+
     indent = util.indent
     assert = util.assert
-
-
-Value
------
-
-The **Value** instances represent an active value that changes with
-time.  The actual value can be accessed via the `value` property.
-Whenever the value changes, a `value` event is notified, using the
-standard [**node.js** *events*](http://nodejs.org/api/events.html)
-system.  To register a listener callback that is called whenever the
-value changes, use the `on` method from the `events.EventEmitter`
-interface.
-
-    class exports.Value extends events.EventEmitter
-
-        constructor: (initial=undefined) ->
-            if initial?
-                @value = initial
-
-        @property 'value',
-            get: -> @_value
-            set: (newValue) ->
-                if @_value != newValue
-                    @_value = newValue
-                    @emit 'value', newValue
-                @_value
-
-
-A **Reduce** value combines N values applying a reduction (i.e. fold)
-operation on them.  It updates whenever one of them changes.
-
-    class exports.Reduce extends exports.Value
-
-        constructor: (@reducer, @reduced...) ->
-            for v in @reduced
-                v.on 'value', => do @update
-            do @update
-
-        update: ->
-            @value = @reduced.reduce (a, b) => @reducer a.value, b.value
-
-    exports.reduce = -> new exports.Reduce arguments...
-    exports.and = -> exports.reduce ((a, b) -> a and b), arguments...
-    exports.or = -> exports.reduce ((a, b) -> a or b), arguments...
-
-
-A **Transform** value holds a transformation of some other value by a
-unary function.
-
-    class exports.Transform extends exports.Value
-
-        constructor: (@transformer, @transformed) ->
-            @transformed.on 'value', => do @update
-            do @update
-
-        update: ->
-            @value = @transformer @transformed.value
-
-    exports.transform = -> new exports.Transform arguments...
-    exports.not = -> exports.transform ((a) -> not a), arguments...
 
 
 Actor
@@ -117,7 +59,7 @@ A **Behaviour** determines how a control should behave under some
 circunstances. In general, behaviours are values also, so one can
 listen to them.
 
-    class exports.Behaviour extends exports.Value
+    class exports.Behaviour extends value.Value
 
 Behaviours can be enabled or disabled, to determine the behaviour of a
 given actor.
@@ -344,12 +286,12 @@ methods of the `control.Control` class.
 
         elseWhen: (condition, args...) ->
             assert @_nextCondition?, "Can not define more conditions after 'else'"
-            @_nextCondition = exports.and exports.not(@_nextCondition), condition
+            @_nextCondition = value.and value.not(@_nextCondition), condition
             new exports.When @_nextCondition, args...
 
         else: (condition, args...) ->
             assert @_nextCondition?, "Can not define more conditions after 'else'"
-            nextCondition = exports.not @_nextCondition
+            nextCondition = value.not @_nextCondition
             @_nextCondition = undefined
             new exports.When nextCondition, args...
 

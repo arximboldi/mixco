@@ -96,11 +96,12 @@ Documentation
 
 ### API
 
-  * [mixco.script][mixco.script]
-  * [mixco.control][mixco.control]
   * [mixco.behaviour][mixco.behaviour]
+  * [mixco.control][mixco.control]
+  * [mixco.script][mixco.script]
   * [mixco.transform][mixco.transform]
   * [mixco.util][mixco.util]
+  * [mixco.value][mixco.value]
 
 ### Scripts
 
@@ -111,6 +112,7 @@ Documentation
   [mixco.behaviour]: mixco/behaviour.html
   [mixco.transform]: mixco/transform.html
   [mixco.util]: mixco/util.html
+  [mixco.value]: mixco/value.html
   [script.nanokontrol2]: script/nanokontrol2.html
 
 

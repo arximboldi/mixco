@@ -35,6 +35,7 @@ First, we have to import he *Mixco* modules that we are going to use.
     script    = require "../mixco/script"
     control   = require "../mixco/control"
     behaviour = require "../mixco/behaviour"
+    value     = require "../mixco/value"
 
 
 The script
@@ -72,6 +73,7 @@ Lets define these couple of shortcuts.
 
         c = control
         b = behaviour
+        v = value
 
 ### Constructor
 
@@ -172,7 +174,7 @@ behave as *nudge* buttons for the selected track, but we want the
 condition combinator to mix the conditions. We also use `control.elseWhen`
 to simplify the negative condition.
 
-            chooseCycle = b.and @cycle, @decks.choose i
+            chooseCycle = v.and @cycle, @decks.choose i
             @nudgeUpButton
                 .when(chooseCycle, g, "rate_temp_up")
                 .elseWhen @decks.choose(i), g, "rate_temp_up_small"

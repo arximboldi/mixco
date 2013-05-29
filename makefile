@@ -16,7 +16,8 @@ FRAMEWORK = \
 	tmp/mixco/transform.js \
 	tmp/mixco/script.js \
 	tmp/mixco/control.js \
-	tmp/mixco/behaviour.js
+	tmp/mixco/behaviour.js \
+	tmp/mixco/value.js
 
 DOCS      = \
 	doc/index.html \
@@ -25,7 +26,8 @@ DOCS      = \
 	doc/mixco/script.html \
 	doc/mixco/util.html \
 	doc/mixco/transform.html \
-	doc/mixco/behaviour.html
+	doc/mixco/behaviour.html \
+	doc/mixco/value.html
 
 all: $(SCRIPTS)
 
