@@ -122,7 +122,7 @@ Documentation
   [mixco.util]: mixco/util.html
   [mixco.value]: mixco/value.html
 
-  [spec.mixco.behaviour]: spec/mixco/value.behaviour.html
+  [spec.mixco.behaviour]: spec/mixco/behaviour.spec.html
   [spec.mixco.value]: spec/mixco/value.spec.html
 
 
