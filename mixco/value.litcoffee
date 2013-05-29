@@ -9,7 +9,7 @@ Dependencies
 ------------
 
     events = require('events')
-
+    util   = require('./util')
 
 Value
 -----
@@ -37,6 +37,29 @@ interface.
                 @_value
 
 
+### Constants
+
+Constants are lightweight objects that behave like a exports.Value,
+but can not be modified -- at least, they will not trigger a
+modification when modified.
+
+      class exports.Const
+
+        value: undefined
+
+        constructor: (initial=undefined) ->
+            @value = initial
+
+It has to mock the events.EventEmitter interface.
+
+        on: ->
+        addListener: ->
+        removeListener: ->
+        listeners: -> []
+
+    exports.const = -> new exports.Const arguments...
+
+
 High-order values
 -----------------
 
@@ -54,7 +77,9 @@ operation on them.  It updates whenever one of them changes.
             do @update
 
         update: ->
-            @value = @reduced.reduce (a, b) => @reducer a.value, b.value
+            @value = @reduced
+                .reduce((a, b) => exports.const @reducer a.value, b.value)
+                .value
 
     exports.reduce = -> new exports.Reduce arguments...
     exports.and = -> exports.reduce ((a, b) -> a and b), arguments...

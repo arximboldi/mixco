@@ -94,6 +94,10 @@ beautiful documentation like this doing:
 Documentation
 -------------
 
+### Scripts
+
+  * [script.nanokontrol2][script.nanokontrol2]
+
 ### API
 
   * [mixco.behaviour][mixco.behaviour]
@@ -103,9 +107,9 @@ Documentation
   * [mixco.util][mixco.util]
   * [mixco.value][mixco.value]
 
-### Scripts
+### Tests
 
-  * [script.nanokontrol2][script.nanokontrol2]
+  * [spec.mixco.value][spec.mixco.value]
 
   [mixco.script]: mixco/script.html
   [mixco.control]: mixco/control.html
@@ -113,6 +117,9 @@ Documentation
   [mixco.transform]: mixco/transform.html
   [mixco.util]: mixco/util.html
   [mixco.value]: mixco/value.html
+
+  [spec.mixco.value]: spec/mixco/value.html
+
   [script.nanokontrol2]: script/nanokontrol2.html
 
 

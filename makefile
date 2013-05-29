@@ -72,3 +72,6 @@ clean:
 
 upload-doc: doc
 	ncftpput -R -m -u u48595320 sinusoid.es /mixco doc/*
+
+test:
+	jasmine-node --verbose --coffee spec
