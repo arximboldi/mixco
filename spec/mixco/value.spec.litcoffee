@@ -6,7 +6,7 @@ Tests for the `mixco.value` module.
 Module
 ------
 
-    {Value, Reduce} = require('../../mixco/value')
+    {Value, Reduce, Const, transform} = require('../../mixco/value')
 
 Tests
 -----
@@ -52,4 +52,12 @@ Tests for the **Reduce** class.
             v[1].value = 0
             expect(r.value).toBe 4
             v[0].value = 5
+            expect(r.value).toBe 8
+
+Tests for **transform**
+
+    describe 'transform', ->
+
+        it "applies a nullary operation", ->
+            r = transform ((a) -> a*4), new Const 2
             expect(r.value).toBe 8
