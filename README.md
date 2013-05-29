@@ -60,9 +60,10 @@ Required dependencies to compile the Mixxx scripts:
   - [Browserify](http://browserify.org/) >= 2.0
   - [GNU make](http://www.gnu.org/software/make/)
 
-Optional dependencies to compile documentation:
+Optional dependencies:
 
-  - [Docco](http://jashkenas.github.io/docco/) >= 0.5
+  - [Docco](http://jashkenas.github.io/docco/) >= 0.
+  - [jasmine-node](https://github.com/mhevery/jasmine-node) >= 1.3.1
 
 
 Installation
