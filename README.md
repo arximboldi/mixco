@@ -110,7 +110,10 @@ Documentation
 
 ### Tests
 
+  * [spec.mixco.behaviour][spec.mixco.behaviour]
   * [spec.mixco.value][spec.mixco.value]
+
+  [script.nanokontrol2]: script/nanokontrol2.html
 
   [mixco.script]: mixco/script.html
   [mixco.control]: mixco/control.html
@@ -119,9 +122,8 @@ Documentation
   [mixco.util]: mixco/util.html
   [mixco.value]: mixco/value.html
 
+  [spec.mixco.behaviour]: spec/mixco/value.behaviour.html
   [spec.mixco.value]: spec/mixco/value.spec.html
-
-  [script.nanokontrol2]: script/nanokontrol2.html
 
 
 License

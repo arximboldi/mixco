@@ -101,6 +101,7 @@ output of its actor based on their current `value`.
             if @actor?.send?
                 @_updateOutputCallback or= => do @updateOutput
                 @on 'value', @_updateOutputCallback
+                do @updateOutput
 
         disable: ->
             if @_updateOutputCallback?
