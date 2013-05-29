@@ -27,7 +27,8 @@ DOCS      = \
 	doc/mixco/util.html \
 	doc/mixco/transform.html \
 	doc/mixco/behaviour.html \
-	doc/mixco/value.html
+	doc/mixco/value.html \
+	doc/spec/mixco/value.spec.html
 
 all: $(SCRIPTS)
 

@@ -119,7 +119,7 @@ Documentation
   [mixco.util]: mixco/util.html
   [mixco.value]: mixco/value.html
 
-  [spec.mixco.value]: spec/mixco/value.html
+  [spec.mixco.value]: spec/mixco/value.spec.html
 
   [script.nanokontrol2]: script/nanokontrol2.html
 
