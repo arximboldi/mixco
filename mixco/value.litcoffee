@@ -8,8 +8,8 @@ changes.
 Dependencies
 ------------
 
-    events = require('events')
-    util   = require('./util')
+    events = require 'events'
+    util   = require './util'
 
 Value
 -----

@@ -26,10 +26,10 @@ License
 Dependencies
 ------------
 
-    events    = require('events')
-    transform = require('./transform')
-    util      = require('./util')
-    value     = require('./value')
+    events    = require 'events'
+    transform = require './transform'
+    util      = require './util'
+    value     = require './value'
 
     indent = util.indent
     assert = util.assert

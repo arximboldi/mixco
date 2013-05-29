@@ -32,10 +32,10 @@ Dependencies
 
 First, we have to import he *Mixco* modules that we are going to use.
 
-    script    = require "../mixco/script"
-    control   = require "../mixco/control"
-    behaviour = require "../mixco/behaviour"
-    value     = require "../mixco/value"
+    script    = require '../mixco/script'
+    control   = require '../mixco/control'
+    behaviour = require '../mixco/behaviour'
+    value     = require '../mixco/value'
 
 
 The script

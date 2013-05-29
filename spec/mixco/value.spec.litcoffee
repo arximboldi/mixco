@@ -6,7 +6,7 @@ Tests for the `mixco.value` module.
 Module
 ------
 
-    {Value, Reduce, Const, transform} = require('../../mixco/value')
+    {Value, Reduce, Const, transform} = require '../../mixco/value'
 
 Tests
 -----

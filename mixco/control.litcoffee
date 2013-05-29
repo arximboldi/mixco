@@ -25,8 +25,9 @@ License
 Dependencies
 ------------
 
-    util = require('./util')
-    behaviour = require('./behaviour')
+    util      = require './util'
+    behaviour = require './behaviour'
+
     indent = util.indent
     hexStr = util.hexStr
     assert = util.assert

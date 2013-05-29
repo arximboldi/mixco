@@ -26,11 +26,13 @@ License
 Dependencies
 ------------
 
-    util = require('./util')
-    indent = util.indent
+    util = require './util'
+
+    indent    = util.indent
     xmlEscape = util.xmlEscape
-    catching = util.catching
-    assert = util.assert
+    catching  = util.catching
+    assert    = util.assert
+
 
 Script
 ------
