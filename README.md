@@ -62,7 +62,7 @@ Required dependencies to compile the Mixxx scripts:
 
 Optional dependencies:
 
-  - [Docco](http://jashkenas.github.io/docco/) >= 0.
+  - [Docco](http://jashkenas.github.io/docco/) >= 0.6
   - [jasmine-node](https://github.com/mhevery/jasmine-node) >= 1.3.1
 
 
