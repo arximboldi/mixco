@@ -6,6 +6,8 @@ Tests for behaviours.
 Mocks
 -----
 
+    mock = require '../mock'
+
     mockActor = -> createSpyObj 'actor', [
         'send',
         'on',
@@ -21,7 +23,7 @@ Module
 Tests
 -----
 
-Tests for the output basic behaviour.
+Tests for the **Output** basic behaviour.
 
     describe 'Output', ->
 
@@ -53,3 +55,34 @@ Tests for the output basic behaviour.
             output.value = 1
             output.value = 0
             expect(actor.send).toHaveBeenCalledWith 'off'
+
+Tests for the **Map** behaviour
+
+    describe 'Map', ->
+
+        map    = null
+        actor  = null
+        script = null
+
+        beforeEach ->
+            map    = new Map "[Test]", "test"
+            actor  = do mockActor
+            script = do mock.testScript
+
+        it 'does not listen to the Mixxx control unnecesarily', ->
+            actor.send = undefined
+            map.enable script, actor
+            expect(script.mixxx.engine.connectControl)
+                .not.toHaveBeenCalled()
+
+        it 'connects to the Mixxx control when actor has send', ->
+            map.enable script, actor
+            expect(script.mixxx.engine.connectControl)
+                .toHaveBeenCalledWith "[Test]", "test", do script.handlerKey
+
+
+        it 'connects to the Mixxx control when someone is obsrving "value"', ->
+            map.on "value", ->
+            map.enable script, actor
+            expect(script.mixxx.engine.connectControl)
+                .toHaveBeenCalledWith "[Test]", "test", do script.handlerKey

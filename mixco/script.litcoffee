@@ -113,6 +113,18 @@ unloaded.
         constructor: ->
             @controls = []
 
+### Mixxx environment
+
+In general, controls, behaviours and other entities using the Mixxx
+environment --the global variables like *engine* or *midi*-- should
+access it via this property instead.  This improves testability.
+
+        @property 'mixxx',
+            get: ->
+                engine: engine
+                midi: midi
+
+
 ### Standalone execution
 
 The following methods are executed implicitly by **register** when the
@@ -204,5 +216,7 @@ still be known from the return value of `registerHandler`.
             this[handlerName] = -> callback arguments...
             return @handlerKey id
 
-        handlerKey: (id) ->
+        handlerKey: (id=undefined) ->
+            if not id?
+                id = @_nextCallbackId - 1
             "#{@name}.__handle_#{id}"

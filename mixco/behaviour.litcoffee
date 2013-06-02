@@ -147,6 +147,7 @@ synchronised with Mixxx only there are listeners on it.
 It seems that Mixxx does not update the direct-mapped outputs upon
 initialization, so we have to update them manually unconditionally.
 
+            engine = script.mixxx.engine
             @value = engine.getValue @group, @key
 
 Then, if the value of the mapped control is observed from the script
