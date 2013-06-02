@@ -28,6 +28,7 @@ DOCS      = \
 	doc/mixco/transform.html \
 	doc/mixco/behaviour.html \
 	doc/mixco/value.html \
+	doc/spec/mock.html \
 	doc/spec/mixco/behaviour.spec.html \
 	doc/spec/mixco/value.spec.html
 

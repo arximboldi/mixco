@@ -110,6 +110,7 @@ Documentation
 
 ### Tests
 
+  * [spec.mock][spec.mock]
   * [spec.mixco.behaviour][spec.mixco.behaviour]
   * [spec.mixco.value][spec.mixco.value]
 
@@ -122,6 +123,7 @@ Documentation
   [mixco.util]: mixco/util.html
   [mixco.value]: mixco/value.html
 
+  [spec.mock]: spec/mock.html
   [spec.mixco.behaviour]: spec/mixco/behaviour.spec.html
   [spec.mixco.value]: spec/mixco/value.spec.html
 
