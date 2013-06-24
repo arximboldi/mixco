@@ -113,6 +113,7 @@ Documentation
   * [spec.mock][spec.mock]
   * [spec.mixco.behaviour][spec.mixco.behaviour]
   * [spec.mixco.value][spec.mixco.value]
+  * [spec.mixco.script][spec.mixco.script]
 
   [script.nanokontrol2]: script/nanokontrol2.html
 
@@ -126,6 +127,7 @@ Documentation
   [spec.mock]: spec/mock.html
   [spec.mixco.behaviour]: spec/mixco/behaviour.spec.html
   [spec.mixco.value]: spec/mixco/value.spec.html
+  [spec.mixco.script]: spec/mixco/script.spec.html
 
 
 License
