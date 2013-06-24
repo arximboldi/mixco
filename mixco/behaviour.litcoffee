@@ -254,6 +254,28 @@ associate a value that can be associated to it.
         directInMapping: ->
 
 
+    class exports.Set extends Action
+
+        constructor: (@setValue, args...) ->
+            super (=>
+                engine.setValue @group, @key, @setValue), args...
+
+    exports.set = -> new exports.Set arguments...
+
+
+    class exports.Toggle extends exports.Map
+
+        constructor: (@setOffValue, @setOnValue, args...) ->
+            super args...
+
+        onEvent: (ev) ->
+            engine.setValue @group, @key, (if ev.value then @setOnValue else @setOffValue)
+
+        directInMapping: ->
+
+    exports.toggle = -> new exports.Toggle arguments...
+
+
 ### Chooser
 
 The **Chooser** lets you select a toggle control of the groups
