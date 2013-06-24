@@ -211,7 +211,7 @@ The **toBehaviour** factory builds a default behaviour from a set
 of arguments.  If the argument is just a behaviour, it returns it.
 
     exports.toBehaviour = (behaviour, args...) ->
-        if not (behaviour instanceof exports.Behaviour)
+        if args.length > 0
             exports.map behaviour, args...
         else
             behaviour
@@ -300,7 +300,7 @@ methods of the `control.Control` class.
 
         constructor: (@_condition, wrapped...) ->
             @_wrapped = exports.toBehaviour wrapped...
-            @_condition.on 'value', () => do @_update
+            @_condition.on 'value', => do @_update
             @_nextCondition = @_condition
 
         elseWhen: (condition, args...) ->
@@ -308,7 +308,7 @@ methods of the `control.Control` class.
             @_nextCondition = value.and value.not(@_nextCondition), condition
             new exports.When @_nextCondition, args...
 
-        else: (condition, args...) ->
+        else: (args...) ->
             assert @_nextCondition?, "Can not define more conditions after 'else'"
             nextCondition = value.not @_nextCondition
             @_nextCondition = undefined

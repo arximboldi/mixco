@@ -14,10 +14,17 @@ Mocks
         'addListener',
         'removeListener' ]
 
+    mockBehaviour = ->
+        behaviour = new Behaviour
+        spyOn(behaviour, 'enable').andCallThrough()
+        spyOn(behaviour, 'disable').andCallThrough()
+        behaviour
+
 Module
 ------
 
-    {Output, Map} = require '../../mixco/behaviour'
+    value = require '../../mixco/value'
+    {Output, Map, When, Behaviour} = require '../../mixco/behaviour'
 
 
 Tests
@@ -100,3 +107,58 @@ Tests for the **Map** behaviour
             map.enable script, actor
             expect(script.mixxx.engine.connectControl)
                 .toHaveBeenCalledWith "[Test]", "test", do script.handlerKey
+
+Tests for the **When** behaviour
+
+    describe 'When', ->
+
+        condition = null
+        wrapped   = null
+        when_     = null
+        actor     = null
+        script    = null
+
+        beforeEach ->
+            condition = new value.Value false
+            wrapped   = do mockBehaviour
+            actor     = do mockActor
+            script    = do mock.testScript
+            when_     = new When condition, wrapped
+
+        it "does nothing when enabled and condition not satisifed", ->
+            when_.enable script, actor
+            expect(wrapped.enable).
+                not.toHaveBeenCalled()
+
+        it "enables wrapped when condition is satisfied", ->
+            condition.value = true
+            when_.enable script, actor
+            expect(wrapped.enable).
+                toHaveBeenCalledWith script, actor
+
+        it "disables wrapped when it is disabled", ->
+            condition.value = true
+            when_.enable script, actor
+            when_.disable()
+            expect(wrapped.disable).
+                toHaveBeenCalledWith script, actor
+
+        it "enables or disables wrapped when condition changes", ->
+            when_.enable script, actor
+            condition.value = true
+            expect(wrapped.enable).
+                toHaveBeenCalledWith script, actor
+            condition.value = false
+            expect(wrapped.disable).
+                toHaveBeenCalledWith script, actor
+
+        it "generates a new negated version on 'else", ->
+            wrapped2 = do mockBehaviour
+            else_ = when_.else wrapped2
+            condition.value = true
+            else_.enable script, actor
+            expect(wrapped2.enable).
+                not.toHaveBeenCalledWith script, actor
+            condition.value = false
+            expect(wrapped2.enable).
+                toHaveBeenCalledWith script, actor
