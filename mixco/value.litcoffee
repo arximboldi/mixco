@@ -25,6 +25,7 @@ interface.
     class exports.Value extends events.EventEmitter
 
         constructor: (initial=undefined) ->
+            @setMaxListeners 0
             if initial?
                 @value = initial
 
