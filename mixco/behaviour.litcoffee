@@ -90,17 +90,21 @@ determined after the XML configuration is generated.
 ### Output
 
 Adds some common operations for behaviours that can update the
-output of its actor based on their current `value`.
+output of its actor based on its nested `output` *Value*.
 
     class exports.Output extends exports.Behaviour
 
         minimum: 1
 
+        constructor: ->
+            super
+            @output = new value.Value
+
         enable: ->
             super
             if @actor?.send?
                 @_updateOutputCallback or= => do @updateOutput
-                @on 'value', @_updateOutputCallback
+                @output.on 'value', @_updateOutputCallback
                 do @updateOutput
 
         disable: ->
@@ -110,7 +114,8 @@ output of its actor based on their current `value`.
             super
 
         updateOutput: ->
-            @actor.send if @value >= @minimum then 'on' else 'off'
+            @actor.send if Math.abs(@output.value) >= @minimum \
+                then 'on' else 'off'
 
 
 ### ToValue
@@ -139,7 +144,10 @@ synchronised with Mixxx only there are listeners on it.
 
     class exports.Map extends exports.Output
 
-        constructor: (@group, @key) ->
+        constructor: (@group, @key, @outgroup, @outkey) ->
+            super
+            @outgroup or= @group
+            @outkey or= @key
 
         enable: (script) ->
             super
@@ -154,25 +162,34 @@ Then, if the value of the mapped control is observed from the script
 or we need to manually send output to the actor, we register a handler
 to listen to it.
 
-            if @actor?.send? or @listeners('value').length > 0
-                @_valueHandler or= script.registerHandler (v) =>
+            if @listeners('value').length > 0
+                @_inHandler or= script.registerHandler (v) =>
                     @value = v
-                engine.connectControl @group, @key, @_valueHandler
-                @_valueHandlerConnected = true
+                engine.connectControl @group, @key, @_inHandler
+                @_inHandlerConnected = true
+
+            if @output.listeners('value').length > 0
+                @_outHandler or= script.registerHandler (v) =>
+                    @output.value = v
+                engine.connectControl @outgroup, @outkey, @_outHandler
+                @_outHandlerConnected = true
 
         disable: (script) ->
             super
-            if @_valueHandlerConnected?
-                engine.connectControl @group, @key, @_valueHandler, true
-                @_valueHandlerConnected = false
+            if @_inHandlerConnected?
+                engine.connectControl @group, @key, @_inHandler, true
+                @_inHandlerConnected = false
+            if @_outHandlerConnected?
+                engine.connectControl @outgroup, @outkey, @_outHandler, true
+                @_outHandlerConnected = false
 
         directInMapping: ->
             group: @group
             key:   @key
 
         directOutMapping: ->
-            group: @group
-            key:   @key
+            group: @outgroup
+            key:   @outkey
 
 While in general mappings are done directly, bypassing the script,
 under some circunstances it might happen that they are proccessed in
@@ -206,11 +223,11 @@ The **Soft** behaviour defines a mapping with soft takeover enabled.
 
         enable: ->
             super
-            engine.softTakeover(@group, @key, true)
+            engine.softTakeover @group, @key, true
 
         disable: ->
             super
-            engine.softTakeover(@group, @key, false)
+            engine.softTakeover @group, @key, false
 
 When soft takeover is enabled we have to process the events through
 the script.
