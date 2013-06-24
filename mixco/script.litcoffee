@@ -170,7 +170,7 @@ XML file and display some help.
             #{indent 2}<wiki>#{xmlEscape(@info.wiki)}</wiki>
             #{indent 2}<forums>#{xmlEscape(@info.forums)}</forums>
             #{indent 1}</info>
-            #{indent 1}<controller id=\"#{@codename}\">
+            #{indent 1}<controller id=\"#{@name}\">
             #{indent 2}<scriptfiles>
             #{indent 3}<file functionprefix=\"#{@name}\"
             #{indent 3}      filename=\"#{@name}.js\"/>
