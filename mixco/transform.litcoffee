@@ -56,18 +56,62 @@ needed. Please make sure to keep it in sync with the official
   [mixxxcontrols]: http://www.mixxx.org/wiki/doku.php/mixxxcontrols
 
     exports.mappings =
-        back:                 binaryT
-        cue_default:          binaryT
-        filterHigh:           centeredT 0.0, 1.0, 4.0
-        filterLow:            centeredT 0.0, 1.0, 4.0
-        filterMid:            centeredT 0.0, 1.0, 4.0
-        fwd:                  binaryT
-        play:                 binaryT
-        plf:                  binaryT
-        pregain:              centeredT 0.0, 1.0, 4.0
-        rate:                 linearT -1.0, 1.0
-        rate_temp_down:       binaryT
-        rate_temp_down_small: binaryT
-        rate_temp_up:         binaryT
-        rate_temp_up_small:   binaryT
-        volume:               defaultT
+        loop_halve:             binaryT
+        loop_double:            binaryT
+        back:                   binaryT
+        balance:                linearT -1.0, 1.0
+        beatloop_16_activate:   binaryT
+        beatloop_16_toggle:     binaryT
+        beatloop_1_activate:    binaryT
+        beatloop_1_toggle:      binaryT
+        beatloop_2_activate:    binaryT
+        beatloop_2_toggle:      binaryT
+        beatloop_32_activate:   binaryT
+        beatloop_32_toggle:     binaryT
+        beatloop_4_activate:    binaryT
+        beatloop_4_toggle:      binaryT
+        beatloop_8_activate:    binaryT
+        beatloop_8_toggle:      binaryT
+        beatloop_dobule:        binaryT
+        beatloop_halve:         binaryT
+        beats_translate_curpos: binaryT
+        beatsync:               binaryT
+        beatsync_tempo:         binaryT
+        crossfader:             linearT -1.0, 1.0
+        cue_default:            binaryT
+        filterHigh:             centeredT 0.0, 1.0, 4.0
+        filterLow:              centeredT 0.0, 1.0, 4.0
+        filterMid:              centeredT 0.0, 1.0, 4.0
+        fwd:                    binaryT
+        headMix:                centeredT -1.0, 1.0
+        headVolume:             centeredT 0.0, 1.0, 5.0
+        hotcue_1_activate:      binaryT
+        hotcue_1_clear:         binaryT
+        hotcue_2_activate:      binaryT
+        hotcue_2_clear:         binaryT
+        hotcue_3_activate:      binaryT
+        hotcue_3_clear:         binaryT
+        hotcue_4_activate:      binaryT
+        hotcue_4_clear:         binaryT
+        hotcue_5_activate:      binaryT
+        hotcue_5_clear:         binaryT
+        hotcue_6_activate:      binaryT
+        hotcue_6_clear:         binaryT
+        hotcue_7_activate:      binaryT
+        hotcue_7_clear:         binaryT
+        wheel:                  linearT -3.0, 3.0
+        jog:                    linearT -3.0, 3.0
+        LoadSelectedTrack:      binaryT
+        play:                   binaryT
+        plf:                    binaryT
+        pregain:                centeredT 0.0, 1.0, 4.0
+        rate:                   linearT -1.0, 1.0
+        rate_temp_down:         binaryT
+        rate_temp_down_small:   binaryT
+        rate_temp_up:           binaryT
+        rate_temp_up_small:     binaryT
+        SelectNextPlaylist:     binaryT
+        SelectNextTrack:        binaryT
+        SelectPrevPlaylist:     binaryT
+        SelectPrevTrack:        binaryT
+        volume:                 defaultT
