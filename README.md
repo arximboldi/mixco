@@ -69,8 +69,9 @@ Optional dependencies:
 Installation
 ------------
 
-To install the *Mixco* First, [grab the sources][git]. Then, from the
-project folder, execute:
+To install the *Mixco*, first, [grab the sources][git]. If you just
+want to use the provided scripts, you can grab the [precompiled
+scripts from here][precomp]. Else, from the project folder, execute:
 
 > make
 
@@ -89,6 +90,7 @@ beautiful documentation like this doing:
 > make doc DOCS=doc/script/myscript.html
 
   [git]: https://gitorious.org/mixco
+  [precomp]: https://gitorious.org/mixco/compiled
   [mixxxmidi]: http://www.mixxx.org/wiki/doku.php/midi_controller_mapping_file_format
 
 
