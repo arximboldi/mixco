@@ -37,8 +37,10 @@ Supported hardware
 ------------------
 
   - [Korg Nanokontrol 2][script.nanokontrol2]
+  - [M-Audio Xponent][script.xponent]
 
   [script.nanokontrol2]: script/nanokontrol2.html
+  [script.xponent]: script/xponent.html
 
 
 Download
@@ -100,6 +102,7 @@ Documentation
 ### Scripts
 
   * [script.nanokontrol2][script.nanokontrol2]
+  * [script.xponent][script.xponent]
 
 ### API
 
@@ -117,7 +120,8 @@ Documentation
   * [spec.mixco.value][spec.mixco.value]
   * [spec.mixco.script][spec.mixco.script]
 
-  [script.nanokontrol2]: script/nanokontrol2.html
+  [script.nanokontrol2]: script/nanokontrol2.htm
+  [script.xponent]: script/xponent.html
 
   [mixco.script]: mixco/script.html
   [mixco.control]: mixco/control.html

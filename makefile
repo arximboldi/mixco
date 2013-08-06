@@ -9,7 +9,8 @@
 
 
 SCRIPTS   = \
-	out/nanokontrol2.js out/nanokontrol2.midi.xml
+	out/nanokontrol2.js out/nanokontrol2.midi.xml \
+	out/xponent.js out/xponent.midi.xml
 
 FRAMEWORK = \
 	tmp/mixco/util.js \
@@ -22,6 +23,7 @@ FRAMEWORK = \
 DOCS      = \
 	doc/index.html \
 	doc/script/nanokontrol2.html \
+	doc/script/xponent.html \
 	doc/mixco/control.html \
 	doc/mixco/script.html \
 	doc/mixco/util.html \
