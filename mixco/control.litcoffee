@@ -56,6 +56,7 @@ for a control.
             #{indent depth}<status>#{hexStr @status(message)}</status>
             #{indent depth}<midino>#{hexStr @midino}</midino>
             """
+    exports.midiId = midiId
 
 The **event** function returns an object representing an script event
 coming from Mixxx.
