@@ -105,6 +105,7 @@ needed. Please make sure to keep it in sync with the official
         play:                   binaryT
         plf:                    binaryT
         pregain:                centeredT 0.0, 1.0, 4.0
+        pregain_toggle:         binaryT
         rate:                   linearT -1.0, 1.0
         rate_temp_down:         binaryT
         rate_temp_down_small:   binaryT
@@ -114,4 +115,7 @@ needed. Please make sure to keep it in sync with the official
         SelectNextTrack:        binaryT
         SelectPrevPlaylist:     binaryT
         SelectPrevTrack:        binaryT
+        filterHighKill:         binaryT
+        filterMidKill:          binaryT
+        filterLowKill:          binaryT
         volume:                 defaultT
