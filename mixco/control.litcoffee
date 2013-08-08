@@ -36,8 +36,8 @@ Dependencies
 Constants
 ---------
 
-    MIDI_NOTE_ON  = 0x8
-    MIDI_NOTE_OFF = 0x9
+    MIDI_NOTE_ON  = 0x9
+    MIDI_NOTE_OFF = 0x8
     MIDI_CC       = 0xB
 
 
@@ -47,16 +47,29 @@ Utilities
 The **midi** function returns an object representing a MIDI identifier
 for a control.
 
-    midiId = (midino = 0, channel = 0) ->
-        midino: midino
+    midiId = (message = MIDI_CC, midino = 0, channel = 0) ->
+        message: message
+        midino:  midino
         channel: channel
-        status: (message) -> (message << 4) | @channel
-        configMidi: (message, depth) ->
+        status: -> (@message << 4) | @channel
+        configMidi: (depth) ->
             """
-            #{indent depth}<status>#{hexStr @status(message)}</status>
+            #{indent depth}<status>#{hexStr @status()}</status>
             #{indent depth}<midino>#{hexStr @midino}</midino>
             """
     exports.midiId = midiId
+
+The **noteIds** and **ccIds** returns a list with the MIDI messages
+needed to identify a control based on notes or control signals.
+
+    noteOnIds = -> [ midiId(MIDI_NOTE_ON, arguments...) ]
+    noteIds   = -> [ midiId(MIDI_NOTE_ON, arguments...)
+                   , midiId(MIDI_NOTE_OFF, arguments...) ]
+    ccIds     = -> [ midiId(MIDI_CC, arguments...) ]
+
+    exports.noteOnIds = noteOnIds
+    exports.noteIds = noteIds
+    exports.ccIds = ccIds
 
 The **event** function returns an object representing an script event
 coming from Mixxx.
@@ -75,9 +88,9 @@ Base class for all control types.
 
     class exports.Control extends behaviour.Actor
 
-        constructor: (@id=midiId()) ->
-            if not (@id instanceof Object)
-                @id = midiId @id
+        constructor: (@ids = [midiId()]) ->
+            if not (@ids instanceof Array)
+                @ids = ccIds @id
             @_behaviours = []
 
 The following set of methods define the behaviour of the control. A
@@ -135,7 +148,7 @@ signal when they are received.
                  not (@_behaviours.length == 1 and do @_behaviours[0].directInMapping)
 
         handlerId: -> util.mangle \
-            "#{@id.midino}_#{@id.status @message}"
+            "#{@ids[0].midino}_#{@ids[0].status @message}"
 
         init: (script) ->
             assert not @_isInit
@@ -160,11 +173,16 @@ signal when they are received.
                     key:   script.handlerKey do @handlerId
             else
                 mapping = do @_behaviours[0].directInMapping
+            (@configInMapping depth, mapping, id for id in @ids)
+                .filter((x)->x)
+                .join('\n')
+
+        configInMapping: (depth, mapping, id) ->
             """
             #{indent depth}<control>
             #{indent depth+1}<group>#{mapping.group}</group>
             #{indent depth+1}<key>#{mapping.key}</key>
-            #{@id.configMidi @message, depth+1}
+            #{id.configMidi depth+1}
             #{indent depth+1}<options>
             #{@_configOptions depth+2}
             #{indent depth+1}</options>
@@ -190,7 +208,6 @@ Represents a basic hardware element for setting continuous parameters
 
     class exports.Knob extends exports.Control
 
-        message: MIDI_CC
 
 I hate using the **new** operator, thus for every concrete control
 we'll provide some factory functions.
@@ -228,7 +245,8 @@ represent the boolean property that it is mapped to.
             @doSend value
 
         doSend: (state) ->
-            midi.sendShortMsg @id.status(@message), @id.midino, @states[state]
+            id = @ids[0]
+            midi.sendShortMsg id.status(), id.midino, @states[state]
 
         init: ->
             # We should remove the send function before enabling
@@ -251,7 +269,7 @@ represent the boolean property that it is mapped to.
                 #{indent depth}<output>
                 #{indent depth+1}<group>#{mapping.group}</group>
                 #{indent depth+1}<key>#{mapping.key}</key>
-                #{@id.configMidi @message, depth+1}
+                #{@ids[0].configMidi depth+1}
                 #{indent depth+1}<on>#{hexStr @states['on']}</on>
                 #{indent depth+1}<off>#{hexStr @states['off']}</off>
                 #{@_behaviours[0].configOutput depth+1}
