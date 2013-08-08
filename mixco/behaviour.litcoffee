@@ -360,3 +360,37 @@ determine, in the script, wether they are enabled or not.
         directInMapping: -> null
 
     exports.when = -> new exports.When arguments...
+
+
+### Special functionality
+
+Tries to mimic the punch-in functionaility of a mixer by setting the
+crossfader to the center.  The threshold must be either positive or
+negative for the left channel and indicates how far the crossfader has
+to be from the center for punch-in to have effect.
+
+    class exports.PunchIn extends exports.Output
+
+        minimum: true
+
+        constructor: (@threshold) ->
+            super
+
+        onEvent: (ev) ->
+            value = @value = @output.value =
+                ev.value > 0 and ev.status >> 4 != 0x8
+            if value
+                oldfader = engine.getValue "[Master]", "crossfader"
+                if (@threshold < 0 and oldfader < @threshold) or
+                        (@threshold > 0 and oldfader > @threshold)
+                    @_oldfader = oldfader
+                    engine.setValue "[Master]", "crossfader", 0
+            else
+                if @_oldfader?
+                    engine.setValue "[Master]", "crossfader", @_oldfader
+                    @_oldfader = undefined
+
+        directOutMapping: -> null
+        directInMapping: -> null
+
+    exports.punchIn = -> new exports.PunchIn arguments...
