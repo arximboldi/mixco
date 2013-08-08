@@ -78,9 +78,9 @@ Lets define these couple of shortcuts.
 
 Transport section.
 
-            id = (cc) -> c.midiId cc, 2
+            ccId = (cc) -> c.ccIds cc, 2
             g  = "[Master]"
-            @add c.slider(id 0x07).does g, "crossfader"
+            @add c.slider(ccId 0x07).does g, "crossfader"
 
 ### Per deck controls.
 
@@ -90,12 +90,28 @@ Transport section.
         addDeck: (i) ->
             assert i in [0, 1]
             g  = "[Channel#{i+1}]"
-            id = (cc) -> c.midiId cc, i
+            ccId = (cc) -> c.ccIds cc, i
+            noteId = (note) -> c.noteIds note, i
+            noteOnId = (note) -> c.noteOnIds note, i
 
 The mixer section.
 
-            @add c.slider(id 0x07).does g, "volume"
-            @add c.knob(id 0x08).does g, "filterLow"
-            @add c.knob(id 0x09).does g, "filterMid"
-            @add c.knob(id 0x0A).does g, "filterHigh"
-            @add c.knob(id 0x0B).does b.soft g, "pregain"
+            @add c.slider(ccId 0x07).does g, "volume"
+            @add c.knob(ccId 0x08).does g, "filterLow"
+            @add c.knob(ccId 0x09).does g, "filterMid"
+            @add c.knob(ccId 0x0A).does g, "filterHigh"
+            @add c.knob(ccId 0x0B).does b.soft g, "pregain"
+
+            @add c.ledButton(noteOnId 0x08).does g, "filterLowKill"
+            @add c.ledButton(noteOnId 0x09).does g, "filterMidKill"
+            @add c.ledButton(noteOnId 0x0A).does g, "filterHighKill"
+            @add c.ledButton(noteId 0x0B).does g, "pregain_toggle"
+
+            @add c.ledButton(noteId 0x07).does b.punchIn (0.5-i)
+
+The transport section.
+
+            @add c.ledButton(noteId 0x21).does g, "back"
+            @add c.ledButton(noteId 0x22).does g, "fwd"
+            @add c.ledButton(noteId 0x23).does g, "cue_default"
+            @add c.ledButton(noteOnId 0x24).does g, "play"
