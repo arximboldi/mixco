@@ -32,11 +32,13 @@ interface.
         @property 'value',
             get: -> @_value
             set: (newValue) ->
-                if @_value != newValue
-                    @_value = newValue
-                    @emit 'value', newValue
-                @_value
+                @setValue newValue
 
+        setValue: (newValue) ->
+            if @_value != newValue
+                @_value = newValue
+                @emit 'value', newValue
+            @_value
 
 ### Constants
 
