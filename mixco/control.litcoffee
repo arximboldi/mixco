@@ -145,7 +145,7 @@ signal when they are received.
 
         @property 'needsHandler',
             get: ->
-                 not (@_behaviours.length == 1 and do @_behaviours[0].directInMapping)
+                 @_behaviours.length != 1 or not do @_behaviours[0].directInMapping
 
         handlerId: -> util.mangle \
             "#{@ids[0].midino}_#{@ids[0].status @message}"
@@ -260,7 +260,7 @@ represent the boolean property that it is mapped to.
             @doSend 'off'
 
         @property 'needsSend',
-            get: -> not (@_behaviours.length == 1 and do @_behaviours[0].directOutMapping)
+            get: -> @_behaviours.length != 1 or not do @_behaviours[0].directOutMapping
 
         configOutputs: (depth, script) ->
             mapping = not @needsSend and do @_behaviours[0].directOutMapping
