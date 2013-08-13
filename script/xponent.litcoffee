@@ -81,9 +81,11 @@ Transport section.
             ccId = (cc) -> c.ccIds cc, 2
             g  = "[Master]"
             @add c.slider(ccId 0x07).does g, "crossfader"
+            @add c.slider(ccId 0x0D).does g, "headMix"
 
 ### Per deck controls.
 
+            @decks = b.chooser "pfl"
             @addDeck 0
             @addDeck 1
 
@@ -93,6 +95,15 @@ Transport section.
             ccId = (cc) -> c.ccIds cc, i
             noteId = (note) -> c.noteIds note, i
             noteOnId = (note) -> c.noteOnIds note, i
+
+Shift button.
+
+            shift = do b.modifier
+            @add c.ledButton(noteId 0x2C).does shift
+
+PFL selector button.
+
+            @add c.ledButton(noteOnId 0x14).does @decks.choose(i)
 
 The mixer section.
 
@@ -108,6 +119,9 @@ The mixer section.
             @add c.ledButton(noteId 0x0B).does g, "pregain_toggle"
 
             @add c.ledButton(noteId 0x07).does b.punchIn (0.5-i)
+            @add c.ledButton(noteId 0x02)
+                .when(shift, g, "beatsync_tempo")
+                .else g, "beatsync"
 
 The transport section.
 
@@ -115,3 +129,23 @@ The transport section.
             @add c.ledButton(noteId 0x22).does g, "fwd"
             @add c.ledButton(noteId 0x23).does g, "cue_default"
             @add c.ledButton(noteOnId 0x24).does g, "play"
+
+            for idx in [0..5]
+                @add c.ledButton(noteId(0x17 + idx))
+                    .when(shift, g, "hotcue_#{idx+1}_clear", g, "hotcue_#{idx+1}_enabled")
+                    .else g, "hotcue_#{idx+1}_activate", g, "hotcue_#{idx+1}_enabled"
+
+The looping section.
+
+            @add c.ledButton(noteId 0x29).does g, "loop_in"
+            @add c.ledButton(noteId 0x2B).does g, "loop_out"
+            @add c.ledButton(noteOnId 0x2A).does g, "reloop_exit", g, "loop_enabled"
+
+The wheel section.
+
+            @add c.ledButton(noteId 0x10)
+                .when(shift, g, "rate_temp_down_small")
+                .else g, "rate_temp_down"
+            @add c.ledButton(noteId 0x11)
+                .when(shift, g, "rate_temp_up_small")
+                .else g, "rate_temp_up"
