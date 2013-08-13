@@ -144,16 +144,15 @@ directly in the XML file.  Otherwise, the control will request to
 process the MIDI messages via the script, and it will emit a `event`
 signal when they are received.
 
-        @property 'needsHandler',
-            get: ->
-                 @_behaviours.length != 1 or not do @_behaviours[0].directInMapping
+        needsHandler: ->
+            @_behaviours.length != 1 or not do @_behaviours[0].directInMapping
 
         handlerId: -> util.mangle \
             "#{@ids[0].midino}_#{@ids[0].status @message}"
 
         init: (script) ->
             assert not @_isInit
-            if @needsHandler
+            if do @needsHandler
                 script.registerHandler \
                     ((args...) => @emit 'event', event args...),
                     @handlerId()
@@ -168,7 +167,7 @@ signal when they are received.
             @_isInit = false
 
         configInputs: (depth, script) ->
-            if @needsHandler
+            if do @needsHandler
                 mapping =
                     group: "[Master]"
                     key:   script.handlerKey do @handlerId
@@ -196,7 +195,7 @@ signal when they are received.
             "#{indent depth}<normal/>"
 
         _configOptions: (depth) ->
-            if @needsHandler
+            if do @needsHandler
                 "#{indent depth}<script-binding/>"
             else
                 @configOptions depth
