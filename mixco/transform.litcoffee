@@ -119,3 +119,8 @@ needed. Please make sure to keep it in sync with the official
         filterMidKill:          binaryT
         filterLowKill:          binaryT
         volume:                 defaultT
+        loop_in:                binaryT
+        loop_out:               binaryT
+        loop_enabled:           binaryT
+        loop_start_position:    linearT
+        loop_end_position:      linearT

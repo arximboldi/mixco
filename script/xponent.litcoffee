@@ -139,7 +139,7 @@ The looping section.
 
             @add c.ledButton(noteId 0x29).does g, "loop_in"
             @add c.ledButton(noteId 0x2B).does g, "loop_out"
-            @add c.ledButton(noteOnId 0x2A).does g, "reloop_exit", g, "loop_enabled"
+            @add c.ledButton(noteId 0x2A).does g, "reloop_exit", g, "loop_enabled"
 
 The wheel section.
 
