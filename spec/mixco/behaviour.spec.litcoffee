@@ -23,6 +23,7 @@ Mocks
 Module
 ------
 
+    util = require '../../mixco/util'
     value = require '../../mixco/value'
     {Output, Map, When, Behaviour} = require '../../mixco/behaviour'
 
@@ -107,6 +108,19 @@ Tests for the **Map** behaviour
             map.enable script, actor
             expect(script.mixxx.engine.connectControl)
                 .toHaveBeenCalledWith "[Test]", "test", do script.handlerKey
+
+        it 'initializes the value and output with the current engine status', ->
+            script.mixxx.engine.getValue = (group, key) ->
+                if group == "[Test]" and key == "test"
+                    1
+                else if group == "[Test2]" and key == "test2"
+                    2
+                else
+                    null
+            map2.enable script, actor
+            expect(map2.value).toBe(1)
+            expect(map2.output.value).toBe(2)
+
 
 Tests for the **When** behaviour
 

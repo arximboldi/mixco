@@ -130,7 +130,7 @@ the value.  It can take an *initial* value too.
             super initial
 
         onEvent: (ev) ->
-            @value = @transformer ev.value
+            @output.value = @value = @transformer ev.value
 
     exports.toValue = -> new exports.ToValue arguments...
     exports.modifier = -> exports.toValue transform.binaryT, false
@@ -157,6 +157,7 @@ initialization, so we have to update them manually unconditionally.
 
             engine = script.mixxx.engine
             @value = engine.getValue @group, @key
+            @output.value = engine.getValue @outgroup, @outkey
 
 Then, if the value of the mapped control is observed from the script
 or we need to manually send output to the actor, we register a handler
