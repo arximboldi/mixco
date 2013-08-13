@@ -149,3 +149,5 @@ The wheel section.
             @add c.ledButton(noteId 0x11)
                 .when(shift, g, "rate_temp_up_small")
                 .else g, "rate_temp_up"
+
+            @add c.slider(c.pbIds i).does b.soft g, "rate"

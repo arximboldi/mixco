@@ -36,10 +36,10 @@ Dependencies
 Constants
 ---------
 
-    MIDI_NOTE_ON  = 0x9
-    MIDI_NOTE_OFF = 0x8
-    MIDI_CC       = 0xB
-
+    MIDI_NOTE_ON   = 0x9
+    MIDI_NOTE_OFF  = 0x8
+    MIDI_CC        = 0xB
+    MIDI_PITCHBEND = 0xE
 
 Utilities
 ---------
@@ -62,11 +62,13 @@ for a control.
 The **noteIds** and **ccIds** returns a list with the MIDI messages
 needed to identify a control based on notes or control signals.
 
+    pbIds     = -> [ midiId(MIDI_PITCHBEND, 0, arguments...) ]
     noteOnIds = -> [ midiId(MIDI_NOTE_ON, arguments...) ]
     noteIds   = -> [ midiId(MIDI_NOTE_ON, arguments...)
                    , midiId(MIDI_NOTE_OFF, arguments...) ]
     ccIds     = -> [ midiId(MIDI_CC, arguments...) ]
 
+    exports.pbIds = pbIds
     exports.noteOnIds = noteOnIds
     exports.noteIds = noteIds
     exports.ccIds = ccIds
@@ -77,7 +79,10 @@ coming from Mixxx.
     event = (channel, control, value, status, group) ->
         channel: channel
         control: control
-        value: if status >> 4 != MIDI_NOTE_OFF then value else 0
+        value: switch status >> 4
+            when MIDI_NOTE_OFF  then 0
+            when MIDI_PITCHBEND then (value * 128.0 + control) / 128.0
+            else value
         status: status
         group: group
         message: -> @status >> 4
