@@ -77,9 +77,10 @@ coming from Mixxx.
     event = (channel, control, value, status, group) ->
         channel: channel
         control: control
-        value: value
+        value: if status >> 4 != MIDI_NOTE_OFF then value else 0
         status: status
         group: group
+        message: -> @status >> 4
 
 Controls
 --------

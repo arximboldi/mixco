@@ -378,8 +378,7 @@ to be from the center for punch-in to have effect.
             super
 
         onEvent: (ev) ->
-            value = @value = @output.value =
-                ev.value > 0 and ev.status >> 4 != 0x8
+            value = @value = @output.value = ev.value > 0
             if value
                 oldfader = engine.getValue "[Master]", "crossfader"
                 if (@threshold < 0 and oldfader < @threshold) or
