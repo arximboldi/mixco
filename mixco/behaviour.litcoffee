@@ -257,9 +257,9 @@ associate a value that can be associated to it.
 
     class exports.Set extends Action
 
-        constructor: (@setValue, args...) ->
+        constructor: (@valueToSet, args...) ->
             super (=>
-                engine.setValue @group, @key, @setValue), args...
+                engine.setValue @group, @key, @valueToSet), args...
 
     exports.set = -> new exports.Set arguments...
 
