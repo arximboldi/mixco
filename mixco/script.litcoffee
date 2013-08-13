@@ -123,6 +123,7 @@ access it via this property instead.  This improves testability.
             get: ->
                 engine: engine
                 midi: midi
+                script: script
 
 
 ### Standalone execution
