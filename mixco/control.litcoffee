@@ -156,6 +156,7 @@ signal when they are received.
             "#{@ids[0].midino}_#{@ids[0].status @message}"
 
         init: (script) ->
+            @script = script
             assert not @_isInit
             if do @needsHandler
                 script.registerHandler \
@@ -166,10 +167,12 @@ signal when they are received.
             @_isInit = true
 
         shutdown: (script) ->
+            assert script == @script
             assert @_isInit
             for b in @_behaviours
                 b.disable script, this
             @_isInit = false
+            delete @script
 
         configInputs: (depth, script) ->
             if do @needsHandler
@@ -251,7 +254,7 @@ represent the boolean property that it is mapped to.
 
         doSend: (state) ->
             id = @ids[0]
-            midi.sendShortMsg id.status(), id.midino, @states[state]
+            @script.mixxx.midi.sendShortMsg id.status(), id.midino, @states[state]
 
         init: ->
             # We should remove the send function before enabling
@@ -261,8 +264,8 @@ represent the boolean property that it is mapped to.
             super
 
         shutdown: ->
-            super
             @doSend 'off'
+            super
 
         @property 'needsSend',
             get: -> @_behaviours.length != 1 or not do @_behaviours[0].directOutMapping

@@ -32,6 +32,7 @@ DOCS      = \
 	doc/mixco/value.html \
 	doc/spec/mock.html \
 	doc/spec/mixco/behaviour.spec.html \
+	doc/spec/mixco/control.spec.html \
 	doc/spec/mixco/value.spec.html \
 	doc/spec/mixco/script.spec.html
 
