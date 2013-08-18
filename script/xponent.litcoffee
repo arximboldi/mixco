@@ -137,11 +137,32 @@ The transport section.
 
 The looping section.
 
-            @add c.ledButton(noteId 0x29).does g, "loop_in"
-            @add c.ledButton(noteId 0x2B).does g, "loop_out"
+            @add c.ledButton(noteId 0x29)
+                .when(shift, g, "loop_halve")
+                .else g, "loop_in"
+            @add c.ledButton(noteId 0x2B)
+                .when(shift, g, "loop_double")
+                .else g, "loop_out"
             @add c.ledButton(noteId 0x2A).does g, "reloop_exit", g, "loop_enabled"
 
+            @add c.ledButton(noteId 0x25)
+                .when(shift, g, "beatloop_0.125_activate", g, "beatloop_0.125_enabled")
+                .else g, "beatloop_4_activate", g, "beatloop_4_enabled"
+            @add c.ledButton(noteId 0x26)
+                .when(shift, g, "beatloop_0.5_activate", g, "beatloop_0.5_enabled")
+                .else g, "beatloop_8_activate", g, "beatloop_8_enabled"
+            @add c.ledButton(noteId 0x27)
+                .when(shift, g, "beatloop_1_activate", g, "beatloop_1_enabled")
+                .else g, "beatloop_16_activate", g, "beatloop_16_enabled"
+            @add c.ledButton(noteId 0x28)
+                .when(shift, g, "beatloop_2_activate", g, "beatloop_2_enabled")
+                .else g, "beatloop_32_activate", g, "beatloop_32_enabled"
+
 The wheel section.
+
+            scratchOn = do b.option
+            @add c.ledButton(noteOnId 0x16).does scratchOn
+            @add c.knob(ccId 0x16).does g, "jog"
 
             @add c.ledButton(noteId 0x10)
                 .when(shift, g, "rate_temp_down_small")

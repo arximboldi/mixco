@@ -138,6 +138,7 @@ the value.  It can take an *initial* value too.
 
     exports.toValue = -> new exports.ToValue arguments...
     exports.modifier = -> exports.toValue transform.binaryT, false
+    exports.option = -> exports.toValue (-> not @value), false
 
 
 ### Map
