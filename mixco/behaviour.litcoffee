@@ -66,14 +66,18 @@ given actor.
 
         enable: (script, actor) ->
             assert not @actor?
+            assert not @script?
+            @script = script
             @actor = actor
             @_eventListener = (ev) => @onEvent ev
             actor.on 'event', @_eventListener
 
         disable: (script, actor) ->
+            assert @script == script
             assert @actor == actor
             actor.removeListener 'event', @_eventListener
-            @actor = undefined
+            delete @script
+            delete @actor
 
 Define a **directMapping** when the Behaviour can be mapped directly
 to a Mixxx actor. Note that this should not depend on conditions
@@ -149,7 +153,7 @@ synchronised with Mixxx only there are listeners on it.
             @outgroup or= @group
             @outkey or= @key
 
-        enable: (script) ->
+        enable: (script, actor) ->
             super
 
 It seems that Mixxx does not update the direct-mapped outputs upon
@@ -175,14 +179,14 @@ to listen to it.
                 engine.connectControl @outgroup, @outkey, @_outHandler
                 @_outHandlerConnected = true
 
-        disable: (script) ->
-            super
+        disable:  ->
             if @_inHandlerConnected?
-                engine.connectControl @group, @key, @_inHandler, true
+                @script.mixxx.engine.connectControl @group, @key, @_inHandler, true
                 @_inHandlerConnected = false
             if @_outHandlerConnected?
-                engine.connectControl @outgroup, @outkey, @_outHandler, true
+                @script.mixxx.engine.connectControl @outgroup, @outkey, @_outHandler, true
                 @_outHandlerConnected = false
+            super
 
         directInMapping: ->
             group: @group
@@ -224,11 +228,11 @@ The **Soft** behaviour defines a mapping with soft takeover enabled.
 
         enable: ->
             super
-            engine.softTakeover @group, @key, true
+            @script.mixxx.engine.softTakeover @group, @key, true
 
         disable: ->
+            @script.mixxx.engine.softTakeover @group, @key, false
             super
-            engine.softTakeover @group, @key, false
 
 When soft takeover is enabled we have to process the events through
 the script.
@@ -306,8 +310,8 @@ The **select** method enables the control on the Nth group.
 
         select: (n) ->
             @_selected = n
-            for _, n in @_decks
-                engine.setValue @_groupN(n), @_key, (@_selected == n)
+            for deck, n in @_decks
+                deck.script?.mixxx.engine.setValue @_groupN(n), @_key, (@_selected == n)
 
     exports.chooser = -> new exports.Chooser arguments...
 
@@ -338,6 +342,7 @@ methods of the `control.Control` class.
             new exports.When nextCondition, args...
 
         enable: (args...) ->
+            super args...
             @_enableOn = args
             @_enableRequested = true
             do @_update
@@ -345,6 +350,7 @@ methods of the `control.Control` class.
         disable: ->
             @_enableRequested = false
             do @_update
+            super
 
         _update: ->
             mustEnable = @_enableRequested and @_condition.value

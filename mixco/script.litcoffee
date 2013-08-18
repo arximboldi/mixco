@@ -121,10 +121,12 @@ access it via this property instead.  This improves testability.
 
         @property 'mixxx',
             get: ->
-                engine: engine
-                midi: midi
-                script: script
-
+                @_mixxxSystem or=
+                    engine: engine
+                    midi: midi
+                    script: script
+            set: (mixxxSystem) ->
+                @_mixxxSystem = mixxxSystem
 
 ### Standalone execution
 

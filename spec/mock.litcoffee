@@ -30,6 +30,24 @@ Midi
             'sendSysexMessage', # (data, length)
             ]
 
+
+Midi
+----
+
+    exports.script = ->
+        createSpyObj "script", [
+            'pitch', # (control, value, status)
+            ]
+
+
+Fake mixxx object
+-----------------
+
+    exports.mixxx = ->
+        engine: do exports.engine
+        midi:   do exports.midi
+        script: do exports.script
+
 Script
 ------
 
@@ -39,8 +57,6 @@ This test script class provides Mixxx object mocks.
 
         @property 'mixxx',
             get: ->
-                @_fakeMixxx or=
-                    engine: do exports.engine
-                    midi:   do exports.midi
+                @_fakeMixxx or= do exports.mixxx
 
     exports.testScript = -> new exports.TestScript arguments...

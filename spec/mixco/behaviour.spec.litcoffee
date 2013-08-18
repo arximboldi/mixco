@@ -153,7 +153,7 @@ Tests for the **When** behaviour
         it "disables wrapped when it is disabled", ->
             condition.value = true
             when_.enable script, actor
-            when_.disable()
+            when_.disable script, actor
             expect(wrapped.disable).
                 toHaveBeenCalledWith script, actor
 
