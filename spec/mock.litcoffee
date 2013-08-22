@@ -19,6 +19,11 @@ Engine
             'setValue',       # (group, key, value)
             'softTakeover',   # (group, key, enable)
             'connectControl', # (group, key, handler[, disconnnect])
+            'scratchEnable',  # (int deck, int intervalsPerRev, float rpm,
+                              #  alpha, beta, ramp)
+            'scratchTick',    # (int deck, int interval)
+            'scratchDisable', # (int deck)
+            'isScratching',   # (int deck)
             ]
 
 Midi

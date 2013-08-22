@@ -411,3 +411,51 @@ to be from the center for punch-in to have effect.
         directInMapping: -> null
 
     exports.punchIn = -> new exports.PunchIn arguments...
+
+
+The **ScratchEnable** and **ScratchTick** behaviour map to the
+engine scratch system.
+
+    class exports.ScratchEnable extends exports.Output
+
+        minimum: true
+
+        constructor: (@scratchDeck,
+                      @scratchIntervalsPerRev = 128*4,
+                      @scratchRpm             = 44.0,
+                      @scratchAlpha           = 1.0/8.0,
+                      @scratchBeta            = 1.0 / 8.0 / 32.0,
+                      @scratchRamp            = true) ->
+            super()
+
+        onEvent: (ev) ->
+            val = @value = @output.value = ev.value > 0
+            engine = @script.mixxx.engine
+            if val
+                engine.scratchEnable @scratchDeck, @scratchIntervalsPerRev,
+                                     @scratchRpm, @scratchAlpha, @scratchBeta,
+                                     @scratchRamp
+            else
+                engine.scratchDisable @scratchDeck, @scratchRamp
+
+        directOutMapping: -> null
+        directInMapping: -> null
+
+    exports.scratchEnable = -> new exports.ScratchEnable arguments...
+
+
+    class exports.ScratchTick extends exports.Output
+
+        constructor: (@scratchDeck,
+                      @scratchTransform = (val) -> val) ->
+            super()
+
+        onEvent: (ev) ->
+            val = @value = @output.value = ev.value
+            engine = @script.mixxx.engine
+            engine.scratchTick @scratchDeck, @scratchTransform val
+
+        directOutMapping: -> null
+        directInMapping: -> null
+
+    exports.scratchTick = -> new exports.ScratchTick arguments...

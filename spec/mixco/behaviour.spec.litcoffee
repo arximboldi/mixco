@@ -25,7 +25,7 @@ Module
 
     util = require '../../mixco/util'
     value = require '../../mixco/value'
-    {Output, Map, When, Behaviour, PunchIn} =
+    {Output, Map, When, Behaviour, PunchIn, ScratchEnable, ScratchTick} =
         require '../../mixco/behaviour'
 
 
@@ -265,3 +265,64 @@ Tests for the **PunchIn** behaviour
                 .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
             rightPunchIn.onEvent value: 0
             expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", -0.75
+
+
+Tests for the **ScratchEnable** behaviour
+
+    describe 'ScratchEnable', ->
+
+        actor   = null
+        script  = null
+        scratch = null
+
+        beforeEach ->
+            actor   = do mockActor
+            script  = do mock.testScript
+            scratch = new ScratchEnable 1, 32, 33, 1, 0.4, false
+            scratch.enable script, actor
+
+        it 'enables scratch on button press', ->
+            do expect(script.mixxx.engine.scratchEnable)
+                .not.toHaveBeenCalled
+
+            scratch.onEvent value: 1
+            expect(script.mixxx.engine.scratchEnable)
+                .toHaveBeenCalledWith 1, 32, 33, 1, 0.4, false
+
+        it 'disables scratch on button release', ->
+            do expect(script.mixxx.engine.scratchDisable)
+                .not.toHaveBeenCalled
+
+            scratch.onEvent value: 0
+            do expect(script.mixxx.engine.scratchEnable)
+                .not.toHaveBeenCalled
+            expect(script.mixxx.engine.scratchDisable)
+                .toHaveBeenCalledWith 1, false
+
+
+Tests for the **ScratchTick** behaviour
+
+    describe 'ScratchTick', ->
+
+        actor   = null
+        script  = null
+        scratch = null
+
+        beforeEach ->
+            actor   = do mockActor
+            script  = do mock.testScript
+            scratch = new ScratchTick 1, (v) -> v / 2
+            scratch.enable script, actor
+
+        it 'ticks the given deck scratch with the current transform', ->
+            do expect(script.mixxx.engine.scratchTick)
+                .not.toHaveBeenCalled
+
+            scratch.onEvent value: 64
+            expect(script.mixxx.engine.scratchTick)
+                .toHaveBeenCalledWith 1, 32
+
+            scratch.onEvent value: 32
+            expect(script.mixxx.engine.scratchTick)
+                .toHaveBeenCalledWith 1, 16
