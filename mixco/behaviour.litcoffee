@@ -153,6 +153,11 @@ synchronised with Mixxx only there are listeners on it.
             super
             @outgroup or= @group
             @outkey or= @key
+            @_transform = transform.mappings[@key]
+
+        transform: (trans) ->
+            @_transform = trans
+            this
 
         enable: (script, actor) ->
             super
@@ -190,8 +195,11 @@ to listen to it.
             super
 
         directInMapping: ->
-            group: @group
-            key:   @key
+            if @_transform == transform.mappings[@key]
+                group: @group
+                key:   @key
+            else
+                null
 
         directOutMapping: ->
             group: @outgroup
@@ -203,8 +211,7 @@ the script.  In this case, we define `onEvent` to emulate the
 behaviour of a direct mapping.
 
         onEvent: (ev) ->
-            value = transform.mappings[@key](ev.value)
-            engine.setValue @group, @key, value
+            @script.mixxx.engine.setValue @group, @key, @_transform ev.value
 
         configOutput: (depth) ->
             "#{indent depth}<minimum>#{@minimum}</minimum>"
@@ -275,7 +282,8 @@ associate a value that can be associated to it.
             super args...
 
         onEvent: (ev) ->
-            engine.setValue @group, @key, (if ev.value then @setOnValue else @setOffValue)
+            val = if ev.value then @setOnValue else @setOffValue
+            engine.setValue @group, @key, val
 
         directInMapping: ->
 

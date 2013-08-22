@@ -121,6 +121,42 @@ Tests for the **Map** behaviour
             expect(map2.value).toBe(1)
             expect(map2.output.value).toBe(2)
 
+        it 'sets the values in the engine using the default transform', ->
+            xfader = new Map "[Master]", "crossfader"
+            xfader.enable script, actor
+
+            xfader.onEvent value: 63.5
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
+
+            xfader.onEvent value: 127
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 1
+
+            xfader.onEvent value: 0
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 1
+
+        it 'sets the values in the engine using custom transformation', ->
+            xfader = new Map("[Master]", "crossfader").transform (v) -> v
+            xfader.enable script, actor
+
+            xfader.onEvent value: 64
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 64
+
+            xfader.onEvent value: 127
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 127
+
+            xfader.onEvent value: 0
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 0
+
+        it 'does not direct map when a custom transform is set', ->
+            xfader = new Map("[Master]", "crossfader").transform (v) -> v
+            expect(do xfader.directInMapping).toBe null
+
 
 Tests for the **When** behaviour
 
