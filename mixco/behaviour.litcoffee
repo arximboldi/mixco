@@ -335,6 +335,7 @@ methods of the `control.Control` class.
     class exports.When extends exports.Behaviour
 
         constructor: (@_condition, wrapped...) ->
+            super()
             @_wrapped = exports.toBehaviour wrapped...
             @_condition.on 'value', => do @_update
             @_nextCondition = @_condition
