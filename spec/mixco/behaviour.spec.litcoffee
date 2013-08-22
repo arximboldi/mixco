@@ -25,7 +25,8 @@ Module
 
     util = require '../../mixco/util'
     value = require '../../mixco/value'
-    {Output, Map, When, Behaviour} = require '../../mixco/behaviour'
+    {Output, Map, When, Behaviour, PunchIn} =
+        require '../../mixco/behaviour'
 
 
 Tests
@@ -212,3 +213,55 @@ Tests for the **When** behaviour
             condition.value = false
             expect(wrapped2.enable).
                 toHaveBeenCalledWith script, actor
+
+
+Tests for the **PunchIn** behaviour
+
+    describe 'PunchIn', ->
+
+        rightPunchIn = null
+        leftPunchIn  = null
+        actor        = null
+        script       = null
+        xfader       = 0.0
+
+        beforeEach ->
+            leftPunchIn  = new PunchIn 0.5
+            rightPunchIn = new PunchIn -0.5
+            actor        = do mockActor
+            script       = do mock.testScript
+            script.mixxx.engine.getValue = (group, control) ->
+                expect(group).toBe "[Master]"
+                expect(control).toBe "crossfader"
+                xfader
+            leftPunchIn.enable script, actor
+            rightPunchIn.enable script, actor
+
+        it "does nothing when the crossfader is to the requested side", ->
+            xfader = -0.75
+            leftPunchIn.onEvent value: 1
+            do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
+            leftPunchIn.onEvent value: 0
+            do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
+
+            xfader = 0.75
+            rightPunchIn.onEvent value: 1
+            do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
+            rightPunchIn.onEvent value: 0
+            do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
+
+        it "sets the crossfader to the middle and restores otherwise", ->
+            xfader = 0.75
+            leftPunchIn.onEvent value: 1
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
+            leftPunchIn.onEvent value: 0
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 0.75
+
+            xfader = -0.75
+            rightPunchIn.onEvent value: 1
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
+            rightPunchIn.onEvent value: 0
+            expect(script.mixxx.engine.setValue)

@@ -390,11 +390,12 @@ to be from the center for punch-in to have effect.
         minimum: true
 
         constructor: (@threshold) ->
-            super
+            super()
 
         onEvent: (ev) ->
-            value = @value = @output.value = ev.value > 0
-            if value
+            val = @value = @output.value = ev.value > 0
+            engine = @script.mixxx.engine
+            if val
                 oldfader = engine.getValue "[Master]", "crossfader"
                 if (@threshold < 0 and oldfader < @threshold) or
                         (@threshold > 0 and oldfader > @threshold)
