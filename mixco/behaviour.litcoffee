@@ -335,17 +335,19 @@ methods of the `control.Control` class.
     class exports.When extends exports.Behaviour
 
         constructor: (@_condition, wrapped...) ->
+            @else = => @_else arguments...
+            @else.when = => @_elseWhen arguments...
             super()
             @_wrapped = exports.toBehaviour wrapped...
             @_condition.on 'value', => do @_update
             @_nextCondition = @_condition
 
-        elseWhen: (condition, args...) ->
+        _elseWhen: (condition, args...) ->
             assert @_nextCondition?, "Can not define more conditions after 'else'"
             @_nextCondition = value.and value.not(@_nextCondition), condition
             new exports.When @_nextCondition, args...
 
-        else: (args...) ->
+        _else: (args...) ->
             assert @_nextCondition?, "Can not define more conditions after 'else'"
             nextCondition = value.not @_nextCondition
             @_nextCondition = undefined

@@ -95,6 +95,9 @@ Base class for all control types.
     class exports.Control extends behaviour.Actor
 
         constructor: (@ids = [midiId()]) ->
+            @else = => @_else arguments...
+            @else.when = => @_elseWhen arguments...
+            super()
             if not (@ids instanceof Array)
                 @ids = ccIds @id
             @_behaviours = []
@@ -128,14 +131,14 @@ Thera are three kinds of behaviours we can associate to the control:
             @_behaviours.push @_lastWhen
             this
 
-        elseWhen: (args...) ->
-            assert @_lastWhen?, "'else' must be preceded by 'when' or 'elseWhen'"
-            @_lastWhen = @_lastWhen.elseWhen args...
+        _elseWhen: (args...) ->
+            assert @_lastWhen?, "'elseWhen' must be preceded by 'when' or 'elseWhen'"
+            @_lastWhen = @_lastWhen.else.when args...
             @_behaviours.push @_lastWhen
             this
 
-        else: (args...) ->
-            assert @_lastWhen?, "'else' must be preceded by 'when' or 'elseWhen'"
+        _else: (args...) ->
+            assert @_lastWhen?, "'elsen' must be preceded by 'when' or 'elseWhen'"
             @_lastWhen = @_lastWhen.else args...
             @_behaviours.push @_lastWhen
             @_lastWhen = undefined

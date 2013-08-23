@@ -194,16 +194,16 @@ effects.
 The << and >> buttons are a bit more complicated. We want them to
 behave as *nudge* buttons for the selected track, but we want the
 *cycle* modifier to change the nudge speed. We use the `behaviour.and`
-condition combinator to mix the conditions. We also use `control.elseWhen`
+condition combinator to mix the conditions. We also use `control.else.when`
 to simplify the negative condition.
 
             chooseCycle = v.and @cycle, @decks.choose i
             @nudgeUpButton
                 .when(chooseCycle, b.toggle 0, 0.5, g, "wheel")
-                .elseWhen @decks.choose(i), b.toggle 0, 0.1, g, "wheel"
+                .else.when @decks.choose(i), b.toggle 0, 0.1, g, "wheel"
             @nudgeDownButton
                 .when(chooseCycle, b.toggle 0, -0.5, g, "wheel")
-                .elseWhen @decks.choose(i), b.toggle 0, -0.1, g, "wheel"
+                .else.when @decks.choose(i), b.toggle 0, -0.1, g, "wheel"
 
 Depending on the selected track we map some of the transport buttons.
 For example, the *track<* and *track>* buttons control the selected
@@ -228,27 +228,27 @@ modifiers.
 
             @add c.ledButton(0x20 + offset[1])
                 .when(@cycle, g, "hotcue_1_activate")
-                .elseWhen(@marker, g, "hotcue_1_clear")
+                .else.when(@marker, g, "hotcue_1_clear")
                 .else g, "beatloop_2_toggle"
             @add c.ledButton(0x20 + offset[2])
                 .when(@cycle, g, "hotcue_2_activate")
-                .elseWhen(@marker, g, "hotcue_2_clear")
+                .else.when(@marker, g, "hotcue_2_clear")
                 .else g, "beatloop_4_toggle"
             @add c.ledButton(0x30 + offset[1])
                 .when(@cycle, g, "hotcue_3_activate")
-                .elseWhen(@marker, g, "hotcue_3_clear")
+                .else.when(@marker, g, "hotcue_3_clear")
                 .else g, "beatloop_8_toggle"
             @add c.ledButton(0x30 + offset[2])
                 .when(@cycle, g, "hotcue_4_activate")
-                .elseWhen(@marker, g, "hotcue_4_clear")
+                .else.when(@marker, g, "hotcue_4_clear")
                 .else g, "beatloop_16_toggle"
             @add c.ledButton(0x40 + offset[1])
                 .when(@cycle, g, "hotcue_5_activate")
-                .elseWhen(@marker, g, "hotcue_5_clear")
+                .else.when(@marker, g, "hotcue_5_clear")
                 .else g, "loop_halve"
             @add c.ledButton(0x40 + offset[2])
                 .when(@cycle, g, "hotcue_6_activate")
-                .elseWhen(@marker, g, "hotcue_6_clear")
+                .else.when(@marker, g, "hotcue_6_clear")
                 .else g, "loop_double"
 
 ### Initialization
