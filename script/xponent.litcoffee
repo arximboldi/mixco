@@ -113,9 +113,9 @@ The mixer section.
             @add c.knob(ccId 0x0A).does g, "filterHigh"
             @add c.knob(ccId 0x0B).does b.soft g, "pregain"
 
-            @add c.ledButton(noteOnId 0x08).does g, "filterLowKill"
-            @add c.ledButton(noteOnId 0x09).does g, "filterMidKill"
-            @add c.ledButton(noteOnId 0x0A).does g, "filterHighKill"
+            @add c.ledButton(noteId 0x08).does g, "filterLowKill"
+            @add c.ledButton(noteId 0x09).does g, "filterMidKill"
+            @add c.ledButton(noteId 0x0A).does g, "filterHighKill"
             @add c.ledButton(noteId 0x0B).does g, "pregain_toggle"
 
             @add c.ledButton(noteId 0x07).does b.punchIn (0.5-i)
@@ -160,9 +160,14 @@ The looping section.
 
 The wheel section.
 
-            scratchOn = do b.option
-            @add c.ledButton(noteOnId 0x16).does scratchOn
-            @add c.knob(ccId 0x16).does g, "jog"
+            scratchMode = do b.option
+            @add c.ledButton(noteOnId 0x15).does scratchMode
+
+            @add c.ledButton(noteId 0x16)
+                .when scratchMode, b.scratchEnable i+1
+            @add c.knob(ccId 0x16)
+                .when(scratchMode, b.scratchTick i+1, (v) -> v-64)
+                .else b.map(g, "jog").transform (v) -> (v-64)/8.0
 
             @add c.ledButton(noteId 0x10)
                 .when(shift, g, "rate_temp_down_small")

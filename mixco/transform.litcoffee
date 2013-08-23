@@ -124,6 +124,8 @@ needed. Please make sure to keep it in sync with the official
         rate_temp_down_small:       binaryT
         rate_temp_up:               binaryT
         rate_temp_up_small:         binaryT
+        scratch2:                   linearT -3.0, 3.0
+        scratch2_enable:            binaryT
         SelectNextPlaylist:         binaryT
         SelectNextTrack:            binaryT
         SelectPrevPlaylist:         binaryT
