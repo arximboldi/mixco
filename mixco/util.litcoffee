@@ -71,4 +71,4 @@ standalone.
 
     exports.assert = (value, error=undefined) ->
         if not value
-           throw new Error(error if error? else "Assertion failed.")
+           throw new Error(if error? then error else "Assertion failed.")
