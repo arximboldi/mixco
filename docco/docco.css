@@ -1,0 +1,525 @@
+/*--------------------- Typography ----------------------------*/
+
+@font-face {
+    font-family: 'aller-light';
+    src: url('public/fonts/aller-light.eot');
+    src: url('public/fonts/aller-light.eot?#iefix') format('embedded-opentype'),
+    url('public/fonts/aller-light.woff') format('woff'),
+    url('public/fonts/aller-light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'aller-bold';
+    src: url('public/fonts/aller-bold.eot');
+    src: url('public/fonts/aller-bold.eot?#iefix') format('embedded-opentype'),
+    url('public/fonts/aller-bold.woff') format('woff'),
+    url('public/fonts/aller-bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'novecento-bold';
+    src: url('public/fonts/novecento-bold.eot');
+    src: url('public/fonts/novecento-bold.eot?#iefix') format('embedded-opentype'),
+    url('public/fonts/novecento-bold.woff') format('woff'),
+    url('public/fonts/novecento-bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*--------------------- Layout ----------------------------*/
+html { height: 100%; }
+body {
+    font-family: "aller-light";
+    font-size: 14px;
+    line-height: 18px;
+    color: #333;
+    margin: 0; padding: 0;
+    height:100%;
+}
+#container { min-height: 100%; }
+
+a {
+    color: #000;
+}
+
+b, strong {
+    font-weight: normal;
+    font-family: "aller-bold";
+}
+
+p, ul, ol {
+    margin: 15px 0 0px;
+}
+
+h1, h2 {
+    margin: 30px 0 15px 0;
+}
+
+h3, h4, h5, h6 {
+    margin: 15px 0 15px 0;
+}
+
+
+h1, h2, h3 {
+    text-transform: uppercase;
+    font-family: "novecento-bold";
+    font-weight: normal;
+}
+
+h4, h5, h6 {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #000;
+    line-height: 1em;
+}
+
+h1 { margin-top: 60px; }
+
+h1 {
+    font-size: 250%;
+    width: 100%;
+}
+
+h2 { font-size: 175%; }
+
+
+hr {
+    border: 0;
+    background: 1px solid #ddd;
+    height: 1px;
+    margin: 20px 0;
+}
+
+pre, tt, code {
+    font-size: 12px; line-height: 16px;
+    font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+    margin: 0; padding: 0; color: #aaa;
+}
+
+.annotation pre {
+    display: block;
+    margin: 0;
+    padding: 7px 10px;
+    overflow-x: auto;
+}
+
+.annotation pre code {
+    border: 0;
+    padding: 0;
+    background: transparent;
+}
+
+
+blockquote {
+    border-left: 5px solid #ccc;
+    margin: 10px 0 10px;
+    padding: 1px 0 1px 1em;
+}
+.sections blockquote p {
+    font-family: Menlo, Consolas, Monaco, monospace;
+    font-size: 12px; line-height: 16px;
+    color: #999;
+    margin: 10px 0 10px;
+    white-space: pre-wrap;
+}
+
+ul.sections {
+    list-style: none;
+    padding:0 0 5px 0;;
+    margin:0;
+}
+
+/*
+  Force border-box so that % widths fit the parent
+  container without overlap because of margin/padding.
+
+More Info : http://www.quirksmode.org/css/box.html
+*/
+ul.sections > li > div {
+    -moz-box-sizing: border-box;    /* firefox */
+    -ms-box-sizing: border-box;     /* ie */
+    -webkit-box-sizing: border-box; /* webkit */
+    -khtml-box-sizing: border-box;  /* konqueror */
+    box-sizing: border-box;         /* css3 */
+}
+
+
+/*---------------------- Jump Page -----------------------------*/
+#jump_to, #jump_page {
+    margin: 0;
+    background: white;
+    font: 16px Arial;
+    cursor: pointer;
+    text-align: right;
+    list-style: none;
+}
+
+#jump_to a {
+    text-decoration: none;
+}
+
+#jump_to a.large {
+    display: none;
+}
+#jump_to a.small {
+    font-size: 22px;
+    font-weight: bold;
+    color: #676767;
+}
+
+#jump_to, #jump_wrapper {
+    position: fixed;
+    right: 0; top: 0;
+    padding: 10px 15px;
+    margin:0;
+}
+
+#jump_wrapper {
+    display: none;
+    padding:0;
+}
+
+#jump_to:hover #jump_wrapper {
+    display: block;
+}
+
+#jump_page {
+    padding: 5px 0 3px;
+    margin: 0 0 25px 25px;
+}
+
+#jump_page .source {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    border-top: 1px solid #eee;
+}
+
+#jump_page .source:hover {
+    background: #f5f5ff;
+}
+
+#jump_page .source:first-child {
+}
+
+/*---------------------- Low resolutions (> 320px) ---------------------*/
+
+.pilwrap { display: none; }
+
+ul.sections > li > div {
+    display: block;
+    padding:5px 10px 0 10px;
+}
+
+ul.sections > li > div.annotation ul, ul.sections > li > div.annotation ol {
+    padding-left: 30px;
+}
+
+ul.sections > li > div.content {
+    background: #000;
+    overflow-x:auto;
+    border: 0;
+    margin:5px 10px 5px 10px;
+    padding-bottom: 5px;
+}
+
+ul.sections > li > div.annotation pre {
+    margin: 7px 0 7px;
+    padding-left: 15px;
+}
+
+ul.sections > li > div.annotation p tt, .annotation code {
+    background: #f8f8ff;
+    border: 0;
+    font-size: 12px;
+    padding: 0 0.2em;
+    color: #000;
+}
+
+
+/*----------------------  (> 481px) ---------------------*/
+
+@media only screen and (min-width: 681px) {
+    #container {
+	position: relative;
+    }
+    body {
+	background-color: #000;
+	font-size: 15px;
+	line-height: 21px;
+    }
+    pre, tt, code {
+	line-height: 18px;
+    }
+    p, ul, ol {
+	margin: 0 0 15px;
+    }
+
+    #jump_to {
+	padding: 5px 10px;
+    }
+    #jump_wrapper {
+	padding: 0;
+    }
+    #jump_to, #jump_page {
+	font: 10px Arial;
+	text-transform: uppercase;
+    }
+    #jump_page .source {
+	padding: 5px 10px;
+    }
+    #jump_to a.large {
+	display: inline-block;
+    }
+    #jump_to a.small {
+	display: none;
+    }
+
+    #background {
+	position: absolute;
+	top: 0; bottom: 0;
+	width: 350px;
+	background: #fff;
+	border-right: 0px solid #000;
+	z-index: -1;
+    }
+
+    ul.sections > li > div.annotation ul, ul.sections > li > div.annotation ol {
+	padding-left: 40px;
+    }
+
+    ul.sections > li {
+	white-space: nowrap;
+    }
+
+    ul.sections > li > div {
+	display: inline-block;
+    }
+
+
+    ul.sections > li > div.annotation  {
+	border-top: 3px dashed #ddd;
+	max-width: 350px;
+	min-width: 350px;
+	min-height: 5px;
+	padding: 13px;
+	overflow-x: hidden;
+	white-space: normal;
+	vertical-align: top;
+	text-align: left;
+    }
+    ul.sections > li > div.annotation.header {
+	border-top: 0;
+    }
+    ul.sections > li#section-1 > div.annotation {
+	border: 0;
+    }
+
+    ul.sections > li > div.annotation pre {
+	margin: 15px 0 15px;
+	padding-left: 15px;
+    }
+
+    ul.sections > li > div.annotation + div.content {
+	border-top: 3px dashed #222;
+    }
+    ul.sections > li > div.content {
+	width: 100%;
+	padding: 0px;
+	margin: 0;
+	vertical-align: top;
+	background: #000;
+    }
+
+    .pilwrap {
+	position: relative;
+	display: inline;
+    }
+
+    .pilcrow {
+	font: 12px Arial;
+	text-decoration: none;
+	color: #454545;
+	position: absolute;
+	top: 3px; left: -20px;
+	padding: 1px 2px;
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+    }
+    .for-h1 .pilcrow {
+	top: 47px;
+    }
+    .for-h2 .pilcrow, .for-h3 .pilcrow, .for-h4 .pilcrow {
+	top: 35px;
+    }
+
+    ul.sections > li > div.annotation:hover .pilcrow {
+	opacity: 1;
+    }
+
+    body {
+	font-size: 16px;
+	line-height: 24px;
+    }
+
+    #background {
+	width: 625px;
+    }
+
+    ul.sections > li > div.annotation {
+	max-width: 625px;
+	min-width: 625px;
+	padding: 10px 25px 1px 50px;
+    }
+
+    ul.sections > li > div.content {
+	padding: 9px 15px 16px 25px;
+    }
+
+}
+
+/*---------------------- Syntax Highlighting -----------------------------*/
+
+td.linenos { background-color: #f0f0f0; padding-right: 10px; }
+span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+pre code {
+    display: block; padding: 0.5em;
+    color: #ddd;
+    background: #000
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+    color: #408080;
+    font-style: italic
+}
+
+pre .keyword,
+pre .assignment,
+pre .literal,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .lisp .title,
+pre .subst {
+    color: #C57151;
+/*font-weight: bold*/
+}
+
+pre .number,
+pre .hexcolor {
+    color: #40a070
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+    color: #219161;
+}
+
+pre .title,
+pre .id {
+    color: #4986CD;
+}
+pre .params {
+    color: #00F;
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .subst {
+    font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .label,
+pre .tex .command {
+    color: #4986CD;
+    font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+    color: #000080;
+    font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .instancevar,
+pre .lisp .body {
+    color: #ccc
+}
+
+pre .regexp {
+    color: #B68
+}
+
+pre .class {
+    color: #ccc;
+    font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .ruby .symbol .keyword,
+pre .ruby .symbol .keymethods,
+pre .lisp .keyword,
+pre .tex .special,
+pre .input_number {
+    color: #990073
+}
+
+pre .builtin,
+pre .constructor,
+pre .built_in,
+pre .lisp .title {
+    color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+    color: #999;
+    font-weight: bold
+}
+
+pre .deletion {
+    background: #300
+}
+
+pre .addition {
+    background: #030
+}
+
+pre .diff .change {
+    background: #003
+}
+
+pre .chunk {
+    color: #aaa
+}
+
+pre .tex .formula {
+    opacity: 0.5;
+}

@@ -65,12 +65,14 @@ out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
 
 doc/index.html: README.md
 	@mkdir -p $(@D)
-	docco -l linear -o $(@D) $<
+	docco -t docco/docco.jst -c docco/docco.css  -o $(@D) $<
 	mv $(@D)/README.html $@
+	cp -rf docco/public $(@D)
 
 doc/%.html: %.litcoffee
 	@mkdir -p $(@D)
-	docco -l linear -o $(@D) $<
+	docco -t docco/docco.jst -c docco/docco.css -o $(@D) $<
+	cp -rf docco/public $(@D)
 
 clean:
 	rm -rf ./doc
