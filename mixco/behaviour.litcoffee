@@ -90,6 +90,17 @@ determined after the XML configuration is generated.
 
         onEvent: (ev) -> null
 
+### Call
+
+The simplest behaviour just calls a function when it receives
+something.
+
+    class exports.Call extends exports.Behaviour
+
+        constructor: (@onEvent) ->
+
+    exports.call = factory exports.Call
+
 
 ### Output
 
@@ -357,83 +368,67 @@ determine, in the script, wether they are enabled or not.
     exports.when = factory exports.When
 
 
-### Special functionality
+### Special actions
 
-Tries to mimic the punch-in functionaility of a mixer by setting the
+    class exports.Action extends exports.Output
+
+        minimum: true
+
+        constructor: (@action = undefined) ->
+            super()
+            @onPress   or= action.press
+            @onRelease or= action.release
+
+        onEvent: (ev) ->
+            val = @value = @output.value = ev.value > 0
+            if val
+                @onPress?()
+            else
+                @onRelease?()
+
+    exports.action = factory exports.Action
+
+
+**PunchIn** tries to mimic the punch-in functionaility of a mixer by setting the
 crossfader to the center.  The threshold must be either positive or
 negative for the left channel and indicates how far the crossfader has
 to be from the center for punch-in to have effect.
 
-    class exports.PunchIn extends exports.Output
-
-        minimum: true
-
-        constructor: (@threshold) ->
-            super()
-
-        onEvent: (ev) ->
-            val = @value = @output.value = ev.value > 0
-            engine = @script.mixxx.engine
-            if val
-                oldfader = engine.getValue "[Master]", "crossfader"
-                if (@threshold < 0 and oldfader < @threshold) or
-                        (@threshold > 0 and oldfader > @threshold)
-                    @_oldfader = oldfader
+    exports.punchIn = (threshold) ->
+        oldxfader = undefined
+        exports.action
+            press: ->
+                engine    = @script.mixxx.engine
+                newxfader = engine.getValue "[Master]", "crossfader"
+                if (threshold < 0 and newxfader < threshold) or
+                        (threshold > 0 and newxfader > threshold)
+                    oldxfader = newxfader
                     engine.setValue "[Master]", "crossfader", 0
-            else
-                if @_oldfader?
-                    engine.setValue "[Master]", "crossfader", @_oldfader
-                    @_oldfader = undefined
 
-        directOutMapping: -> null
-        directInMapping: -> null
-
-    exports.punchIn = -> new exports.PunchIn arguments...
+            release: ->
+                engine = @script.mixxx.engine
+                if oldxfader?
+                    engine.setValue "[Master]", "crossfader", oldxfader
+                    oldxfader = undefined
 
 
-The **ScratchEnable** and **ScratchTick** behaviour map to the
+The **scratchEnable** and **scratchTick** behaviour map to the
 engine scratch system.
 
-    class exports.ScratchEnable extends exports.Output
+    exports.scratchEnable = (deck,
+                             intervalsPerRev = 128*4,
+                             rpm             = 44.0,
+                             alpha           = 1.0/8.0,
+                             beta            = 1.0 / 8.0 / 32.0,
+                             ramp            = true) ->
+        exports.action
+            press: ->
+                enable = @script.mixxx.engine.scratchEnable
+                enable deck, intervalsPerRev, rpm, alpha, beta, ramp
+            release: ->
+                @script.mixxx.engine.scratchDisable deck, ramp
 
-        minimum: true
-
-        constructor: (@scratchDeck,
-                      @scratchIntervalsPerRev = 128*4,
-                      @scratchRpm             = 44.0,
-                      @scratchAlpha           = 1.0/8.0,
-                      @scratchBeta            = 1.0 / 8.0 / 32.0,
-                      @scratchRamp            = true) ->
-            super()
-
-        onEvent: (ev) ->
-            val = @value = @output.value = ev.value > 0
+    exports.scratchTick = (deck, transform) ->
+        exports.call (ev) ->
             engine = @script.mixxx.engine
-            if val
-                engine.scratchEnable @scratchDeck, @scratchIntervalsPerRev,
-                                     @scratchRpm, @scratchAlpha, @scratchBeta,
-                                     @scratchRamp
-            else
-                engine.scratchDisable @scratchDeck, @scratchRamp
-
-        directOutMapping: -> null
-        directInMapping: -> null
-
-    exports.scratchEnable = -> new exports.ScratchEnable arguments...
-
-
-    class exports.ScratchTick extends exports.Output
-
-        constructor: (@scratchDeck,
-                      @scratchTransform = (val) -> val) ->
-            super()
-
-        onEvent: (ev) ->
-            val = @value = @output.value = ev.value
-            engine = @script.mixxx.engine
-            engine.scratchTick @scratchDeck, @scratchTransform val
-
-        directOutMapping: -> null
-        directInMapping: -> null
-
-    exports.scratchTick = -> new exports.ScratchTick arguments...
+            engine.scratchTick deck, transform ev.value
