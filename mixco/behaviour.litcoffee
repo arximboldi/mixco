@@ -31,9 +31,9 @@ Dependencies
     util      = require './util'
     value     = require './value'
 
-    indent = util.indent
-    assert = util.assert
-
+    indent  = util.indent
+    assert  = util.assert
+    factory = util.factory
 
 Actor
 -----
@@ -102,7 +102,7 @@ output of its actor based on its nested `output` *Value*.
 
         constructor: ->
             super
-            @output = new value.Value
+            @output = do value.value
 
         enable: ->
             super
@@ -217,7 +217,7 @@ behaviour of a direct mapping.
             "#{indent depth}<minimum>#{@minimum}</minimum>"
 
 
-    exports.map  = -> new exports.Map arguments...
+    exports.map = factory exports.Map
 
 
 The **toBehaviour** factory builds a default behaviour from a set
@@ -247,7 +247,7 @@ the script.
 
         directInMapping: -> null
 
-    exports.soft = -> new exports.Soft arguments...
+    exports.soft = factory exports.Soft
 
 
 ### Actions
@@ -322,7 +322,7 @@ The **select** method enables the control on the Nth group.
             for deck, n in @_decks
                 deck.script?.mixxx.engine.setValue @_groupN(n), @_key, (@_selected == n)
 
-    exports.chooser = -> new exports.Chooser arguments...
+    exports.chooser = factory exports.Chooser
 
 
 ### Conditionals
@@ -378,7 +378,7 @@ determine, in the script, wether they are enabled or not.
         directOutMapping: -> null
         directInMapping: -> null
 
-    exports.when = -> new exports.When arguments...
+    exports.when = factory exports.When
 
 
 ### Special functionality

@@ -8,8 +8,10 @@ changes.
 Dependencies
 ------------
 
-    events = require 'events'
-    util   = require './util'
+    events  = require 'events'
+    util    = require './util'
+    factory = util.factory
+
 
 Value
 -----
@@ -40,13 +42,16 @@ interface.
                 @emit 'value', newValue
             @_value
 
+    exports.value = factory exports.Value
+
+
 ### Constants
 
 Constants are lightweight objects that behave like a exports.Value,
 but can not be modified -- at least, they will not trigger a
 modification when modified.
 
-      class exports.Const
+    class exports.Const
 
         value: undefined
 
@@ -60,7 +65,7 @@ It has to mock the events.EventEmitter interface.
         removeListener: ->
         listeners: -> []
 
-    exports.const = -> new exports.Const arguments...
+    exports.const = factory exports.Const
 
 
 High-order values
@@ -84,9 +89,9 @@ operation on them.  It updates whenever one of them changes.
                 .reduce((a, b) => exports.const @reducer a.value, b.value)
                 .value
 
-    exports.reduce = -> new exports.Reduce arguments...
-    exports.and = -> exports.reduce ((a, b) -> a and b), arguments...
-    exports.or = -> exports.reduce ((a, b) -> a or b), arguments...
+    exports.reduce = factory exports.Reduce
+    exports.and    = -> exports.reduce ((a, b) -> a and b), arguments...
+    exports.or     = -> exports.reduce ((a, b) -> a or b), arguments...
 
 
 A **Transform** value holds a transformation of some other value by a
@@ -101,5 +106,5 @@ unary function.
         update: ->
             @value = @transformer @transformed.value
 
-    exports.transform = -> new exports.Transform arguments...
-    exports.not = -> exports.transform ((a) -> not a), arguments...
+    exports.transform = factory exports.Transform
+    exports.not       = -> exports.transform ((a) -> not a), arguments...

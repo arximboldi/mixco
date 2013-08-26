@@ -28,9 +28,10 @@ Dependencies
     util      = require './util'
     behaviour = require './behaviour'
 
-    indent = util.indent
-    hexStr = util.hexStr
-    assert = util.assert
+    indent  = util.indent
+    hexStr  = util.hexStr
+    assert  = util.assert
+    factory = util.factory
 
 
 Constants
@@ -223,7 +224,7 @@ Represents a basic hardware element for setting continuous parameters
 I hate using the **new** operator, thus for every concrete control
 we'll provide some factory functions.
 
-    exports.knob = -> new exports.Knob arguments...
+    exports.knob   = factory exports.Knob
     exports.slider = exports.knob
 
 
@@ -238,7 +239,7 @@ Represents a hardware button.
         configOptions: (depth) ->
             "#{indent depth}<button/>"
 
-    exports.button = -> new exports.Button arguments...
+    exports.button = factory exports.Button
 
 
 ### LedButton
@@ -287,4 +288,4 @@ represent the boolean property that it is mapped to.
                 #{indent depth}</output>
                 """
 
-    exports.ledButton = -> new exports.LedButton arguments...
+    exports.ledButton = factory exports.LedButton
