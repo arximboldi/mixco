@@ -158,6 +158,19 @@ Tests for the **Map** behaviour
             xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
             expect(do xfader.directInMapping).toBe null
 
+        it 'does nothing when the transform return null', ->
+            xfader = behaviour.map("[Master]", "crossfader").transform (v) ->
+                if v == 64 then 64 else null
+            xfader.enable script, actor
+
+            xfader.onEvent value: 32
+            expect(script.mixxx.engine.setValue)
+                .not.toHaveBeenCalled()
+
+            xfader.onEvent value: 64
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Master]", "crossfader", 64
+
 
 Tests for the **When** behaviour
 
