@@ -34,6 +34,7 @@ First, we have to import he *Mixco* modules that we are going to use.
     control   = require '../mixco/control'
     behaviour = require '../mixco/behaviour'
     value     = require '../mixco/value'
+    transform = require '../mixco/transform'
 
 The script
 ----------
@@ -70,6 +71,7 @@ Lets define these couple of shortcuts.
         c = control
         b = behaviour
         v = value
+        t = transform
 
 ### Constructor
 
@@ -135,8 +137,17 @@ The transport section.
                     .when(shift, g, "hotcue_#{idx+1}_clear", g, "hotcue_#{idx+1}_enabled")
                     .else g, "hotcue_#{idx+1}_activate", g, "hotcue_#{idx+1}_enabled"
 
-            @add c.ledButton(noteId 0x1C).does b.beatJump g, -1
-            @add c.ledButton(noteId 0x1D).does b.beatJump g, 1
+            @add c.ledButton(noteId 0x1C)
+                .when(shift, "[Playlist]", "SelectPrevPlaylist")
+                .else b.beatJump g, -1
+            @add c.ledButton(noteId 0x1D)
+                .when(shift, "[Playlist]", "SelectNextPlaylist")
+                .else b.beatJump g, 1
+            @add c.ledButton(noteOnId 0x1E)
+                .when(shift, "[Playlist]", "ToggleSelectedSidebarItem")
+                .else g, "keylock"
+            @add c.ledButton(noteId 0x1F).does g, "beats_translate_curpos"
+            @add c.ledButton(noteId 0x20).does g, "reverse"
 
 The looping section.
 
@@ -166,10 +177,19 @@ The wheel section.
             scratchMode = do b.option
             @add c.ledButton(noteOnId 0x15).does scratchMode
 
+            selectTrackKnobTransform = do ->
+                toggle = false
+                (val) ->
+                    val = val - 64
+                    toggle = not toggle or Math.abs(val) > 16
+                    if toggle then val.sign() else null
+
             @add c.ledButton(noteId 0x16)
-                .when scratchMode, b.scratchEnable i+1
+                .when v.and(v.not(shift), scratchMode), b.scratchEnable i+1
             @add c.knob(ccId 0x16)
-                .when(scratchMode, b.scratchTick i+1, (v) -> v-64)
+                .when(shift, b.map("[Playlist]", "SelectTrackKnob")
+                    .transform selectTrackKnobTransform)
+                .else.when(scratchMode, b.scratchTick i+1, (v) -> v-64)
                 .else b.map(g, "jog").transform (v) -> (v-64)/8.0
 
             @add c.ledButton(noteId 0x10)
@@ -180,3 +200,12 @@ The wheel section.
                 .else g, "rate_temp_up"
 
             @add c.slider(c.pbIds i).does b.soft g, "rate"
+
+Brake and spinback under the wheel.
+
+            @add c.ledButton(noteId 0x12)
+                .when(shift, g, "eject")
+                .else b.brake i+1
+            @add c.ledButton(noteId 0x13)
+                .when(shift, g, "LoadSelectedTrack")
+                .else b.spinback i+1

@@ -33,9 +33,10 @@ accessed via setters and getters.
         Object.defineProperty @prototype, prop, desc
 
 
-We also *monkeypatch* **Number** to provide a clamp method.
+We also *monkeypatch* **Number** to provide some nice methods.
 
     Number::clamp = (min, max) -> Math.min Math.max(this, min), max
+    Number::sign = () -> if this < 0 then -1 else 1
 
 
 **printer** can be used to print both into Mixxx console or the

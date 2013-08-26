@@ -454,3 +454,14 @@ tracks out of sync, specially while they play.
             latency    = engine.getValue "[Master]", "latency"
             targetpos += latency / 1000.0 / duration
         engine.setValue group, "playposition", targetpos.clamp 0, 1
+
+The **spinback** and **brake** functionalities just call the
+equivalent methods in the engine.
+
+    exports.spinback = (deck, args...) ->
+        exports.option().on 'value', ->
+            @script.mixxx.engine.spinback deck, @value, args...
+
+    exports.brake = (deck, args...) ->
+        exports.option().on 'value', ->
+            @script.mixxx.engine.brake deck, @value, args...

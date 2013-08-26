@@ -42,10 +42,15 @@ Utilities
     centeredT = -> transform centered, arguments...
     defaultT  = linearT 0.0, 1.0
 
-    exports.binaryT = binaryT
-    exports.linearT = linearT
-    exports.ceneredT = centeredT
-    exports.defaultT = defaultT
+    exports.binaryT   = binaryT
+    exports.linearT   = linearT
+    exports.centeredT = centeredT
+    exports.defaultT  = defaultT
+
+    exports.binary    = binary
+    exports.linear    = linear
+    exports.centered  = centered
+
 
 Mappings
 --------
@@ -109,6 +114,7 @@ needed. Please make sure to keep it in sync with the official
         hotcue_7_activate:          binaryT
         hotcue_7_clear:             binaryT
         jog:                        linearT -3.0, 3.0
+        keylock:                    binaryT
         LoadSelectedTrack:          binaryT
         loop_double:                binaryT
         loop_enabled:               binaryT
@@ -126,11 +132,15 @@ needed. Please make sure to keep it in sync with the official
         rate_temp_down_small:       binaryT
         rate_temp_up:               binaryT
         rate_temp_up_small:         binaryT
+        reverse:                    binaryT
         scratch2:                   linearT -3.0, 3.0
         scratch2_enable:            binaryT
         SelectNextPlaylist:         binaryT
         SelectNextTrack:            binaryT
         SelectPrevPlaylist:         binaryT
         SelectPrevTrack:            binaryT
+        SelectTrackKnob:            linearT -127.0, 127.0
         volume:                     defaultT
         wheel:                      linearT -3.0, 3.0
+        ToggleSelectedSidebarItem:  binaryT
+        eject:                      binaryT
