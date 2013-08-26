@@ -341,7 +341,7 @@ methods of the `control.Control` class.
             new exports.When nextCondition, args...
 
         enable: (args...) ->
-            super args...
+            super
             @_enableOn = args
             @_enableRequested = true
             do @_update

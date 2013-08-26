@@ -234,8 +234,6 @@ Represents a hardware button.
 
     class exports.Button extends exports.Control
 
-        message: MIDI_CC
-
         configOptions: (depth) ->
             "#{indent depth}<button/>"
 
