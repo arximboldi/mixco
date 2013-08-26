@@ -3,6 +3,14 @@ spec.mixco.behaviour
 
 Tests for behaviours.
 
+Module
+------
+
+    util      = require '../../mixco/util'
+    value     = require '../../mixco/value'
+    behaviour = require '../../mixco/behaviour'
+
+
 Mocks
 -----
 
@@ -15,18 +23,10 @@ Mocks
         'removeListener' ]
 
     mockBehaviour = ->
-        behaviour = new Behaviour
-        spyOn(behaviour, 'enable').andCallThrough()
-        spyOn(behaviour, 'disable').andCallThrough()
-        behaviour
-
-Module
-------
-
-    util = require '../../mixco/util'
-    value = require '../../mixco/value'
-    {Output, Map, When, Behaviour, PunchIn, ScratchEnable, ScratchTick} =
-        require '../../mixco/behaviour'
+        mocked = new behaviour.Behaviour
+        spyOn(mocked, 'enable').andCallThrough()
+        spyOn(mocked, 'disable').andCallThrough()
+        mocked
 
 
 Tests
@@ -40,7 +40,7 @@ Tests for the **Output** basic behaviour.
         actor  = null
 
         beforeEach ->
-            output = new Output
+            output = new behaviour.Output
             actor  = do mockActor
 
         it 'can accept actor without "send"', ->
@@ -75,8 +75,8 @@ Tests for the **Map** behaviour
         script = null
 
         beforeEach ->
-            map    = new Map "[Test]", "test"
-            map2   = new Map "[Test]", "test", "[Test2]", "test2"
+            map    = behaviour.map "[Test]", "test"
+            map2   = behaviour.map "[Test]", "test", "[Test2]", "test2"
             actor  = do mockActor
             script = do mock.testScript
 
@@ -123,7 +123,7 @@ Tests for the **Map** behaviour
             expect(map2.output.value).toBe(2)
 
         it 'sets the values in the engine using the default transform', ->
-            xfader = new Map "[Master]", "crossfader"
+            xfader = behaviour.map "[Master]", "crossfader"
             xfader.enable script, actor
 
             xfader.onEvent value: 63.5
@@ -139,7 +139,7 @@ Tests for the **Map** behaviour
                 .toHaveBeenCalledWith "[Master]", "crossfader", 1
 
         it 'sets the values in the engine using custom transformation', ->
-            xfader = new Map("[Master]", "crossfader").transform (v) -> v
+            xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
             xfader.enable script, actor
 
             xfader.onEvent value: 64
@@ -155,7 +155,7 @@ Tests for the **Map** behaviour
                 .toHaveBeenCalledWith "[Master]", "crossfader", 0
 
         it 'does not direct map when a custom transform is set', ->
-            xfader = new Map("[Master]", "crossfader").transform (v) -> v
+            xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
             expect(do xfader.directInMapping).toBe null
 
 
@@ -170,11 +170,11 @@ Tests for the **When** behaviour
         script    = null
 
         beforeEach ->
-            condition = new value.Value false
+            condition = value.value false
             wrapped   = do mockBehaviour
             actor     = do mockActor
             script    = do mock.testScript
-            when_     = new When condition, wrapped
+            when_     = behaviour.when condition, wrapped
 
         it "does nothing when enabled and condition not satisifed", ->
             when_.enable script, actor
@@ -226,8 +226,8 @@ Tests for the **PunchIn** behaviour
         xfader       = 0.0
 
         beforeEach ->
-            leftPunchIn  = new PunchIn 0.5
-            rightPunchIn = new PunchIn -0.5
+            leftPunchIn  = behaviour.punchIn 0.5
+            rightPunchIn = behaviour.punchIn -0.5
             actor        = do mockActor
             script       = do mock.testScript
             script.mixxx.engine.getValue = (group, control) ->
@@ -279,7 +279,7 @@ Tests for the **ScratchEnable** behaviour
         beforeEach ->
             actor   = do mockActor
             script  = do mock.testScript
-            scratch = new ScratchEnable 1, 32, 33, 1, 0.4, false
+            scratch = behaviour.scratchEnable 1, 32, 33, 1, 0.4, false
             scratch.enable script, actor
 
         it 'enables scratch on button press', ->
@@ -288,7 +288,7 @@ Tests for the **ScratchEnable** behaviour
 
             scratch.onEvent value: 1
             expect(script.mixxx.engine.scratchEnable)
-                .toHaveBeenCalledWith 1, 32, 33, 1, 0.4, false
+1                .toHaveBeenCalledWith 1, 32, 33, 1, 0.4, false
 
         it 'disables scratch on button release', ->
             do expect(script.mixxx.engine.scratchDisable)
@@ -312,7 +312,7 @@ Tests for the **ScratchTick** behaviour
         beforeEach ->
             actor   = do mockActor
             script  = do mock.testScript
-            scratch = new ScratchTick 1, (v) -> v / 2
+            scratch = behaviour.scratchTick 1, (v) -> v / 2
             scratch.enable script, actor
 
         it 'ticks the given deck scratch with the current transform', ->
