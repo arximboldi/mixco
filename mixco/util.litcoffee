@@ -32,6 +32,12 @@ accessed via setters and getters.
     Function::property = (prop, desc) ->
         Object.defineProperty @prototype, prop, desc
 
+
+We also *monkeypatch* **Number** to provide a clamp method.
+
+    Number::clamp = (min, max) -> Math.min Math.max(this, min), max
+
+
 **printer** can be used to print both into Mixxx console or the
 standard output, for code paths that run both as Mixxx script or
 standalone.

@@ -135,6 +135,9 @@ The transport section.
                     .when(shift, g, "hotcue_#{idx+1}_clear", g, "hotcue_#{idx+1}_enabled")
                     .else g, "hotcue_#{idx+1}_activate", g, "hotcue_#{idx+1}_enabled"
 
+            @add c.ledButton(noteId 0x1C).does b.beatJump g, -1
+            @add c.ledButton(noteId 0x1D).does b.beatJump g, 1
+
 The looping section.
 
             @add c.ledButton(noteId 0x29)
