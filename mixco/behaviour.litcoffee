@@ -211,7 +211,9 @@ the script.  In this case, we define `onEvent` to emulate the
 behaviour of a direct mapping.
 
         onEvent: (ev) ->
-            @script.mixxx.engine.setValue @group, @key, @_transform ev.value
+            val = @_transform ev.value
+            if val != null
+                @script.mixxx.engine.setValue @group, @key, val
 
         configOutput: (depth) ->
             "#{indent depth}<minimum>#{@minimum}</minimum>"
@@ -250,44 +252,16 @@ the script.
     exports.soft = factory exports.Soft
 
 
-### Actions
+The *set* behaviour sets a control to a spefic value whenever it is
+pressed.  The *toggle* behaviour instead sets it to two different
+value on press or release.
 
-Actions let you set a callback.  Still, they are map, so you can
-associate a value that can be associated to it.
+    exports.toggle = (offValue, onValue, args...) ->
+        exports.map(args...).transform (val) ->
+            if val then onValue else offValue
 
-    class Action extends exports.Map
-
-        constructor: (@action, args...) ->
-            super args...
-
-        onEvent: (ev) ->
-            if ev.value
-                @action()
-
-        directInMapping: ->
-
-
-    class exports.Set extends Action
-
-        constructor: (@valueToSet, args...) ->
-            super (=>
-                engine.setValue @group, @key, @valueToSet), args...
-
-    exports.set = -> new exports.Set arguments...
-
-
-    class exports.Toggle extends exports.Map
-
-        constructor: (@setOffValue, @setOnValue, args...) ->
-            super args...
-
-        onEvent: (ev) ->
-            val = if ev.value then @setOnValue else @setOffValue
-            engine.setValue @group, @key, val
-
-        directInMapping: ->
-
-    exports.toggle = -> new exports.Toggle arguments...
+    exports.set = (valueToSet, args...) ->
+        exports.toggle valueToSet, null, args...
 
 
 ### Chooser
@@ -311,7 +285,7 @@ selected.
         choose: (n) ->
             result = @_decks[n]
             if not result
-                result = new Action (=> @select n), @_groupN(n), @_key
+                result = exports.map(@_groupN(n), @_key).transform => @select n
                 @_decks[n] = result
             result
 
@@ -320,7 +294,9 @@ The **select** method enables the control on the Nth group.
         select: (n) ->
             @_selected = n
             for deck, n in @_decks
-                deck.script?.mixxx.engine.setValue @_groupN(n), @_key, (@_selected == n)
+                deck.script?.mixxx.engine.setValue \
+                    @_groupN(n), @_key, (@_selected == n)
+            null
 
     exports.chooser = factory exports.Chooser
 
