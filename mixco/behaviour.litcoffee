@@ -122,13 +122,13 @@ output of its actor based on its nested `output` *Value*.
                 then 'on' else 'off'
 
 
-### ToValue
+### Transform
 
-The simplest behaviour just transforms the input values into a value.
+Simple behaviour that just transforms the input values into a value.
 It takes one of the transforms of the `mixco.transform` module to map
 the value.  It can take an *initial* value too.
 
-    class exports.ToValue extends exports.Output
+    class exports.Transform extends exports.Output
 
         constructor: (@transformer, initial=undefined) ->
             super initial
@@ -136,9 +136,9 @@ the value.  It can take an *initial* value too.
         onEvent: (ev) ->
             @output.value = @value = @transformer ev.value
 
-    exports.toValue = -> new exports.ToValue arguments...
-    exports.modifier = -> exports.toValue transform.binaryT, false
-    exports.option = -> exports.toValue (-> not @value), false
+    exports.transform = factory exports.Transform
+    exports.modifier  = -> exports.transform transform.binaryT, false
+    exports.option    = -> exports.transform (-> not @value), false
 
 
 ### Map
