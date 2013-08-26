@@ -288,7 +288,7 @@ Tests for the **ScratchEnable** behaviour
 
             scratch.onEvent value: 1
             expect(script.mixxx.engine.scratchEnable)
-1                .toHaveBeenCalledWith 1, 32, 33, 1, 0.4, false
+                .toHaveBeenCalledWith 1, 32, 33, 1, 0.4, false
 
         it 'disables scratch on button release', ->
             do expect(script.mixxx.engine.scratchDisable)
