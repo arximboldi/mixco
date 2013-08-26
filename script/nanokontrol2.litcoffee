@@ -68,9 +68,7 @@ preferences window in Mixxx when he selects the script.
             forums: ''
             wiki: ''
 
-### Basic deck controls
-
-Lets define these couple of shortcuts.
+Also, lets define these couple of shortcuts to save typing.
 
         c = control
         b = behaviour

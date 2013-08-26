@@ -122,7 +122,7 @@ Documentation
   * [spec.mixco.value][spec.mixco.value]
   * [spec.mixco.script][spec.mixco.script]
 
-  [script.nanokontrol2]: script/nanokontrol2.htm
+  [script.nanokontrol2]: script/nanokontrol2.html
   [script.xponent]: script/xponent.html
 
   [mixco.script]: mixco/script.html

@@ -83,7 +83,7 @@ Transport section.
             @add c.slider(ccId 0x07).does g, "crossfader"
             @add c.slider(ccId 0x0D).does g, "headMix"
 
-### Per deck controls.
+### Per deck controls
 
             @decks = b.chooser "pfl"
             @addDeck 0
