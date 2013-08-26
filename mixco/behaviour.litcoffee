@@ -222,9 +222,11 @@ the script.  In this case, we define `onEvent` to emulate the
 behaviour of a direct mapping.
 
         onEvent: (ev) ->
-            val = @_transform ev.value
+            val = @_transform ev.value, @value
             if val != null
                 @script.mixxx.engine.setValue @group, @key, val
+                if @listeners('value').length == 0
+                    @value = val
 
         configOutput: (depth) ->
             "#{indent depth}<minimum>#{@minimum}</minimum>"

@@ -171,6 +171,18 @@ Tests for the **Map** behaviour
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 64
 
+        it 'does toggle from previous state when binary transform', ->
+            lock = behaviour.map("[Channel1]", "keylock")
+            lock.enable script, actor
+
+            lock.onEvent value: 32
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Channel1]", "keylock", true
+
+            lock.onEvent value: 32
+            expect(script.mixxx.engine.setValue)
+                .toHaveBeenCalledWith "[Channel1]", "keylock", false
+
 
 Tests for the **When** behaviour
 

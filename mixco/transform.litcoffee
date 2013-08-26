@@ -25,7 +25,9 @@ License
 Utilities
 ---------
 
-    binary   = (v) -> if v > 0 then 1 else 0
+    binary   = (v, oldv) ->
+        if oldv? then not oldv
+        else v > 0
     linear   = (v, min, max) -> min + v * (max - min)
     centered = (v, min, center, max) ->
         if v < .5
@@ -33,7 +35,7 @@ Utilities
         else
             linear (v-.5)*2, center, max
 
-    transform = (f, args...) -> (v) -> f v / 127.0, args...
+    transform = (f, args...) -> (v, oldv) -> f v / 127.0, args..., oldv
 
     binaryT   = transform binary
     linearT   = -> transform linear, arguments...
