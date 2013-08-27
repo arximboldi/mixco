@@ -139,7 +139,7 @@ Thera are three kinds of behaviours we can associate to the control:
             this
 
         _else: (args...) ->
-            assert @_lastWhen?, "'elsen' must be preceded by 'when' or 'elseWhen'"
+            assert @_lastWhen?, "'else' must be preceded by 'when' or 'elseWhen'"
             @_lastWhen = @_lastWhen.else args...
             @_behaviours.push @_lastWhen
             @_lastWhen = undefined

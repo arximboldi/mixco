@@ -1,5 +1,5 @@
-mixco.expression
-================
+mixco.value
+===========
 
 Module that provides a series of expressions that re-evaluate
 automatically whenever one of the leaf nodes of the expression tree
