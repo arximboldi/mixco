@@ -15,11 +15,6 @@ functionallity of the controls.
     value     = require '../mixco/value'
     transform = require '../mixco/transform'
 
-The script
-----------
-
-Declaration, metadata and some aliases to the *Mixco* modules.
-
     script.register module, class Xponent extends script.Script
 
         info:
@@ -37,7 +32,8 @@ Declaration, metadata and some aliases to the *Mixco* modules.
         v = value
         t = transform
 
-### Global section
+Global section
+--------------
 
 Controls that do not have a per-deck functionality.
 
@@ -54,7 +50,8 @@ Controls that do not have a per-deck functionality.
 
             @add c.slider(ccId 0x07).does g, "crossfader"
 
-### Per deck controls
+Per deck controls
+-----------------
 
 We add the two decks with the `addDeck(idx)` function. In the
 *Xponent*, each MIDI message is repeated per-deck on a different
@@ -82,7 +79,7 @@ channel.
 
             @add c.ledButton(noteOnId 0x14).does @decks.choose(i)
 
-#### The mixer
+### The mixer
 
 
 * **20.** Filter and gain kills.
@@ -119,7 +116,7 @@ channel.
 
             @add c.ledButton(noteId 0x07).does b.punchIn (0.5-i)
 
-#### The transport section
+### The transport section
 
 * **29.** Song progress indication. When it approches the end of the
   playing song it starts blinking.
@@ -197,7 +194,7 @@ channel.
             @add c.ledButton(noteOnId 0x24).does g, "play"
 
 
-#### The looping section
+### The looping section
 
 * **36.** This includes several controls to manage loops...
 
@@ -235,7 +232,7 @@ channel.
                 .when(shift, g, "beatloop_2_activate", g, "beatloop_2_enabled")
                 .else g, "beatloop_32_activate", g, "beatloop_32_enabled"
 
-#### The wheel and pitch section
+### The wheel and pitch section
 
 * **10.** Toggles *scratch* mode.
 
