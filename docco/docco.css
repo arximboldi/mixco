@@ -315,11 +315,10 @@ ul.sections > li > div.annotation p tt, .annotation code {
 	vertical-align: top;
 	text-align: left;
     }
-    ul.sections > li > div.annotation.header {
+    ul.sections > li > div.annotation.header,
+    ul.sections > li#section-1 > div.annotation,
+    ul.sections > li#section-2 > div.annotation {
 	border-top: 0;
-    }
-    ul.sections > li#section-1 > div.annotation {
-	border: 0;
     }
 
     ul.sections > li > div.annotation pre {
@@ -327,15 +326,18 @@ ul.sections > li > div.annotation p tt, .annotation code {
 	padding-left: 15px;
     }
 
-    ul.sections > li > div.annotation + div.content {
-	border-top: 3px dashed #222;
-    }
     ul.sections > li > div.content {
+	border-top: 3px dashed #222;
 	width: 100%;
 	padding: 0px;
 	margin: 0;
 	vertical-align: top;
 	background: #000;
+    }
+
+    ul.sections > li#section-1 > div.content,
+    ul.sections > li#section-2 > div.content {
+	border-top: 0;
     }
 
     .pilwrap {

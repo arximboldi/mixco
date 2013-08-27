@@ -35,8 +35,10 @@
               </div>
           </li>
         <% } %>
+	<% var license = null; %>
         <% for (var i=0, l=sections.length; i<l; i++) { %>
-        <% var section = sections[i]; %>
+        <%   var section = sections[i]; %>
+	<%   var noCode = section.codeText.replace(/\s/gm, '') == '' %>
         <li id="section-<%= i + 1 %>">
           <% bigHeading = section.docsHtml.match(/^\s*(<h1>)|<h2>/) %>
             <div class="annotation<%= bigHeading ? ' header': '' %>">
@@ -44,9 +46,9 @@
               <div class="pilwrap <%= heading ? 'for-' + heading[1] : '' %>">
                 <a class="pilcrow" href="#section-<%= i + 1 %>">&#182;</a>
               </div>
-              <%= section.docsHtml %>
+              <%= section.docsHtml.replace(/--/gm, '&mdash;') %>
             </div>
-            <% if (section.codeText.replace(/\s/gm, '') != '') { %>
+            <% if (!noCode) { %>
             <div class="content"><%= section.codeHtml %></div>
             <% } %>
         </li>
