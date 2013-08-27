@@ -6,17 +6,25 @@ Methods to transform MIDI values to Mixxx control values.
 Utilities
 ---------
 
-    binary   = (v, oldv) ->
-        if oldv? then not oldv
-        else v > 0
-    linear   = (v, min, max) -> min + v * (max - min)
-    centered = (v, min, center, max) ->
-        if v < .5
-            linear v*2, min, center
-        else
-            linear (v-.5)*2, center, max
+    binary           = (v, oldv) -> if oldv? then not oldv else v > 0
+    binary.inverse   = (v)       -> if v > 0 then 1 else 0
 
-    transform = (f, args...) -> (v, oldv) -> f v / 127.0, args..., oldv
+    linear           = (v, min, max) -> min + v * (max - min)
+    linear.inverse   = (v, min, max) -> (v - min) / (max - min)
+
+    centered         = (v, min, center, max) ->
+        if v < .5
+        then linear v*2, min, center
+        else linear (v-.5)*2, center, max
+    centered.inverse = (v, min, center, max) ->
+        if v < center
+        then 0.5 * linear.inverse v, min, center
+        else 0.5 + 0.5 * linear.inverse v, center, max
+
+    transform = (f, args...) ->
+        result         = (v, oldv) -> f v / 127.0, args..., oldv
+        result.inverse = (v)       -> 127 * f.inverse(v, args...)
+        result
 
     binaryT   = transform binary
     linearT   = -> transform linear, arguments...
@@ -105,6 +113,7 @@ needed. Please make sure to keep it in sync with the official
         loop_out:                   binaryT
         loop_start_position:        linearT
         play:                       binaryT
+        playposition:               linearT 0.0, 1.0
         plf:                        binaryT
         pregain:                    centeredT 0.0, 1.0, 4.0
         pregain_toggle:             binaryT
@@ -125,6 +134,9 @@ needed. Please make sure to keep it in sync with the official
         wheel:                      linearT -3.0, 3.0
         ToggleSelectedSidebarItem:  binaryT
         eject:                      binaryT
+        VuMeter:                    defaultT
+        VuMeterL:                   defaultT
+        VuMeterR:                   defaultT
 
 
 License

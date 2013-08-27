@@ -148,6 +148,13 @@ synchronised with Mixxx only there are listeners on it.
             @_transform = trans
             this
 
+        meter: (transformer = undefined) ->
+            @_outTransform   = transformer
+            @_outTransform or= transform.mappings[@outkey].inverse
+            @updateOutput = ->
+                @actor.send Math.floor @_outTransform @output.value
+            this
+
         enable: (script, actor) ->
             super
 

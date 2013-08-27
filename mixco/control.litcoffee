@@ -123,7 +123,6 @@ Thera are three kinds of behaviours we can associate to the control:
             @_lastWhen = undefined
             this
 
-
 The control will listen to the --via a *handler*-- only when the
 behaviours need it. If there is only one behaviour in the control and
 this can be directly mapped, the midi messages will be connected
@@ -229,17 +228,18 @@ represent the boolean property that it is mapped to.
             on: 0x7f
             off: 0x00
 
-        send: (value) ->
-            @doSend value
+        send: (state) ->
+            @doSend state
 
         doSend: (state) ->
             id = @ids[0]
+            assert @states[state]?, "State '#{state}' not in the states"
             @script.mixxx.midi.sendShortMsg id.status(), id.midino, @states[state]
 
         init: ->
             # We should remove the send function before enabling
             # behaviours.
-            if not @needsSend
+            if not @needsSend()
                 @send = undefined
             super
 
@@ -247,11 +247,11 @@ represent the boolean property that it is mapped to.
             @doSend 'off'
             super
 
-        @property 'needsSend',
-            get: -> @_behaviours.length != 1 or not do @_behaviours[0].directOutMapping
+        needsSend: ->
+            @_behaviours.length != 1 or not do @_behaviours[0].directOutMapping
 
         configOutputs: (depth, script) ->
-            mapping = not @needsSend and do @_behaviours[0].directOutMapping
+            mapping = not @needsSend() and do @_behaviours[0].directOutMapping
             if mapping
                 """
                 #{indent depth}<output>
@@ -265,6 +265,25 @@ represent the boolean property that it is mapped to.
                 """
 
     exports.ledButton = factory exports.LedButton
+
+
+### Meter
+
+Represents a visual element that is controlled by MIDI notes, like a
+LED volume meter.
+
+    class exports.Meter extends exports.Control
+
+        send: (value) ->
+            id = @ids[0]
+            @script.mixxx.midi.sendShortMsg id.status(), id.midino, value
+
+        configInputs:  -> ""
+        configOutputs: -> ""
+        needsHandler:  -> false
+
+    exports.meter = factory exports.Meter
+
 
 License
 -------

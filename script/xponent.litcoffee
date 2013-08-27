@@ -84,16 +84,6 @@ channel.
 
 #### The mixer
 
-* **33.** Deck volume.
-
-            @add c.slider(ccId 0x07).does g, "volume"
-
-* **22.** Mixer EQ and gain.
-
-            @add c.knob(ccId 0x08).does g, "filterLow"
-            @add c.knob(ccId 0x09).does g, "filterMid"
-            @add c.knob(ccId 0x0A).does g, "filterHigh"
-            @add c.knob(ccId 0x0B).does b.soft g, "pregain"
 
 * **20.** Filter and gain kills.
 
@@ -102,6 +92,17 @@ channel.
             @add c.ledButton(noteId 0x0A).does g, "filterHighKill"
             @add c.ledButton(noteId 0x0B).does g, "pregain_toggle"
 
+* **22.** Mixer EQ and gain.
+
+            @add c.knob(ccId 0x08).does g, "filterLow"
+            @add c.knob(ccId 0x09).does g, "filterMid"
+            @add c.knob(ccId 0x0A).does g, "filterHigh"
+            @add c.knob(ccId 0x0B).does b.soft g, "pregain"
+
+* **23.** Per deck volume meters.
+
+            @add c.meter(c.ccIds 0x12+i, 3).does b.map(g, "VuMeter").meter()
+
 * **34.** Sync button. Adjust pitch and aligns grids to beatmatch both
   tracks. When *shift* is pressed, it only adjusts pitch, not phase.
 
@@ -109,12 +110,39 @@ channel.
                 .when(shift, g, "beatsync_tempo")
                 .else g, "beatsync"
 
+* **33.** Deck volume.
+
+            @add c.slider(ccId 0x07).does g, "volume"
+
 * **38.** Punch-in/transform. While pressed, lets this track be heard
   overriding the corssfader.
 
             @add c.ledButton(noteId 0x07).does b.punchIn (0.5-i)
 
 #### The transport section
+
+* **29.** Song progress indication. When it approches the end of the
+  playing song it starts blinking.
+
+            playpositionMeter = do ->
+                step = 0
+                (pos) ->
+                    engine = @script.mixxx.engine
+                    duration = switch
+                        when not engine.getValue g, "play" then undefined
+                        when pos > .9  then 5
+                        when pos > .8  then 9
+                        when pos > .75 then 13
+                        else undefined
+                    if duration?
+                        step = (step + 1) % duration
+                        if step > duration / 2 then 0 else pos * 127
+                    else
+                        step = 0
+                        pos * 127
+
+            @add c.meter(c.ccIds 0x14+i, 3).does b.map(g, "playposition")
+                .meter playpositionMeter
 
 * **30.** Back and forward.
 
