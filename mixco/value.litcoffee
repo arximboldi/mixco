@@ -5,9 +5,6 @@ Module that provides a series of expressions that re-evaluate
 automatically whenever one of the leaf nodes of the expression tree
 changes.
 
-Dependencies
-------------
-
     events  = require 'events'
     util    = require './util'
     factory = util.factory
@@ -108,3 +105,21 @@ unary function.
 
     exports.transform = factory exports.Transform
     exports.not       = -> exports.transform ((a) -> not a), arguments...
+
+License
+-------
+
+>  Copyright (C) 2013 Juan Pedro Bolívar Puente
+>
+>  This program is free software: you can redistribute it and/or
+>  modify it under the terms of the GNU General Public License as
+>  published by the Free Software Foundation, either version 3 of the
+>  License, or (at your option) any later version.
+>
+>  This program is distributed in the hope that it will be useful,
+>  but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  GNU General Public License for more details.
+>
+>  You should have received a copy of the GNU General Public License
+>  along with this program.  If not, see <http://www.gnu.org/licenses/>.

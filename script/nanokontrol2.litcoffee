@@ -8,29 +8,13 @@ serve as **tutorial** on how to write your own controller scripts.
 
   ![NanoKontrol2 Layout](../pic/nanokontrol2.jpg)
 
-License
--------
-
->  Copyright (C) 2013 Juan Pedro Bolívar Puente
->
->  This program is free software: you can redistribute it and/or
->  modify it under the terms of the GNU General Public License as
->  published by the Free Software Foundation, either version 3 of the
->  License, or (at your option) any later version.
->
->  This program is distributed in the hope that it will be useful,
->  but WITHOUT ANY WARRANTY; without even the implied warranty of
->  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->  GNU General Public License for more details.
->
->  You should have received a copy of the GNU General Public License
->  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
 Dependencies
 ------------
 
-First, we have to import he *Mixco* modules that we are going to use.
+First, we have to import he *Mixco* modules that we are going to use,
+using the [NodeJS,
+**require**](http://nodejs.org/api/modules.html#modules_module_require_id)
+function.
 
     {assert}  = require '../mixco/util'
     script    = require '../mixco/script'
@@ -258,3 +242,21 @@ deck, such that all transport buttons are directly functional.
         init: ->
             super
             @decks.select 0
+
+License
+-------
+
+>  Copyright (C) 2013 Juan Pedro Bolívar Puente
+>
+>  This program is free software: you can redistribute it and/or
+>  modify it under the terms of the GNU General Public License as
+>  published by the Free Software Foundation, either version 3 of the
+>  License, or (at your option) any later version.
+>
+>  This program is distributed in the hope that it will be useful,
+>  but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  GNU General Public License for more details.
+>
+>  You should have received a copy of the GNU General Public License
+>  along with this program.  If not, see <http://www.gnu.org/licenses/>.

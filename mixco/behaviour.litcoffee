@@ -4,28 +4,6 @@ mixco.behaviour
 This module contains all the functionallity that lets you add
 *behaviour* to the hardware *controls* -- i.e. determine what they do.
 
-License
--------
-
->  Copyright (C) 2013 Juan Pedro Bolívar Puente
->
->  This program is free software: you can redistribute it and/or
->  modify it under the terms of the GNU General Public License as
->  published by the Free Software Foundation, either version 3 of the
->  License, or (at your option) any later version.
->
->  This program is distributed in the hope that it will be useful,
->  but WITHOUT ANY WARRANTY; without even the implied warranty of
->  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->  GNU General Public License for more details.
->
->  You should have received a copy of the GNU General Public License
->  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-Dependencies
-------------
-
     events    = require 'events'
     transform = require './transform'
     util      = require './util'
@@ -465,3 +443,21 @@ equivalent methods in the engine.
     exports.brake = (deck, args...) ->
         exports.option().on 'value', ->
             @script.mixxx.engine.brake deck, @value, args...
+
+License
+-------
+
+>  Copyright (C) 2013 Juan Pedro Bolívar Puente
+>
+>  This program is free software: you can redistribute it and/or
+>  modify it under the terms of the GNU General Public License as
+>  published by the Free Software Foundation, either version 3 of the
+>  License, or (at your option) any later version.
+>
+>  This program is distributed in the hope that it will be useful,
+>  but WITHOUT ANY WARRANTY; without even the implied warranty of
+>  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>  GNU General Public License for more details.
+>
+>  You should have received a copy of the GNU General Public License
+>  along with this program.  If not, see <http://www.gnu.org/licenses/>.
