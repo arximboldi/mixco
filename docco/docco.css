@@ -80,11 +80,11 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1em;
 }
 
-h1 { margin-top: 60px; }
-
 h1 {
+    margin-top: 60px;
+    border-bottom: 6px solid #000;
     font-size: 250%;
-    width: 100%;
+    width: 120%;
 }
 
 h2 { font-size: 175%; }
