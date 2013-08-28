@@ -3,50 +3,57 @@ spec.mixco.value
 
 General tests for some of the Mixco based scripts.
 
-Dependencies
-------------
+    fs   = require 'fs'
+    path = require 'path'
+    mock = require './mock'
 
 We should let exception get all the way down to the test framework so
-trivial errors are detected. We clear all the *mixco* modules in the
-*require* cache to make sure the monkeypatched version of the
-*catching* function is used.  Then we patch it.
+trivial errors are detected. The **unrequire** function will cause a
+module to be unloaded.  We patch the *catching* decorator after
+unloading all modules so exceptions reach the test system.
 
-    for name, module of require.cache
-        if name.match("mixco")
-            delete require.cache[name]
+    unrequire = (name) ->
+        fullName = require.resolve name
+        if fullName in require.cache
+            delete require.cache[fullName]
 
-    util = require('../mixco/util')
-    for name, module of require.cache
-        if name.match("mixco/util")
-            module.exports.catching = (f) -> f
+    forEveryModuleInDir = (dir, fn) ->
+        module_exts = [ '.coffee', '.litcoffee' ]
+        current_dir = path.basename require.resolve './scripts.spec.litcoffee'
+        for file in fs.readdirSync path.join current_dir, dir
+            ext = path.extname file
+            if ext in module_exts
+                fn path.basename file, ext
 
-And some mocks of the Mixxx environment.
-
-    mock = require('./mock')
+    do monkeypatchCatching = ->
+        forEveryModuleInDir '../mixco', (name) ->
+            unrequire path.join '../mixco', name
+        require '../mixco/util'
+        module = require.cache[require.resolve '../mixco/util']
+        module.exports.catching = (f) -> f
 
 Tests
 -----
 
-    runBasicScriptTest = (script_name) ->
-        module = require("../script/#{script_name}")
-        script = module[script_name]
-        expect(do script.config)
-            .not.toMatch "undefined"
+    forEveryModuleInDir '../script', (scriptName) ->
 
-        script.mixxx = do mock.mixxx
-        do script.init
-        do script.shutdown
+        describe "Script: #{scriptName}", ->
+            script = null
 
+            beforeEach ->
+                moduleName = path.join '../script', scriptName
+                unrequire moduleName
+                module = require moduleName
+                script = module[scriptName]
+                script.mixxx = do mock.mixxx
 
-    runBasicScriptTests = (script_names...) ->
-        for script_name in script_names
-            runBasicScriptTest script_name
+            it "generates configuration without undefined values", ->
+                expect(do script.config)
+                    .not.toMatch "undefined"
 
-    describe 'Scripts', ->
-
-        it 'can run without being trivially broken', ->
-           runBasicScriptTests "nanokontrol2",
-                               "xponent"
+            it "initializes and shutsdown without launching exceptions", ->
+                do script.init
+                do script.shutdown
 
 License
 -------

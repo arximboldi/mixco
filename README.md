@@ -53,7 +53,8 @@ single minute.
 
   [git]: https://gitorious.org/mixco
 
-### Depedencies
+Depedencies
+-----------
 
 Required dependencies to compile the Mixxx scripts:
 
@@ -80,7 +81,7 @@ scripts from here][precomp]. Else, from the project folder, execute:
 The Mixxx compatible script files should be then `out/` folder, ready
 to be copied to the [Mixxx MIDI controller folder][mixxxmidi]
 
-To compile your own scripts, copy your `myscript.litcoffee` to the
+To **compile** your own scripts, copy your `myscript.litcoffee` to the
 `script/` folder, then execute from the project folder:
 
 > make "SCRIPTS=out/myscript.midi.xml out/myscript.js"
@@ -90,6 +91,12 @@ script files ready to be used with Mixxx.  You can also compile
 beautiful documentation like this doing:
 
 > make doc DOCS=doc/script/myscript.html
+
+Also, there is an automatic testing facility that will try to find
+errors in all the scripts in the `script/` folder.  Run such tests
+with:
+
+> make test
 
   [git]: https://gitorious.org/mixco
   [precomp]: https://gitorious.org/mixco/compiled
