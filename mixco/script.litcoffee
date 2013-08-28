@@ -15,10 +15,10 @@ scripts.
 Script
 ------
 
-First, the *register* function registers a instance of the class `scriptType`
-instance into the parent module.  The script instance will be exported
-as `Script.name`, and if the parent module is main, it will be
-executed.
+First, the **register** function registers a instance of the class
+`scriptType` instance into the parent module.  The script instance
+will be exported as `Script.name`, and if the parent module is main,
+it will be executed.
 
     exports.register = (targetModule, scriptType) ->
         instance = new scriptType

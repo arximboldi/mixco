@@ -293,9 +293,9 @@ Tests for the **PunchIn** behaviour
                 .toHaveBeenCalledWith "[Master]", "crossfader", -0.75
 
 
-Tests for the **ScratchEnable** behaviour
+Tests for the **scratchEnable** behaviour
 
-    describe 'ScratchEnable', ->
+    describe 'scratchEnable', ->
 
         actor   = null
         script  = null
@@ -326,9 +326,9 @@ Tests for the **ScratchEnable** behaviour
                 .toHaveBeenCalledWith 1, false
 
 
-Tests for the **ScratchTick** behaviour
+Tests for the **scratchTick** behaviour
 
-    describe 'ScratchTick', ->
+    describe 'scratchTick', ->
 
         actor   = null
         script  = null
