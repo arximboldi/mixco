@@ -97,14 +97,10 @@ In general, controls, behaviours and other entities using the Mixxx
 environment --the global variables like *engine* or *midi*-- should
 access it via this property instead.  This improves testability.
 
-        @property 'mixxx',
-            get: ->
-                @_mixxxSystem or=
-                    engine: engine
-                    midi: midi
-                    script: script
-            set: (mixxxSystem) ->
-                @_mixxxSystem = mixxxSystem
+        mixxx:
+            engine: engine if engine?
+            midi:   midi   if midi?
+            script: script if script?
 
 ### Standalone execution
 
