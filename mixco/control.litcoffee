@@ -15,10 +15,10 @@ Defines different hardware controls.
 Constants
 ---------
 
-    MIDI_NOTE_ON   = 0x9
-    MIDI_NOTE_OFF  = 0x8
-    MIDI_CC        = 0xB
-    MIDI_PITCHBEND = 0xE
+    exports.MIDI_NOTE_ON   = MIDI_NOTE_ON   = 0x9
+    exports.MIDI_NOTE_OFF  = MIDI_NOTE_OFF  = 0x8
+    exports.MIDI_CC        = MIDI_CC        = 0xB
+    exports.MIDI_PITCHBEND = MIDI_PITCHBEND = 0xE
 
 Utilities
 ---------
@@ -73,12 +73,12 @@ Base class for all control types.
 
     class exports.Control extends behaviour.Actor
 
-        constructor: (@ids = [midiId()]) ->
-            @else = => @_else arguments...
+        constructor: (@ids = [midiId()], args...) ->
+            @else      = => @_else arguments...
             @else.when = => @_elseWhen arguments...
             super()
             if not (@ids instanceof Array)
-                @ids = ccIds @id
+                @ids = ccIds @ids, args...
             @_behaviours = []
 
 The following set of methods define the behaviour of the control. A
@@ -134,7 +134,7 @@ signal when they are received.
             @_behaviours.length != 1 or not do @_behaviours[0].directInMapping
 
         handlerId: -> util.mangle \
-            "#{@ids[0].midino}_#{@ids[0].status @message}"
+            "x#{@ids[0].status().toString(16)}_x#{@ids[0].midino.toString(16)}"
 
         init: (script) ->
             @script = script

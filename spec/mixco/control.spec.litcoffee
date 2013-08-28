@@ -12,7 +12,7 @@ Mocks
 Module
 ------
 
-    {Control} = require '../../mixco/control'
+    {MIDI_CC, Control} = require '../../mixco/control'
 
 Tests
 -----
@@ -34,6 +34,17 @@ Tests for the **Control** base class.
 
             control.shutdown script
             expect(control.script).not.toBeDefined()
+
+        it "converts number or pair in constructor to CC midi id", ->
+            control = new Control 32
+            expect(control.ids.length).toBe(1)
+            {message, midino, channel} = control.ids[0]
+            expect([message, midino, channel]).toEqual [MIDI_CC, 32, 0]
+
+            control = new Control 64, 8
+            expect(control.ids.length).toBe(1)
+            {message, midino, channel} = control.ids[0]
+            expect([message, midino, channel]).toEqual [MIDI_CC, 64, 8]
 
 License
 -------

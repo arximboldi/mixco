@@ -45,7 +45,7 @@ Tests
     describe 'Scripts', ->
 
         it 'can run without being trivially broken', ->
-           runBasicScriptTests "nanokontrol2", \
+           runBasicScriptTests "nanokontrol2",
                                "xponent"
 
 License

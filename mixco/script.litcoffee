@@ -188,13 +188,12 @@ still be known from the return value of `registerHandler`.
 
         _nextCallbackId: 1
         registerHandler: (callback, id=undefined) ->
-            if not id
-                id = @_nextCallbackId++
+            id or= @_nextCallbackId++
             handlerName = "__handle_#{id}"
+            assert not this[handlerName],
+                   "Handlers can be registered only once (#{handlerName})"
 
-            assert not this["handlerName"],
-                "Handlers can be registered only once"
-            this[handlerName] = -> callback arguments...
+            this[handlerName] = callback
             return @handlerKey id
 
         handlerKey: (id=undefined) ->

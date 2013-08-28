@@ -152,7 +152,7 @@ channel.
   sets the hotcue. On second press, jumps to hotcue. When *shift* is
   held, deletes the hotcue point.
 
-            for idx in [0..5]
+            for idx in [0..4]
                 @add c.ledButton(noteId(0x17 + idx))
                     .when(shift, g, "hotcue_#{idx+1}_clear", g, "hotcue_#{idx+1}_enabled")
                     .else g, "hotcue_#{idx+1}_activate", g, "hotcue_#{idx+1}_enabled"
