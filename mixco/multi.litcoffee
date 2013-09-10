@@ -5,7 +5,7 @@ Adds multiple inheritance support to CoffeeScript (and JavaScript).
 It uses the C3 linearization algorithm as described in the [famous
 Dylan paper](http://192.220.96.201/dylan/linearization-oopsla96.html).
 
-    {head, tail, map, find, some, without, isEmpty, every, memoize} =
+    {head, tail, map, find, some, without, isEmpty, every, memoize, reject} =
         require 'underscore'
     {assert} = require './util'
 
@@ -36,7 +36,7 @@ C3 algorithm. Limitations of the approach are:
   > assert D::newProperty == undefined
 
     exports.multi = (bases...) ->
-        generate merge [], map(bases, mro).concat [bases]
+        generate merge map(bases, mro).concat [bases]
 
 This takes a list of classes representing a hierarchy (from most to
 least derived) and generates a single-inheritance hierarchy that
@@ -87,17 +87,13 @@ single-threaded anyway). But this is as good as we can get now.
 This is the C3 linearization algorithm, as translated from the
 original paper.
 
-    merge = (result, inputs) ->
-        if every inputs, isEmpty
-            do result.reverse
-        else
+    merge = (inputs) ->
+        while not isEmpty inputs
             next = find (map inputs, head), (candidate) ->
                 every inputs, (input) -> candidate not in tail input
-            if next
-                merge [next].concat(result), map inputs, (lst) -> without lst, next
-            else
-                throw new Error("Inconsistent multiple inheritance")
-
+            assert next?, "Inconsistent multiple inheritance"
+            inputs = reject map(inputs, (lst) -> without lst, next), isEmpty
+            next
 
 Introspection
 -------------
