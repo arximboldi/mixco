@@ -25,7 +25,7 @@ C3 algorithm. Limitations of the approach are:
   > class D extends multi B, C
   > assert new D not instanceof B
 
-  Instead, one should use the provided `isInstance` function.
+  Instead, one should use the provided `isinstance` function.
 
 - Some of the bases of a multi-inherited hierarchy are *frozen* when
   the sub-class is defined -- i.e. later modifications to the
@@ -96,7 +96,7 @@ original paper.
             if next
                 merge [next].concat(result), map inputs, (lst) -> without lst, next
             else
-                throw new Error("Inconsistent precedence graph.")
+                throw new Error("Inconsistent multiple inheritance")
 
 
 Introspection
@@ -162,12 +162,13 @@ the flattening, as in:
         else
             [cls].concat hierarchy inherited cls
 
-The **isInstance** function takes an object and a class or classes and
+The **isinstance** function takes an object and a class or classes and
 returns whether the object is an instance of any of those classes. It
 is compatible with multi-inherited classes.
 
-    exports.isInstance = (obj, classes...) ->
-        return some classes, (cls) -> obj.constructor in mro cls
+    exports.isinstance = (obj, classes...) ->
+        linearization = mro obj.constructor
+        return some classes, (cls) -> cls in linearization
 
 License
 -------

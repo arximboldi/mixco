@@ -9,9 +9,8 @@ paper](http://192.220.96.201/dylan/linearization-oopsla96.html)
 Module
 ------
 
-    {multi, mro} = require '../../mixco/multi'
+    {multi, mro, hierarchy, inherited, isinstance} = require '../../mixco/multi'
 
-Tests
 Hierarchies to test
 -------------------
 
@@ -100,6 +99,30 @@ Tests
             expect(obj.c).toBe 'c'
             expect(obj.b).toBe 'b'
             expect(obj.a).toBe 'a'
+
+        it 'can generates the original hierarchy when possible', ->
+            expect(hierarchy D).not.toEqual mro D
+            expect(hierarchy inherited D).not.toEqual mro(D)[1..]
+            expect(hierarchy inherited inherited D).toEqual mro(D)[2..]
+
+        it 'it memoizes generated superclasses', ->
+            expect(inherited D).toBe multi B, C
+
+        it 'throws error on inconsistent hierarchy', ->
+            expect(-> multi D, C, B)
+                .toThrow new Error "Inconsistent multiple inheritance"
+
+        it 'can be dynamically type checked with isInstance', ->
+            expect(isinstance new D, D).toBe true
+            expect(isinstance new D, B).toBe true
+            expect(isinstance new D, C).toBe true
+            expect(isinstance new D, A).toBe true
+            expect(isinstance new D, Object).toBe true
+            expect(isinstance new A, Object).toBe true
+            expect(isinstance new Object, A).toBe false
+            expect(isinstance new Pedalo, D).toBe false
+            expect(isinstance new Pedalo, A).toBe false
+            expect(isinstance new Pedalo, SmallCatamaran).toBe true
 
 License
 -------
