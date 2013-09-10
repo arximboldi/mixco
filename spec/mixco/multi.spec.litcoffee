@@ -12,7 +12,8 @@ Module
     {multi, mro} = require '../../mixco/multi'
 
 Tests
------
+Hierarchies to test
+-------------------
 
 Class heterarchy from the Dylan paper, figure 5. Make sure the
 linearization respects the *Extended Precedence Graph*.
@@ -44,6 +45,34 @@ linearization is monotonic.
     class SmallCatamaran extends SmallMultiHull
     class Pedalo extends multi PedalWheelBoat, SmallCatamaran
 
+Hierarchy of classes with methods and constructors that use super.
+
+    class A
+        constructor: ->
+            @a = 'a'
+        method: -> "A"
+
+    class B extends A
+        constructor: ->
+            super
+            @b = 'b'
+        method: -> "B>#{super}"
+
+    class C extends A
+        constructor: ->
+            super
+            @c = 'c'
+        method: -> "C>#{super}"
+
+    class D extends multi B, C
+        constructor: ->
+            super
+            @d = 'd'
+        method: -> "D>#{super}"
+
+Tests
+-----
+
     describe 'multi', ->
 
         it 'generates a monotonic linearization', ->
@@ -60,6 +89,17 @@ linearization is monotonic.
                 EditableScrollablePane, ScrollablePane, EditablePane,
                 Pane, ScrollingMixin, EditingMixin, Object ]
 
+        it 'calls super properly', ->
+            obj = new D
+            expect(mro D).toEqual [D, B, C, A, Object]
+            expect(obj.method()).toBe "D>B>C>A"
+
+        it 'gets constructed properly', ->
+            obj = new D
+            expect(obj.d).toBe 'd'
+            expect(obj.c).toBe 'c'
+            expect(obj.b).toBe 'b'
+            expect(obj.a).toBe 'a'
 
 License
 -------

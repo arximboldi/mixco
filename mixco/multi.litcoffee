@@ -17,7 +17,7 @@ The **multi** function takes a list of classes and returns a *special*
 class object that merges the class hierarchies, as linearized by the
 C3 algorithm. Limitations of the approach are:
 
-- *instanceof* does not always work as expected. For example:
+- `instanceof` does not always work as expected. For example:
 
   > class A
   > class B extends A
@@ -25,7 +25,7 @@ C3 algorithm. Limitations of the approach are:
   > class D extends multi B, C
   > assert new D not instanceof B
 
-  Instead, one should use the provided *isInstance* function.
+  Instead, one should use the provided `isInstance` function.
 
 - Some of the bases of a multi-inherited hierarchy are *frozen* when
   the sub-class is defined -- i.e. later modifications to the
@@ -38,22 +38,54 @@ C3 algorithm. Limitations of the approach are:
     exports.multi = (bases...) ->
         generate merge [], map(bases, mro).concat [bases]
 
-    copyOwn = (from, to) ->
-        for own key, value of from
-            if not to.hasOwnProperty key
-                to[key] = value
-        to
+This takes a list of classes representing a hierarchy (from most to
+least derived) and generates a single-inheritance hierarchy that
+behaves like a class that would be have such a hierarchy.
 
     generate = memoize (linearization) ->
         next = head linearization
         if linearization.equals hierarchy next
             next
         else
-            class MultiSuperClass extends generate tail linearization
+            class result extends generate tail linearization
                 __mro__: linearization
-            copyOwn next::, MultiSuperClass::
-            copyOwn next, MultiSuperClass
-            MultiSuperClass
+                constructor: reparent next, @, next::constructor
+
+                copyOwn next, @
+                copyOwn next::, @::, (value) =>
+                    if value instanceof Function
+                        reparent next, @, value
+                    else
+                        value
+
+This utility lets us copy own properties of a *from* object that are
+not own properties of a *to* object into the *to* object, optionally
+transformed via a projection function.
+
+    copyOwn = (from, to, project = (x) -> x) ->
+        for own key, value of from
+            if not to.hasOwnProperty key
+                to[key] = project value
+        to
+
+The functions call super directly, so we have to change the
+`__super__` attribute of the original class during the scope of the
+function. Yes, this may break if `__super__` is replaced by another
+mechanism. And yes, this is not thread-safe at all (JavaScript is
+single-threaded anyway). But this is as good as we can get now.
+
+    reparent = (oldklass, newklass, method) ->
+        newsuper = inherited(newklass)::
+        oldsuper = oldklass.__super__
+        ->
+            oldklass.__super__ = newsuper
+            try
+                method.apply this, arguments
+            finally
+                oldklass.__super__ = oldsuper
+
+This is the C3 linearization algorithm, as translated from the
+original paper.
 
     merge = (result, inputs) ->
         if every inputs, isEmpty
