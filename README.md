@@ -60,6 +60,7 @@ Required dependencies to compile the Mixxx scripts:
 
   - [CoffeeScript](http://coffeescript.org/) >= 1.5
   - [Node.js](http://nodejs.org/) >= 0.8
+  - [Underscore](http://underscorejs.org/) >= 1.5
   - [Browserify](http://browserify.org/) >= 2.0
   - [GNU make](http://www.gnu.org/software/make/)
 
@@ -115,6 +116,7 @@ Documentation
 
   * [mixco.behaviour][mixco.behaviour]
   * [mixco.control][mixco.control]
+  * [mixco.multi][mixco.multi]
   * [mixco.script][mixco.script]
   * [mixco.transform][mixco.transform]
   * [mixco.util][mixco.util]
@@ -122,29 +124,32 @@ Documentation
 
 ### Tests
 
-  * [spec.mock][spec.mock]
-  * [spec.scripts][spec.scripts]
   * [spec.mixco.behaviour][spec.mixco.behaviour]
   * [spec.mixco.control][spec.mixco.control]
-  * [spec.mixco.value][spec.mixco.value]
+  * [spec.mixco.multi][spec.mixco.multi]
   * [spec.mixco.script][spec.mixco.script]
+  * [spec.mixco.value][spec.mixco.value]
+  * [spec.mock][spec.mock]
+  * [spec.scripts][spec.scripts]
 
   [script.nanokontrol2]: script/nanokontrol2.html
   [script.xponent]: script/xponent.html
 
-  [mixco.script]: mixco/script.html
-  [mixco.control]: mixco/control.html
   [mixco.behaviour]: mixco/behaviour.html
+  [mixco.control]: mixco/control.html
+  [mixco.multi]: mixco/multi.html
+  [mixco.script]: mixco/script.html
   [mixco.transform]: mixco/transform.html
   [mixco.util]: mixco/util.html
   [mixco.value]: mixco/value.html
 
-  [spec.mock]: spec/mock.html
-  [spec.scripts]: spec/scripts.spec.html
   [spec.mixco.behaviour]: spec/mixco/behaviour.spec.html
   [spec.mixco.control]: spec/mixco/control.spec.html
-  [spec.mixco.value]: spec/mixco/value.spec.html
+  [spec.mixco.multi]: spec/mixco/multi.spec.html
   [spec.mixco.script]: spec/mixco/script.spec.html
+  [spec.mixco.value]: spec/mixco/value.spec.html
+  [spec.mock]: spec/mock.html
+  [spec.scripts]: spec/scripts.spec.html
 
 
 License

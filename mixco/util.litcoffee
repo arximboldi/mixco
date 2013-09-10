@@ -1,7 +1,7 @@
 mixco.util
-============
+==========
 
-This module contains a series of utility functions
+This module contains a series of utility functions.
 
 Utilities
 ---------
@@ -19,6 +19,10 @@ We also *monkeypatch* **Number** to provide some nice methods.
     Number::clamp = (min, max) -> Math.min Math.max(this, min), max
     Number::sign = () -> if this < 0 then -1 else 1
 
+Also, it is very convenient to add **equal** for array comparison.
+
+    Array::equals = (other) ->
+        @length is other.length and @every (elem, i) -> elem is other[i]
 
 **printer** can be used to print both into Mixxx console or the
 standard output, for code paths that run both as Mixxx script or

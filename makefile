@@ -13,29 +13,32 @@ SCRIPTS   = \
 	out/xponent.js out/xponent.midi.xml
 
 FRAMEWORK = \
-	tmp/mixco/util.js \
-	tmp/mixco/transform.js \
-	tmp/mixco/script.js \
-	tmp/mixco/control.js \
 	tmp/mixco/behaviour.js \
+	tmp/mixco/control.js \
+	tmp/mixco/multi.js \
+	tmp/mixco/script.js \
+	tmp/mixco/transform.js \
+	tmp/mixco/util.js \
 	tmp/mixco/value.js
 
 DOCS      = \
 	doc/index.html \
+	doc/mixco/behaviour.html \
+	doc/mixco/control.html \
+	doc/mixco/multi.html \
+	doc/mixco/script.html \
+	doc/mixco/transform.html \
+	doc/mixco/util.html \
+	doc/mixco/value.html \
 	doc/script/nanokontrol2.html \
 	doc/script/xponent.html \
-	doc/mixco/control.html \
-	doc/mixco/script.html \
-	doc/mixco/util.html \
-	doc/mixco/transform.html \
-	doc/mixco/behaviour.html \
-	doc/mixco/value.html \
-	doc/spec/mock.html \
-	doc/spec/scripts.spec.html \
 	doc/spec/mixco/behaviour.spec.html \
 	doc/spec/mixco/control.spec.html \
+	doc/spec/mixco/multi.spec.html \
+	doc/spec/mixco/script.spec.html \
 	doc/spec/mixco/value.spec.html \
-	doc/spec/mixco/script.spec.html
+	doc/spec/mock.html \
+	doc/spec/scripts.spec.html
 
 all: $(SCRIPTS)
 
