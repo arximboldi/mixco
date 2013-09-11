@@ -87,6 +87,23 @@ Hierarchy of classes with methods and constructors that use super.
             @g = 'g'
         method: -> "G>#{super}"
 
+Hierarchy of classes where classes that only inherit from `object`
+magically get a superclass in a multiple inheritance context.
+
+    class Base1
+        constructor: ->
+            @base1 = 'base1'
+
+    class Base2
+        constructor: ->
+            @base2 = 'base2'
+
+    class Deriv extends multi Base1, Base2
+        constructor: ->
+            super
+            @deriv = 'deriv'
+ 
+
 Tests
 -----
 
@@ -146,6 +163,12 @@ Tests
             expect(isinstance new Pedalo, D).toBe false
             expect(isinstance new Pedalo, A).toBe false
             expect(isinstance new Pedalo, SmallCatamaran).toBe true
+
+        it 'makes sure the next constructor after a root class', ->
+            obj = new Deriv
+            expect(obj.base1).toBe 'base1'
+            expect(obj.base2).toBe 'base2'
+            expect(obj.deriv).toBe 'deriv'
 
 License
 -------

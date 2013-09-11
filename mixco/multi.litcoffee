@@ -5,7 +5,8 @@ Adds multiple inheritance support to CoffeeScript (and JavaScript).
 It uses the C3 linearization algorithm as described in the [famous
 Dylan paper](http://192.220.96.201/dylan/linearization-oopsla96.html).
 
-    {head, tail, map, find, some, without, isEmpty, every, memoize, reject} =
+    {head, tail, map, find, some, without, isEmpty, every, memoize, reject,
+     partial} =
         require 'underscore'
     {assert} = require './util'
 
@@ -50,13 +51,8 @@ behaves like a class that would be have such a hierarchy.
             class result extends generate tail linearization
                 __mro__: linearization
                 constructor: reparent next, @, next::constructor
-
                 copyOwn next, @
-                copyOwn next::, @::, (value) =>
-                    if value instanceof Function
-                        reparent next, @, value
-                    else
-                        value
+                copyOwn next::, @::, partial reparent, next, @
 
 This utility lets us copy own properties of a *from* object that are
 not own properties of a *to* object into the *to* object, optionally
@@ -68,21 +64,34 @@ transformed via a projection function.
                 to[key] = project value
         to
 
-The functions call super directly, so we have to change the
+Methods in CoffeeScript call super directly, so we have to change the
 `__super__` attribute of the original class during the scope of the
-function. Yes, this may break if `__super__` is replaced by another
-mechanism. And yes, this is not thread-safe at all (JavaScript is
-single-threaded anyway). But this is as good as we can get now.
+method so it calls the right super of the linearization.  Also,
+programmers don't call super in constructor of root classes --indeed
+doing so would rise an error-- so we have to inject such a call when
+there are classes after these in the linearization.  The **reparent**
+function takes care of all these and given an original class, and the
+new class that is replacing it a linearized heterarchy, returns a
+wrapped copy of a value of the former that is suitable for replacing
+it in the later.
 
-    reparent = (oldklass, newklass, method) ->
-        newsuper = inherited(newklass)::
-        oldsuper = oldklass.__super__
-        ->
-            oldklass.__super__ = newsuper
-            try
-                method.apply this, arguments
-            finally
-                oldklass.__super__ = oldsuper
+    reparent = (oldklass, newklass, value) ->
+        if value not instanceof Function
+            value
+        else if value == oldklass::constructor and inherited(oldklass) == Object
+            superctor = inherited(newklass)::constructor
+            ->
+                superctor.apply @, arguments
+                value.apply @, arguments
+        else
+            newsuper = inherited(newklass)::
+            oldsuper = oldklass.__super__
+            ->
+                oldklass.__super__ = newsuper
+                try
+                    value.apply @, arguments
+                finally
+                    oldklass.__super__ = oldsuper
 
 This is the C3 linearization algorithm, as translated from the
 original paper.
