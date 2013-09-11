@@ -69,6 +69,24 @@ Hierarchy of classes with methods and constructors that use super.
             @d = 'd'
         method: -> "D>#{super}"
 
+    class E extends A
+        constructor: ->
+            super
+            @e = 'e'
+        method: -> "E>#{super}"
+
+    class F extends multi C, E
+        constructor: ->
+            super
+            @f = 'f'
+        method: -> "F>#{super}"
+
+    class G extends multi D, F
+        constructor: ->
+            super
+            @g = 'g'
+        method: -> "G>#{super}"
+
 Tests
 -----
 
@@ -88,10 +106,15 @@ Tests
                 EditableScrollablePane, ScrollablePane, EditablePane,
                 Pane, ScrollingMixin, EditingMixin, Object ]
 
-        it 'calls super properly', ->
+        it 'calls super properly in multi case', ->
             obj = new D
             expect(mro D).toEqual [D, B, C, A, Object]
             expect(obj.method()).toBe "D>B>C>A"
+
+        it 'calls super properly in recursive multi case', ->
+            obj = new G
+            expect(mro G).toEqual [G, D, B, F, C, E, A, Object]
+            expect(obj.method()).toBe "G>D>B>F>C>E>A"
 
         it 'gets constructed properly', ->
             obj = new D
