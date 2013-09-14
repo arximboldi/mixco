@@ -154,9 +154,13 @@ Tests for the **Map** behaviour
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 0
 
-        it 'does not direct map when a custom transform is set', ->
+        it 'does not direct map output when a custom transform is set', ->
             xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
-            expect(do xfader.directInMapping).toBe null
+            expect(do xfader.directInMapping).toBe undefined
+
+        it 'does not direct map input when a custom transform is set', ->
+            xfader = behaviour.map("[Master]", "crossfader").meter (v) -> v
+            expect(do xfader.directOutMapping).toBe undefined
 
         it 'does nothing when the transform return null', ->
             xfader = behaviour.map("[Master]", "crossfader").transform (v) ->

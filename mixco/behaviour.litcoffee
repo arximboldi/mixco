@@ -194,12 +194,11 @@ to listen to it.
             if @_transform == transform.mappings[@key]
                 group: @group
                 key:   @key
-            else
-                null
 
         directOutMapping: ->
-            group: @outgroup
-            key:   @outkey
+            if not @_outTransform?
+                group: @outgroup
+                key:   @outkey
 
 While in general mappings are done directly, bypassing the script,
 under some circunstances it might happen that they are proccessed in
