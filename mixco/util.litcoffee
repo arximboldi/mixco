@@ -3,28 +3,33 @@ mixco.util
 
 This module contains a series of utility functions.
 
-Utilities
----------
+Monkey patches
+--------------
 
-We *monkeypatch* the **Function** class to provide a **property**
-class method to define *properties* -- i.e. attributes that are
-accessed via setters and getters.
+### Function
+
+We provide a **property** class method to define *properties* --
+i.e. attributes that are accessed via setters and getters.
 
     Function::property = (prop, desc) ->
         Object.defineProperty @prototype, prop, desc
 
-
-We also *monkeypatch* **Number** to provide some nice methods.
+### Number
 
     Number::clamp = (min, max) -> Math.min Math.max(this, min), max
     Number::sign = () -> if this < 0 then -1 else 1
 
-Also, it is very convenient to add **equal** for array comparison.
+### Array
 
     Array::equals = (other) ->
         @length is other.length and @every (elem, i) -> elem is other[i]
 
-**printer** can be used to print both into Mixxx console or the
+
+Utilities
+
+### Printer
+
+This be used to print both into Mixxx console or the
 standard output, for code paths that run both as Mixxx script or
 standalone.
 
@@ -34,16 +39,27 @@ standalone.
         catch _
             console.error args.toString()
 
+### Error management
+
+This can be used to guard against any possible exception, printing an
+error on the console when it happens.  This is specially useful in the
+context of Mixxx.
+
     exports.catching = (f) -> ->
         try
             f.apply @, arguments
         catch err
             exports.printer "ERROR: #{err}"
 
+Throws an error if *value* is false.  The *error* can be a custom string.
 
-    exports.mangle = (str) ->
-        str.replace(' ', '_').replace('[', '_C_').replace(']', '_D_')
+    exports.assert = (value, error=undefined) ->
+        if not value
+           throw new Error(if error? then error else "Assertion failed")
 
+### String utilities
+
+This tries to scape a string to be valid XML.
 
     exports.xmlEscape = (str) ->
         str
@@ -52,18 +68,22 @@ standalone.
             .replace('>', '&gt;')
             .replace('<', '&lt;')
 
+Generates a string that contains *depth* number of spaces.
 
     exports.indent = (depth) ->
         Array(depth*4).join(" ")
 
+Generates a string with a C-style hexadecimal representation of a
+number.
 
     exports.hexStr = (number) ->
         "0x#{number.toString 16}"
 
+### Factories
 
-    exports.assert = (value, error=undefined) ->
-        if not value
-           throw new Error(if error? then error else "Assertion failed.")
+Generates a function that constructs an object of type *Klass*,
+forwarding all its parameters to the constructor.  I hate using the
+`new` operator, so this will be used on most exported classes.
 
     exports.factory = (Klass) -> -> new Klass arguments...
 
