@@ -26,6 +26,7 @@ i.e. attributes that are accessed via setters and getters.
 
 
 Utilities
+---------
 
 ### Printer
 
