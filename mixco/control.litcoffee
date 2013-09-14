@@ -3,6 +3,7 @@ mixco.control
 
 Defines different hardware controls.
 
+    {multi}   = require './multi'
     util      = require './util'
     behaviour = require './behaviour'
 
@@ -123,26 +124,9 @@ Thera are three kinds of behaviours we can associate to the control:
             @_lastWhen = undefined
             this
 
-The control will listen to the --via a *handler*-- only when the
-behaviours need it. If there is only one behaviour in the control and
-this can be directly mapped, the midi messages will be connected
-directly in the XML file.  Otherwise, the control will request to
-process the MIDI messages via the script, and it will emit a `event`
-signal when they are received.
-
-        needsHandler: ->
-            @_behaviours.length != 1 or not do @_behaviours[0].directInMapping
-
-        handlerId: -> util.mangle \
-            "x#{@ids[0].status().toString(16)}_x#{@ids[0].midino.toString(16)}"
-
         init: (script) ->
             @script = script
             assert not @_isInit
-            if do @needsHandler
-                script.registerHandler \
-                    ((args...) => @emit 'event', event args...),
-                    @handlerId()
             for b in @_behaviours
                 b.enable script, this
             @_isInit = true
@@ -154,6 +138,35 @@ signal when they are received.
                 b.disable script, this
             @_isInit = false
             delete @script
+
+        configInputs: (depth, script) ->
+        configOutputs: (depth, script) ->
+
+### Input
+
+An *input control* can proccess inputs from the hardware.
+
+    class exports.InControl extends exports.Control
+
+        init: (script) ->
+            super
+            if do @needsHandler
+                script.registerHandler \
+                    ((args...) => @emit 'event', event args...),
+                    @handlerId()
+
+The control will listen to the --via a *handler*-- only when the
+behaviours need it. If there is only one behaviour in the control and
+this can be directly mapped, the midi messages will be connected
+directly in the XML file.  Otherwise, the control will request to
+process the MIDI messages via the script, and it will emit a `event`
+signal when they are received.
+
+        needsHandler: ->
+            @_behaviours.length != 1 or not do @_behaviours[0].directInMapping
+
+        handlerId: ->
+            "x#{@ids[0].status().toString(16)}_x#{@ids[0].midino.toString(16)}"
 
         configInputs: (depth, script) ->
             if do @needsHandler
@@ -178,8 +191,6 @@ signal when they are received.
             #{indent depth}</control>
             """
 
-        configOutputs: (depth, script) ->
-
         configOptions: (depth) ->
             "#{indent depth}<normal/>"
 
@@ -190,42 +201,14 @@ signal when they are received.
                 @configOptions depth
 
 
-### Knob
+### Output
 
-Represents a basic hardware element for setting continuous parameters
--- e.g, a knob or slider.
+An *output control* can send data to the hardware.
 
-    class exports.Knob extends exports.Control
-
-
-I hate using the **new** operator, thus for every concrete control
-we'll provide some factory functions.
-
-    exports.knob   = factory exports.Knob
-    exports.slider = exports.knob
-
-
-### Button
-
-Represents a hardware button.
-
-    class exports.Button extends exports.Control
-
-        configOptions: (depth) ->
-            "#{indent depth}<button/>"
-
-    exports.button = factory exports.Button
-
-
-### LedButton
-
-Represents a hardware button with a LED that should be turned on to
-represent the boolean property that it is mapped to.
-
-    class exports.LedButton extends exports.Button
+    class exports.OutControl extends exports.Control
 
         states:
-            on: 0x7f
+            on:  0x7f
             off: 0x00
 
         send: (state) ->
@@ -233,12 +216,15 @@ represent the boolean property that it is mapped to.
 
         doSend: (state) ->
             id = @ids[0]
-            assert @states[state]?, "State '#{state}' not in the states"
-            @script.mixxx.midi.sendShortMsg id.status(), id.midino, @states[state]
+            if state of @states
+                @script.mixxx.midi.sendShortMsg id.status(), id.midino, @states[state]
+            else
+                @script.mixxx.midi.sendShortMsg id.status(), id.midino, state
 
         init: ->
-            # We should remove the send function before enabling
-            # behaviours.
+
+We should remove the send function before enabling behaviours.
+
             if not @needsSend()
                 @send = undefined
             super
@@ -264,25 +250,46 @@ represent the boolean property that it is mapped to.
                 #{indent depth}</output>
                 """
 
+
+### Concrete controls
+
+#### Aliases
+
+Lets provide a series of aliases to make scripts read more natural,
+and maybe also eventually add specifics to these.
+
+    exports.knob   = factory exports.InControl
+    exports.slider = exports.knob
+
+
+#### Button
+
+Represents a hardware button.
+
+    class exports.Button extends exports.InControl
+
+        configOptions: (depth) ->
+            "#{indent depth}<button/>"
+
+    exports.button = factory exports.Button
+
+
+#### LedButton
+
+Represents a hardware button with a LED that can represent a value it
+is mapped to.
+
+    class exports.LedButton extends multi exports.Button, exports.OutControl
+
     exports.ledButton = factory exports.LedButton
 
 
-### Meter
+#### Meter
 
 Represents a visual element that is controlled by MIDI notes, like a
 LED volume meter.
 
-    class exports.Meter extends exports.Control
-
-        send: (value) ->
-            id = @ids[0]
-            @script.mixxx.midi.sendShortMsg id.status(), id.midino, value
-
-        configInputs:  -> ""
-        configOutputs: -> ""
-        needsHandler:  -> false
-
-    exports.meter = factory exports.Meter
+    exports.meter = factory exports.OutControl
 
 
 License
