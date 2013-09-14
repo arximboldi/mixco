@@ -3,31 +3,33 @@ spec.mixco.value
 
 General tests for some of the Mixco based scripts.
 
-    fs   = require 'fs'
-    path = require 'path'
-    mock = require './mock'
+    fs       = require 'fs'
+    path     = require 'path'
+    mock     = require './mock'
+    {assert} = require '../mixco/util'
 
 We should let exception get all the way down to the test framework so
 trivial errors are detected. The **unrequire** function will cause a
 module to be unloaded.  We patch the *catching* decorator after
 unloading all modules so exceptions reach the test system.
 
-    unrequire = (name) ->
+    unrequire = (name, force=false) ->
         fullName = require.resolve name
-        if fullName in require.cache
+        if fullName of require.cache
             delete require.cache[fullName]
 
-    forEveryModuleInDir = (dir, fn) ->
+    forEveryModuleInDir = (dirs..., fn) ->
         module_exts = [ '.coffee', '.litcoffee' ]
         current_dir = path.basename require.resolve './scripts.spec.litcoffee'
-        for file in fs.readdirSync path.join current_dir, dir
-            ext = path.extname file
-            if ext in module_exts
-                fn path.basename file, ext
+        for dir in dirs
+            for file in fs.readdirSync path.join current_dir, dir
+                ext = path.extname file
+                if ext in module_exts
+                    fn path.basename(file, ext), dir
 
     do monkeypatchCatching = ->
-        forEveryModuleInDir '../mixco', (name) ->
-            unrequire path.join '../mixco', name
+        forEveryModuleInDir '../mixco', '../script', (name, dir) ->
+            unrequire path.join(dir, name), true
         require '../mixco/util'
         module = require.cache[require.resolve '../mixco/util']
         module.exports.catching = (f) -> f
