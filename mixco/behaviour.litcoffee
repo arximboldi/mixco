@@ -8,6 +8,7 @@ This module contains all the functionallity that lets you add
     transform = require './transform'
     util      = require './util'
     value     = require './value'
+    {multi, isinstance} = require './multi'
 
     indent  = util.indent
     assert  = util.assert
@@ -130,23 +131,88 @@ the value.  It can take an *initial* value too.
     exports.option    = -> exports.transform (-> not @value), false
 
 
-### Map
+### Mappings
 
-The **map** behaviour maps the hardware control directly to a control
-in Mixxx. Note that its `value` property is guaranteed to be
-synchronised with Mixxx only there are listeners on it.
+#### Input
 
-    class exports.Map extends exports.Output
+The **MapIn** behaviour maps the received input to a control in Mixxx.
 
-        constructor: (@group, @key, @outgroup, @outkey) ->
+    class exports.MapIn extends exports.Behaviour
+
+        constructor: (inGroupOrParams, inKey=undefined) ->
             super
-            @outgroup or= @group
-            @outkey or= @key
+            {@group, @key} =
+                if not isinstance inGroupOrParams, String
+                then inGroupOrParams
+                else
+                    group: inGroupOrParams
+                    key:   inKey
             @_transform = transform.mappings[@key]
 
         transform: (trans) ->
             @_transform = trans
             this
+
+        enable: (script, actor) ->
+            super
+
+It seems that Mixxx does not update the direct-mapped outputs upon
+initialization, so we have to update them manually unconditionally.
+
+            engine = script.mixxx.engine
+            @value = engine.getValue @group, @key
+
+Then, if the value of the mapped control is observed from the script
+we register a handler
+to listen to it.
+
+            if @listeners('value').length > 0
+                @_inHandler or= script.registerHandler (v) =>
+                    @value = v
+                engine.connectControl @group, @key, @_inHandler
+                @_inHandlerConnected = true
+
+        disable:  ->
+            if @_inHandlerConnected?
+                @script.mixxx.engine.connectControl @group, @key, @_inHandler, true
+                @_inHandlerConnected = false
+            super
+
+        directInMapping: ->
+            if @_transform == transform.mappings[@key]
+                group: @group
+                key:   @key
+
+While in general mappings are done directly, bypassing the script,
+under some circunstances it might happen that they are proccessed in
+the script.  In this case, we define `onEvent` to emulate the
+behaviour of a direct mapping.
+
+        onEvent: (ev) ->
+            val = @_transform ev.value, @value
+            if val != null
+                @script.mixxx.engine.setValue @group, @key, val
+                if @listeners('value').length == 0
+                    @value = val
+
+    exports.mapin = factory exports.MapOut
+
+
+#### Output
+
+The **MapOut** behaviour maps the state of a control in Mixxx as
+output to the controller.
+
+    class exports.MapOut extends exports.Output
+
+        constructor: (outGroupOrParams, outKey=undefined) ->
+            super
+            {@outgroup, @outkey} =
+                if not isinstance outGroupOrParams, String
+                then outGroupOrParams
+                else
+                    outgroup: outGroupOrParams
+                    outkey:   outKey
 
         meter: (transformer = undefined) ->
             @_outTransform   = transformer
@@ -162,18 +228,10 @@ It seems that Mixxx does not update the direct-mapped outputs upon
 initialization, so we have to update them manually unconditionally.
 
             engine = script.mixxx.engine
-            @value = engine.getValue @group, @key
             @output.value = engine.getValue @outgroup, @outkey
 
-Then, if the value of the mapped control is observed from the script
-or we need to manually send output to the actor, we register a handler
-to listen to it.
-
-            if @listeners('value').length > 0
-                @_inHandler or= script.registerHandler (v) =>
-                    @value = v
-                engine.connectControl @group, @key, @_inHandler
-                @_inHandlerConnected = true
+If we need to manually send output to the actor, lets connect a
+handler to it.
 
             if @output.listeners('value').length > 0
                 @_outHandler or= script.registerHandler (v) =>
@@ -182,39 +240,41 @@ to listen to it.
                 @_outHandlerConnected = true
 
         disable:  ->
-            if @_inHandlerConnected?
-                @script.mixxx.engine.connectControl @group, @key, @_inHandler, true
-                @_inHandlerConnected = false
             if @_outHandlerConnected?
                 @script.mixxx.engine.connectControl @outgroup, @outkey, @_outHandler, true
                 @_outHandlerConnected = false
             super
-
-        directInMapping: ->
-            if @_transform == transform.mappings[@key]
-                group: @group
-                key:   @key
 
         directOutMapping: ->
             if not @_outTransform?
                 group: @outgroup
                 key:   @outkey
 
-While in general mappings are done directly, bypassing the script,
-under some circunstances it might happen that they are proccessed in
-the script.  In this case, we define `onEvent` to emulate the
-behaviour of a direct mapping.
-
-        onEvent: (ev) ->
-            val = @_transform ev.value, @value
-            if val != null
-                @script.mixxx.engine.setValue @group, @key, val
-                if @listeners('value').length == 0
-                    @value = val
-
         configOutput: (depth) ->
             "#{indent depth}<minimum>#{@minimum}</minimum>"
 
+    exports.mapout = factory exports.MapOut
+
+
+#### Combinatios
+
+The **map** behaviour is the most common one.  It maps both input and
+output to a control in Mixxx.
+
+    class exports.Map extends multi exports.MapIn, exports.MapOut
+
+        constructor: (@groupOrParams, @key, @outgroup, @outkey) ->
+            params =
+                if not isinstance groupOrParams, String
+                then groupOrParams
+                else
+                    group:    groupOrParams
+                    key:      key
+                    outgroup: outgroup,
+                    outkey:   outkey
+            params.outgroup or= params.group
+            params.outkey   or= params.key
+            super params
 
     exports.map = factory exports.Map
 

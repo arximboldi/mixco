@@ -138,7 +138,7 @@ channel.
                         step = 0
                         pos * 127
 
-            @add c.meter(c.ccIds 0x14+i, 3).does b.map(g, "playposition")
+            @add c.meter(c.ccIds 0x14+i, 3).does b.mapout(g, "playposition")
                 .meter playpositionMeter
 
 * **30.** Back and forward.
