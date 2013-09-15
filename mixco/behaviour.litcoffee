@@ -416,6 +416,9 @@ determine, in the script, wether they are enabled or not.
 
 ### Special actions
 
+An the *action* helper behaviour is very useful when writing
+script-only button actions with a press and a release event.
+
     class exports.Action extends exports.Output
 
         minimum: true
