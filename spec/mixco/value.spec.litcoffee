@@ -16,9 +16,9 @@ Tests for the **Value** base class.
     describe 'Value', ->
 
         it "is initialized to given value", ->
-            v = new Value 5
+            v = new Value initial: 5
             expect(v.value).toBe 5
-            v = new Value "hello"
+            v = new Value initial: "hello"
             expect(v.value).toBe "hello"
 
         it "notifies when value changes", ->
@@ -42,7 +42,11 @@ Tests for the **Reduce** class.
         r = null
 
         beforeEach ->
-            v = [new Value(1), new Value(2), new Value(3)]
+            v = [
+                new Value initial: 1
+                new Value initial: 2
+                new Value initial: 3
+            ]
             r = new Reduce ((a, b) -> a + b), v...
 
         it "reduces all given values with binary operation", ->
