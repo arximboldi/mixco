@@ -130,7 +130,7 @@ the value.  It can take an *initial* value too.
 
     exports.transform = factory exports.Transform
     exports.modifier  = -> exports.transform transform.binaryT, false
-    exports.option    = -> exports.transform (-> not @value), false
+    exports.switch    = -> exports.transform (-> not @value), false
 
 
 ### Mappings
@@ -508,11 +508,11 @@ The **spinback** and **brake** functionalities just call the
 equivalent methods in the engine.
 
     exports.spinback = (deck, args...) ->
-        exports.option().on 'value', ->
+        exports.switch().on 'value', ->
             @script.mixxx.engine.spinback deck, @value, args...
 
     exports.brake = (deck, args...) ->
-        exports.option().on 'value', ->
+        exports.switch().on 'value', ->
             @script.mixxx.engine.brake deck, @value, args...
 
 The **playhead** sends the current position meter a MIDI value and

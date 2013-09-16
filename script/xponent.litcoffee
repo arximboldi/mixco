@@ -218,7 +218,7 @@ channel.
 
 * **10.** Toggles *scratch* mode.
 
-            scratchMode = do b.option
+            scratchMode = do b.switch
             @add c.ledButton(noteOnId 0x15).does scratchMode
 
 * **11.** The wheel does different functions...
