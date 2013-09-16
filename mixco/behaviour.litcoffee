@@ -40,7 +40,7 @@ listen to them.
 
     class exports.Behaviour extends value.Value
 
-Behaviours can be enabled or disabled, to determine the behaviour of a
+Behaviours can be enabled or disabled, to activate the behaviour of a
 given actor.
 
         enable: (script, actor) ->
@@ -99,7 +99,7 @@ output of its actor based on its nested `output` *Value*.
         enable: ->
             super
             if @actor?.send?
-                @_updateOutputCallback or= => do @updateOutput
+                @_updateOutputCallback ?= => do @updateOutput
                 @output.on 'value', @_updateOutputCallback
                 do @updateOutput
 
@@ -141,14 +141,14 @@ The **MapIn** behaviour maps the received input to a control in Mixxx.
 
     class exports.MapIn extends exports.Behaviour
 
-        constructor: (inGroupOrParams, inKey=undefined) ->
+        constructor: (ingroupOrParams, inkey=undefined) ->
             super
             {@group, @key} =
-                if not isinstance inGroupOrParams, String
-                then inGroupOrParams
+                if ingroupOrParams not instanceof String
+                then ingroupOrParams
                 else
-                    group: inGroupOrParams
-                    key:   inKey
+                    group: ingroupOrParams
+                    key:   inkey
             @_transform = transform.mappings[@key]
 
         transform: (trans) ->
@@ -169,14 +169,15 @@ we register a handler
 to listen to it.
 
             if @listeners('value').length > 0
-                @_inHandler or= script.registerHandler (v) =>
+                @_inHandler ?= script.registerHandler (v) =>
                     @value = v
                 engine.connectControl @group, @key, @_inHandler
                 @_inHandlerConnected = true
 
         disable:  ->
             if @_inHandlerConnected?
-                @script.mixxx.engine.connectControl @group, @key, @_inHandler, true
+                @script.mixxx.engine.connectControl \
+                    @group, @key, @_inHandler, true
                 @_inHandlerConnected = false
             super
 
@@ -207,18 +208,18 @@ output to the controller.
 
     class exports.MapOut extends exports.Output
 
-        constructor: (outGroupOrParams, outKey=undefined) ->
+        constructor: (outgroupOrParams, outkey=undefined) ->
             super
             {@outgroup, @outkey} =
-                if not isinstance outGroupOrParams, String
-                then outGroupOrParams
+                if outgroupOrParams not instanceof String
+                then outgroupOrParams
                 else
-                    outgroup: outGroupOrParams
-                    outkey:   outKey
+                    outgroup: outgroupOrParams
+                    outkey:   outkey
 
         meter: (transformer = undefined) ->
-            @_outTransform   = transformer
-            @_outTransform or= transform.mappings[@outkey].inverse
+            @_outTransform  = transformer
+            @_outTransform ?= transform.mappings[@outkey].inverse
             @updateOutput = ->
                 @actor.send Math.floor @_outTransform @output.value
             this
@@ -236,14 +237,15 @@ If we need to manually send output to the actor, lets connect a
 handler to it.
 
             if @output.listeners('value').length > 0
-                @_outHandler or= script.registerHandler (v) =>
+                @_outHandler ?= script.registerHandler (v) =>
                     @output.value = v
                 engine.connectControl @outgroup, @outkey, @_outHandler
                 @_outHandlerConnected = true
 
         disable:  ->
             if @_outHandlerConnected?
-                @script.mixxx.engine.connectControl @outgroup, @outkey, @_outHandler, true
+                @script.mixxx.engine.connectControl \
+                    @outgroup, @outkey, @_outHandler, true
                 @_outHandlerConnected = false
             super
 
@@ -265,7 +267,7 @@ output to a control in Mixxx.
 
     class exports.Map extends multi exports.MapIn, exports.MapOut
 
-        constructor: (@groupOrParams, @key, @outgroup, @outkey) ->
+        constructor: (groupOrParams, key, outgroup, outkey) ->
             params =
                 if not isinstance groupOrParams, String
                 then groupOrParams
@@ -274,8 +276,8 @@ output to a control in Mixxx.
                     key:      key
                     outgroup: outgroup,
                     outkey:   outkey
-            params.outgroup or= params.group
-            params.outkey   or= params.key
+            params.outgroup ?= params.group
+            params.outkey   ?= params.key
             super params
 
     exports.map = factory exports.Map
@@ -427,8 +429,8 @@ script-only button actions with a press and a release event.
 
         constructor: (@action = undefined) ->
             super()
-            @onPress   or= action.press
-            @onRelease or= action.release
+            @onPress   ?= action.press
+            @onRelease ?= action.release
 
         onMidiEvent: (ev) ->
             val = @value = @output.value = ev.value > 0
