@@ -126,15 +126,15 @@ Tests for the **Map** behaviour
             xfader = behaviour.map "[Master]", "crossfader"
             xfader.enable script, actor
 
-            xfader.onEvent value: 63.5
+            xfader.onMidiEvent value: 63.5
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
 
-            xfader.onEvent value: 127
+            xfader.onMidiEvent value: 127
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 1
 
-            xfader.onEvent value: 0
+            xfader.onMidiEvent value: 0
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 1
 
@@ -142,15 +142,15 @@ Tests for the **Map** behaviour
             xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
             xfader.enable script, actor
 
-            xfader.onEvent value: 64
+            xfader.onMidiEvent value: 64
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 64
 
-            xfader.onEvent value: 127
+            xfader.onMidiEvent value: 127
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 127
 
-            xfader.onEvent value: 0
+            xfader.onMidiEvent value: 0
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 0
 
@@ -167,23 +167,23 @@ Tests for the **Map** behaviour
                 if v == 64 then 64 else null
             xfader.enable script, actor
 
-            xfader.onEvent value: 32
+            xfader.onMidiEvent value: 32
             expect(script.mixxx.engine.setValue)
                 .not.toHaveBeenCalled()
 
-            xfader.onEvent value: 64
+            xfader.onMidiEvent value: 64
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 64
 
         it 'does toggle from previous state when binary transform', ->
-            lock = behaviour.map("[Channel1]", "keylock")
+            lock = behaviour.map "[Channel1]", "keylock"
             lock.enable script, actor
 
-            lock.onEvent value: 32
+            lock.onMidiEvent value: 32
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Channel1]", "keylock", true
 
-            lock.onEvent value: 32
+            lock.onMidiEvent value: 32
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Channel1]", "keylock", false
 
@@ -268,31 +268,31 @@ Tests for the **PunchIn** behaviour
 
         it "does nothing when the crossfader is to the requested side", ->
             xfader = -0.75
-            leftPunchIn.onEvent value: 1
+            leftPunchIn.onMidiEvent value: 1
             do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
-            leftPunchIn.onEvent value: 0
+            leftPunchIn.onMidiEvent value: 0
             do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
 
             xfader = 0.75
-            rightPunchIn.onEvent value: 1
+            rightPunchIn.onMidiEvent value: 1
             do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
-            rightPunchIn.onEvent value: 0
+            rightPunchIn.onMidiEvent value: 0
             do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
 
         it "sets the crossfader to the middle and restores otherwise", ->
             xfader = 0.75
-            leftPunchIn.onEvent value: 1
+            leftPunchIn.onMidiEvent value: 1
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
-            leftPunchIn.onEvent value: 0
+            leftPunchIn.onMidiEvent value: 0
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 0.75
 
             xfader = -0.75
-            rightPunchIn.onEvent value: 1
+            rightPunchIn.onMidiEvent value: 1
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
-            rightPunchIn.onEvent value: 0
+            rightPunchIn.onMidiEvent value: 0
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Master]", "crossfader", -0.75
 
@@ -315,7 +315,7 @@ Tests for the **scratchEnable** behaviour
             do expect(script.mixxx.engine.scratchEnable)
                 .not.toHaveBeenCalled
 
-            scratch.onEvent value: 1
+            scratch.onMidiEvent value: 1
             expect(script.mixxx.engine.scratchEnable)
                 .toHaveBeenCalledWith 1, 32, 33, 1, 0.4, false
 
@@ -323,7 +323,7 @@ Tests for the **scratchEnable** behaviour
             do expect(script.mixxx.engine.scratchDisable)
                 .not.toHaveBeenCalled
 
-            scratch.onEvent value: 0
+            scratch.onMidiEvent value: 0
             do expect(script.mixxx.engine.scratchEnable)
                 .not.toHaveBeenCalled
             expect(script.mixxx.engine.scratchDisable)
@@ -348,11 +348,11 @@ Tests for the **scratchTick** behaviour
             do expect(script.mixxx.engine.scratchTick)
                 .not.toHaveBeenCalled
 
-            scratch.onEvent value: 64
+            scratch.onMidiEvent value: 64
             expect(script.mixxx.engine.scratchTick)
                 .toHaveBeenCalledWith 1, 32
 
-            scratch.onEvent value: 32
+            scratch.onMidiEvent value: 32
             expect(script.mixxx.engine.scratchTick)
                 .toHaveBeenCalledWith 1, 16
 

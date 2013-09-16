@@ -48,7 +48,9 @@ given actor.
             assert not @script?
             @script = script
             @actor = actor
-            @_eventListener = (ev) => @onEvent ev
+
+            @_eventListener = (ev) =>
+                    @onMidiEvent ev
             actor.on 'event', @_eventListener
 
         disable: (script, actor) ->
@@ -67,7 +69,7 @@ determined after the XML configuration is generated.
 
         configOutput: (depth) ->
 
-        onEvent: (ev) -> null
+        onMidiEvent: (ev) -> null
 
 ### Call
 
@@ -76,7 +78,7 @@ something.
 
     class exports.Call extends exports.Behaviour
 
-        constructor: (@onEvent) ->
+        constructor: (@onMidiEvent) ->
 
     exports.call = factory exports.Call
 
@@ -123,7 +125,7 @@ the value.  It can take an *initial* value too.
         constructor: (@transformer, initial=undefined) ->
             super initial
 
-        onEvent: (ev) ->
+        onMidiEvent: (ev) ->
             @output.value = @value = @transformer ev.value
 
     exports.transform = factory exports.Transform
@@ -185,10 +187,10 @@ to listen to it.
 
 While in general mappings are done directly, bypassing the script,
 under some circunstances it might happen that they are proccessed in
-the script.  In this case, we define `onEvent` to emulate the
+the script.  In this case, we define `onMidiEvent` to emulate the
 behaviour of a direct mapping.
 
-        onEvent: (ev) ->
+        onMidiEvent: (ev) ->
             val = @_transform ev.value, @value
             if val != null
                 @script.mixxx.engine.setValue @group, @key, val
@@ -428,7 +430,7 @@ script-only button actions with a press and a release event.
             @onPress   or= action.press
             @onRelease or= action.release
 
-        onEvent: (ev) ->
+        onMidiEvent: (ev) ->
             val = @value = @output.value = ev.value > 0
             if val
                 @onPress?()
