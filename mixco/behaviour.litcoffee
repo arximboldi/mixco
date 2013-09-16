@@ -67,9 +67,13 @@ determined after the XML configuration is generated.
         directInMapping: -> null
         directOutMapping: -> null
 
+Interface to receive MIDI and map the current value from MIDI.
         configOutput: (depth) ->
 
         onMidiEvent: (ev) -> null
+        getMidiValue: -> @value
+        @property 'midiValue', ->
+            do @getMidiValue
 
 ### Call
 
@@ -192,11 +196,14 @@ the script.  In this case, we define `onMidiEvent` to emulate the
 behaviour of a direct mapping.
 
         onMidiEvent: (ev) ->
-            val = @_transform ev.value, @value
-            if val != null
+            val = @_transform ev.value, @midiValue
+            if val?
                 @script.mixxx.engine.setValue @group, @key, val
                 if @listeners('value').length == 0
                     @value = val
+
+        getMidiValue: ->
+            @_transform?.inverse?(@value) ? @value
 
     exports.mapin = factory exports.MapOut
 

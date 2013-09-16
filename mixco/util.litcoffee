@@ -12,6 +12,8 @@ We provide a **property** class method to define *properties* --
 i.e. attributes that are accessed via setters and getters.
 
     Function::property = (prop, desc) ->
+        if desc instanceof Function
+            desc = get: desc
         Object.defineProperty @prototype, prop, desc
 
 ### Number

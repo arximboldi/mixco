@@ -32,6 +32,23 @@ Mocks
 Tests
 -----
 
+Tests for the **Behaviour** base class.
+
+    describe 'Behaviour', ->
+
+        behav = null
+        beforeEach ->
+            behav = new behaviour.Behaviour initial: 32
+
+        it 'returns the same MIDI value as normal value', ->
+            expect(behav.value).toBe behav.midiValue
+            expect(behav.value).toBe 32
+
+            behav.value = 64
+            expect(behav.value).toBe behav.midiValue
+            expect(behav.value).toBe 64
+
+
 Tests for the **Output** basic behaviour.
 
     describe 'Output', ->
@@ -65,7 +82,40 @@ Tests for the **Output** basic behaviour.
             output.output.value = 0
             expect(actor.send).toHaveBeenCalledWith 'off'
 
-Tests for the **Map** behaviour
+Tests for the **InMap** behaviour.
+
+    describe 'InMap', ->
+        map    = null
+        actor  = null
+        script = null
+
+        beforeEach ->
+            map = behaviour.map
+                group:  "[test]"
+                key:    "test"
+                initial: 42
+            actor = do mockActor
+            script = do mock.testScript
+
+        it 'returns the value as midi value when not inversible transform', ->
+            expect(map.value).toBe map.midiValue
+            expect(map.midiValue).toBe 42
+
+            map.value = 32
+            expect(map.value).toBe map.midiValue
+            expect(map.midiValue).toBe 32
+
+        it 'uses the inverse of the transform to produce back the MIDI values', ->
+            map.transform inverse: (x) -> x - 10
+
+            expect(map.value).toBe 42
+            expect(map.midiValue).toBe 32
+
+            map.value = 32
+            expect(map.value).toBe 32
+            expect(map.midiValue).toBe 22
+
+Tests for the **Map** behaviour.
 
     describe 'Map', ->
 
