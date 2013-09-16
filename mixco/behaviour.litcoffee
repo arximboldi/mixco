@@ -515,6 +515,28 @@ equivalent methods in the engine.
         exports.option().on 'value', ->
             @script.mixxx.engine.brake deck, @value, args...
 
+The **playhead** sends the current position meter a MIDI value and
+blinks faster and faster as the play position aproaches the end of the
+track.
+
+    exports.playhead = (g) ->
+        exports.mapout(g, "playposition").meter do ->
+            step = 0
+            (pos) ->
+                engine = @script.mixxx.engine
+                duration = switch
+                    when not engine.getValue g, "play" then undefined
+                    when pos > .9  then 5
+                    when pos > .8  then 9
+                    when pos > .75 then 13
+                    else undefined
+                if duration?
+                    step = (step + 1) % duration
+                    if step > duration / 2 then 0 else pos * 127
+                else
+                    step = 0
+                    pos * 127
+
 License
 -------
 

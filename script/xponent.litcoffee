@@ -121,25 +121,7 @@ channel.
 * **29.** Song progress indication. When it approches the end of the
   playing song it starts blinking.
 
-            playpositionMeter = do ->
-                step = 0
-                (pos) ->
-                    engine = @script.mixxx.engine
-                    duration = switch
-                        when not engine.getValue g, "play" then undefined
-                        when pos > .9  then 5
-                        when pos > .8  then 9
-                        when pos > .75 then 13
-                        else undefined
-                    if duration?
-                        step = (step + 1) % duration
-                        if step > duration / 2 then 0 else pos * 127
-                    else
-                        step = 0
-                        pos * 127
-
-            @add c.meter(c.ccIds 0x14+i, 3).does b.mapout(g, "playposition")
-                .meter playpositionMeter
+            @add c.meter(c.ccIds 0x14+i, 3).does b.playhead g
 
 * **30.** Back and forward.
 
