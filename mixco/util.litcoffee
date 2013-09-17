@@ -30,6 +30,16 @@ i.e. attributes that are accessed via setters and getters.
 Utilities
 ---------
 
+### Copy
+
+Creates a copy of an object into another.
+
+    exports.copy = (a, b) ->
+        b ?= {}
+        for k, v of a
+            b[k] = v
+        b
+
 ### Printer
 
 This be used to print both into Mixxx console or the

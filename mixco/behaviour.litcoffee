@@ -6,13 +6,10 @@ This module contains all the functionallity that lets you add
 
     events    = require 'events'
     transform = require './transform'
-    util      = require './util'
     value     = require './value'
+    {indent, assert, factory, copy} = require './util'
     {multi, isinstance} = require './multi'
-
-    indent  = util.indent
-    assert  = util.assert
-    factory = util.factory
+    {reduce} = require 'underscore'
 
 Actor
 -----
@@ -50,15 +47,35 @@ given actor.
             @actor = actor
 
             @_eventListener = (ev) =>
-                    @onMidiEvent ev
+                if @_options?
+                    ev = copy ev
+                    ev.value = reduce @_options,
+                        ((x, o) => o.transform?(x, @) ? x),
+                        ev.value
+                @onMidiEvent ev
             actor.on 'event', @_eventListener
+
+            if @_options?
+                for opt in @_options
+                    opt.enable?(@)
 
         disable: (script, actor) ->
             assert @script == script
             assert @actor == actor
+            if @_options?
+                for opt in @_options
+                    opt.disable?(@)
             actor.removeListener 'event', @_eventListener
             delete @script
             delete @actor
+
+Adds an *option* to the behaviour.
+
+        option: (options...) ->
+            for opt in options
+                assert opt
+            (@_options ?= []).push options...
+            this
 
 Define a **directMapping** when the Behaviour can be mapped directly
 to a Mixxx actor. Note that this should not depend on conditions

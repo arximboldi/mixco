@@ -10,7 +10,6 @@ Module
     value     = require '../../mixco/value'
     behaviour = require '../../mixco/behaviour'
 
-
 Mocks
 -----
 
@@ -23,9 +22,10 @@ Mocks
         'removeListener' ]
 
     mockBehaviour = ->
-        mocked = new behaviour.Behaviour
+        mocked = new behaviour.Behaviour arguments...
         spyOn(mocked, 'enable').andCallThrough()
         spyOn(mocked, 'disable').andCallThrough()
+        spyOn(mocked, 'onMidiEvent').andCallThrough()
         mocked
 
 
@@ -38,7 +38,7 @@ Tests for the **Behaviour** base class.
 
         behav = null
         beforeEach ->
-            behav = new behaviour.Behaviour initial: 32
+            behav = mockBehaviour initial: 32
 
         it 'returns the same MIDI value as normal value', ->
             expect(behav.value).toBe behav.midiValue
@@ -48,6 +48,41 @@ Tests for the **Behaviour** base class.
             expect(behav.value).toBe behav.midiValue
             expect(behav.value).toBe 64
 
+        it 'processes MIDI input events with given options', ->
+            behav.option transform: (x) -> x * 2
+
+            actor = new behaviour.Actor
+            behav.enable {}, actor
+
+            actor.emit 'event', value: 3
+            expect(behav.onMidiEvent).toHaveBeenCalledWith value: 6
+
+            behav.option transform: (x) -> x - 1
+
+            actor.emit 'event', value: 3
+            expect(behav.onMidiEvent).toHaveBeenCalledWith value: 5
+
+        it 'transforms can use the current behaviour', ->
+            opt = createSpyObj 'option', ['transform']
+            behav.option opt
+
+            actor = new behaviour.Actor
+            behav.enable {}, actor
+
+            actor.emit 'event', value: 3
+            expect(opt.transform).toHaveBeenCalledWith 3, behav
+
+        it 'options are enabled and disabled', ->
+            opt = createSpyObj 'option', ['enable', 'disable']
+            behav.option opt
+
+            script = {}
+            actor = new behaviour.Actor
+            behav.enable script, actor
+            expect(opt.enable).toHaveBeenCalledWith behav
+
+            behav.disable script, actor
+            expect(opt.disable).toHaveBeenCalledWith behav
 
 Tests for the **Output** basic behaviour.
 
