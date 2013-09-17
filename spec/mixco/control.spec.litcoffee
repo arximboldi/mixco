@@ -12,8 +12,8 @@ Mocks
 Module
 ------
 
-    {MIDI_CC, Control, OutControl} = require '../../mixco/control'
-    {Behaviour} = require '../../mixco/behaviour'
+    {MIDI_CC, Control, InControl, OutControl} = require '../../mixco/control'
+    {Behaviour} = behaviour = require '../../mixco/behaviour'
 
 Tests
 -----
@@ -47,7 +47,47 @@ Tests for the **Control** base class.
             {message, midino, channel} = control.ids[0]
             expect([message, midino, channel]).toEqual [MIDI_CC, 64, 8]
 
-Tests for the **OutControl** base class.
+
+Tests for the **InControl** class.
+
+    describe 'InControl', ->
+
+        control = null
+
+        beforeEach ->
+            control = new InControl
+
+        it "propagates options to its behaviours that are registered", ->
+            beh1 = new Behaviour
+            control.does beh1
+            control.option behaviour.option.invert
+            expect(beh1._options).toEqual [behaviour.option.invert]
+
+        it "propagates options to its new behaviours", ->
+            beh1 = new Behaviour
+            control.option behaviour.option.invert
+            control.does beh1
+            expect(beh1._options).toEqual [behaviour.option.invert]
+
+        it "propagates options to its conditional behaviours", ->
+            beh1 = new Behaviour
+            beh2 = new Behaviour
+            beh3 = new Behaviour
+            control.option behaviour.option.invert
+
+            control.when new Behaviour, beh1
+            expect(beh1._options).toEqual [behaviour.option.invert]
+
+            control.else.when new Behaviour, beh2
+            expect(beh2._options).toEqual [behaviour.option.invert]
+
+            control.else beh3
+            expect(beh3._options).toEqual [behaviour.option.invert]
+
+
+Tests for the **OutControl** class.
+
+    describe 'OutControl', ->
 
         it "configures minimum and maximum from the behaviour mapping", ->
             control = new OutControl

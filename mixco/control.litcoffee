@@ -96,25 +96,27 @@ Thera are three kinds of behaviours we can associate to the control:
 
         does: (args...) ->
             assert not @_isInit
-            @_behaviours.push behaviour.toBehaviour args...
+            @_behaviours.push @registerBehaviour behaviour.toBehaviour args...
             this
 
         when: (args...) ->
             assert not @_isInit
             @_lastWhen = behaviour.when args...
-            @_behaviours.push @_lastWhen
+            @_behaviours.push @registerBehaviour @_lastWhen
             this
 
         _elseWhen: (args...) ->
-            assert @_lastWhen?, "'elseWhen' must be preceded by 'when' or 'elseWhen'"
+            assert @_lastWhen?,
+                "'elseWhen' must be preceded by 'when' or 'elseWhen'"
             @_lastWhen = @_lastWhen.else.when args...
-            @_behaviours.push @_lastWhen
+            @_behaviours.push @registerBehaviour @_lastWhen
             this
 
         _else: (args...) ->
-            assert @_lastWhen?, "'else' must be preceded by 'when' or 'elseWhen'"
+            assert @_lastWhen?,
+                "'else' must be preceded by 'when' or 'elseWhen'"
             @_lastWhen = @_lastWhen.else args...
-            @_behaviours.push @_lastWhen
+            @_behaviours.push @registerBehaviour @_lastWhen
             @_lastWhen = undefined
             this
 
@@ -133,6 +135,7 @@ Thera are three kinds of behaviours we can associate to the control:
             @_isInit = false
             delete @script
 
+        registerBehaviour: (b) -> b
         configInputs: (depth, script) ->
         configOutputs: (depth, script) ->
 
@@ -148,6 +151,20 @@ An *input control* can proccess inputs from the hardware.
                 script.registerHandler \
                     ((args...) => @emit 'event', event args...),
                     @handlerId()
+
+A input control can be configured with the same type of *options* that
+behaviours can.  These are documented in the `mixco.behaviour` module.
+
+        option: (options...) ->
+            (@_options ?= []).push options...
+            for beh in @_behaviours
+                beh.option options...
+            this
+
+        registerBehaviour: (beh) ->
+            if @_options?
+                beh.option @_options...
+            beh
 
 The control will listen to the --via a *handler*-- only when the
 behaviours need it. If there is only one behaviour in the control and
