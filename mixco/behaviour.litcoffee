@@ -68,7 +68,6 @@ determined after the XML configuration is generated.
         directOutMapping: -> null
 
 Interface to receive MIDI and map the current value from MIDI.
-        configOutput: (depth) ->
 
         onMidiEvent: (ev) -> null
         getMidiValue: -> @value
@@ -258,11 +257,9 @@ handler to it.
 
         directOutMapping: ->
             if not @_outTransform?
-                group: @outgroup
-                key:   @outkey
-
-        configOutput: (depth) ->
-            "#{indent depth}<minimum>#{@minimum}</minimum>"
+                group:   @outgroup
+                key:     @outkey
+                minimum: @minimum
 
     exports.mapout = factory exports.MapOut
 

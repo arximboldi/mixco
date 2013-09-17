@@ -12,7 +12,8 @@ Mocks
 Module
 ------
 
-    {MIDI_CC, Control} = require '../../mixco/control'
+    {MIDI_CC, Control, OutControl} = require '../../mixco/control'
+    {Behaviour} = require '../../mixco/behaviour'
 
 Tests
 -----
@@ -45,6 +46,27 @@ Tests for the **Control** base class.
             expect(control.ids.length).toBe(1)
             {message, midino, channel} = control.ids[0]
             expect([message, midino, channel]).toEqual [MIDI_CC, 64, 8]
+
+Tests for the **OutControl** base class.
+
+        it "configures minimum and maximum from the behaviour mapping", ->
+            control = new OutControl
+            behave  = new Behaviour
+            control.does behave
+
+            behave.directOutMapping = ->
+                minimum: 1
+                maximum: 2
+            expect(control.configOutputs 0)
+                .toContain("<minimum>1</minimum>")
+            expect(control.configOutputs 0)
+                .toContain("<maximum>2</maximum>")
+
+            behave.directOutMapping = -> {}
+            expect(control.configOutputs 0)
+                .not.toContain("<minimum>")
+            expect(control.configOutputs 0)
+                .not.toContain("<maximum>")
 
 License
 -------

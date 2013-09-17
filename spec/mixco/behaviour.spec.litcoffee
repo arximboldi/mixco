@@ -147,8 +147,10 @@ Tests for the **Map** behaviour.
                 .toHaveBeenCalledWith "[Test2]", "test2", do script.handlerKey
 
         it 'direct maps output to the right parameter', ->
-            expect(map.directOutMapping()).toEqual { group: "[Test]",  key: "test" }
-            expect(map2.directOutMapping()).toEqual { group: "[Test2]", key: "test2" }
+            expect(map.directOutMapping()).toEqual {
+                group: "[Test]",  key: "test", minimum: 1 }
+            expect(map2.directOutMapping()).toEqual {
+                 group: "[Test2]", key: "test2", minimum: 1 }
 
         it 'direct maps input to the right parameter', ->
             expect(map.directInMapping()).toEqual { group: "[Test]",  key: "test" }

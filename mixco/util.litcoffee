@@ -82,6 +82,21 @@ number.
     exports.hexStr = (number) ->
         "0x#{number.toString 16}"
 
+
+Generates a XML tag with the passed in value or nothing.
+
+    exports.xmlTag = (str, value, indent=0) ->
+        if value?
+            "#{exports.indent indent}<#{str}>#{value}</#{str}>"
+        else
+            ""
+
+Joins several lines, removing empty ones.
+
+    exports.joinLn = (lines) ->
+        lines.filter((x) -> x).join('\n')
+
+
 ### Factories
 
 Generates a function that constructs an object of type *Klass*,

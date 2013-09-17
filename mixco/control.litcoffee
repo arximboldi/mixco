@@ -3,15 +3,9 @@ mixco.control
 
 Defines different hardware controls.
 
-    {multi}   = require './multi'
-    util      = require './util'
+    {multi} = require './multi'
+    {indent, hexStr, assert, factory, xmlTag, joinLn} = require './util'
     behaviour = require './behaviour'
-
-    indent  = util.indent
-    hexStr  = util.hexStr
-    assert  = util.assert
-    factory = util.factory
-
 
 Constants
 ---------
@@ -175,9 +169,7 @@ signal when they are received.
                     key:   script.handlerKey do @handlerId
             else
                 mapping = do @_behaviours[0].directInMapping
-            (@configInMapping depth, mapping, id for id in @ids)
-                .filter((x)->x)
-                .join('\n')
+            joinLn(@configInMapping depth, mapping, id for id in @ids)
 
         configInMapping: (depth, mapping, id) ->
             """
@@ -239,6 +231,10 @@ We should remove the send function before enabling behaviours.
         configOutputs: (depth, script) ->
             mapping = not @needsSend() and do @_behaviours[0].directOutMapping
             if mapping
+                options = joinLn [
+                    xmlTag 'minimum', mapping.minimum, depth+1
+                    xmlTag 'maximum', mapping.maximum, depth+1
+                ]
                 """
                 #{indent depth}<output>
                 #{indent depth+1}<group>#{mapping.group}</group>
@@ -246,10 +242,9 @@ We should remove the send function before enabling behaviours.
                 #{@ids[0].configMidi depth+1}
                 #{indent depth+1}<on>#{hexStr @states['on']}</on>
                 #{indent depth+1}<off>#{hexStr @states['off']}</off>
-                #{@_behaviours[0].configOutput depth+1}
+                #{options}
                 #{indent depth}</output>
                 """
-
 
 ### Concrete controls
 
