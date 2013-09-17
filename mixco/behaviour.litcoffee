@@ -452,6 +452,11 @@ methods of the `control.Control` class.
             @_condition.on 'value', => do @_update
             @_nextCondition = @_condition
 
+        option: ->
+            super
+            @_wrapped.option arguments...
+            this
+
         _elseWhen: (condition, args...) ->
             assert @_nextCondition?, "Can not define more conditions after 'else'"
             @_nextCondition = value.and value.not(@_nextCondition), condition

@@ -368,6 +368,17 @@ Tests for the **When** behaviour
             condition.value = false
             expect(when_.value).toBe false
 
+        it "propagates options to the wrapped behaviour", ->
+            when_.option behaviour.option.softTakeover
+            expect(wrapped._options).toEqual [
+                behaviour.option.softTakeover
+            ]
+
+            when_.option behaviour.option.invert
+            expect(wrapped._options).toEqual [
+                behaviour.option.softTakeover
+                behaviour.option.invert
+            ]
 
 Tests for the **PunchIn** behaviour
 
