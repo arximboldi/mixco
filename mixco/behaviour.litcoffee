@@ -164,7 +164,7 @@ The **MapIn** behaviour maps the received input to a control in Mixxx.
         constructor: (ingroupOrParams, inkey=undefined) ->
             super
             {@group, @key} =
-                if ingroupOrParams not instanceof String
+                if not isinstance ingroupOrParams, String
                 then ingroupOrParams
                 else
                     group: ingroupOrParams
@@ -221,7 +221,7 @@ behaviour of a direct mapping.
         getMidiValue: ->
             @_transform?.inverse?(@value) ? @value
 
-    exports.mapin = factory exports.MapOut
+    exports.mapIn = factory exports.MapIn
 
 
 #### Output
@@ -234,7 +234,7 @@ output to the controller.
         constructor: (outgroupOrParams, outkey=undefined) ->
             super
             {@outgroup, @outkey} =
-                if outgroupOrParams not instanceof String
+                if not isinstance outgroupOrParams, String
                 then outgroupOrParams
                 else
                     outgroup: outgroupOrParams
@@ -278,7 +278,7 @@ handler to it.
                 key:     @outkey
                 minimum: @minimum
 
-    exports.mapout = factory exports.MapOut
+    exports.mapOut = factory exports.MapOut
 
 
 #### Combinatios
@@ -543,7 +543,7 @@ blinks faster and faster as the play position aproaches the end of the
 track.
 
     exports.playhead = (g) ->
-        exports.mapout(g, "playposition").meter do ->
+        exports.mapOut(g, "playposition").meter do ->
             step = 0
             (pos) ->
                 engine = @script.mixxx.engine
