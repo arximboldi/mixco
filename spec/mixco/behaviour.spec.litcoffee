@@ -295,6 +295,13 @@ Tests for the **When** behaviour
             expect(wrapped2.enable).
                 toHaveBeenCalledWith script, actor
 
+        it "exposes wether it meets the condition on its 'value'", ->
+            when_.enable script, actor
+            condition.value = true
+            expect(when_.value).toBe true
+            condition.value = false
+            expect(when_.value).toBe false
+
 
 Tests for the **PunchIn** behaviour
 

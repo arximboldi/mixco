@@ -406,10 +406,10 @@ methods of the `control.Control` class.
             super
 
         _update: ->
-            mustEnable = @_enableRequested and @_condition.value
-            if @_wrapped.actor and not mustEnable
+            @value = @_enableRequested and @_condition.value
+            if @_wrapped.actor and not @value
                 @_wrapped.disable @_enableOn...
-            if not @_wrapped.actor and mustEnable
+            if not @_wrapped.actor and @value
                 @_wrapped.enable @_enableOn...
 
 
