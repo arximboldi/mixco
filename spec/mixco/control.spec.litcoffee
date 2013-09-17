@@ -84,6 +84,70 @@ Tests for the **InControl** class.
             control.else beh3
             expect(beh3._options).toEqual [behaviour.option.invert]
 
+        it "configures the options of its behaviour when it can", ->
+            beh1 = new Behaviour
+            beh1.directInMapping = ->
+                group: "[master]"
+                key: "crossfader"
+            beh1.option behaviour.option.invert
+            beh1.option behaviour.option.softTakeover
+            control.does beh1
+
+            expect(control.configInputs 0)
+                .toMatch ///
+                    \s*<options>
+                    \s*<invert/>
+                    \s*<soft-takeover/>
+                    \s*</options>
+                ///
+
+        it "configures as script binding when no direct input mapping", ->
+            beh1 = new Behaviour
+            beh1.option behaviour.option.invert
+            beh1.option behaviour.option.softTakeover
+            control.does beh1
+
+            expect(control.configInputs 0, mock.testScript())
+                .toMatch ///
+                    \s*<options>
+                    \s*<script-binding/>
+                    \s*</options>
+                ///
+
+        it "configures as script binding when too many behaviours", ->
+            beh1 = new Behaviour
+            beh1.directInMapping = ->
+                group: "[master]"
+                key: "crossfader"
+            beh2 = new Behaviour
+            beh2.directInMapping = beh1.directInMapping
+
+            beh1.option behaviour.option.invert
+            beh1.option behaviour.option.softTakeover
+            control.does beh1
+            control.does beh2
+
+            expect(control.configInputs 0, mock.testScript())
+                .toMatch ///
+                    \s*<options>
+                    \s*<script-binding/>
+                    \s*</options>
+                ///
+
+        it "configures as normal when no options", ->
+            beh1 = new Behaviour
+            beh1.directInMapping = ->
+                group: "[master]"
+                key: "crossfader"
+            control.does beh1
+
+            expect(control.configInputs 0, mock.testScript())
+                .toMatch ///
+                    \s*<options>
+                    \s*<normal/>
+                    \s*</options>
+                ///
+
 
 Tests for the **OutControl** class.
 

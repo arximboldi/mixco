@@ -195,20 +195,21 @@ signal when they are received.
             #{indent depth+1}<key>#{mapping.key}</key>
             #{id.configMidi depth+1}
             #{indent depth+1}<options>
-            #{@_configOptions depth+2}
+            #{@configOptions depth+2}
             #{indent depth+1}</options>
             #{indent depth}</control>
             """
 
         configOptions: (depth) ->
-            "#{indent depth}<normal/>"
-
-        _configOptions: (depth) ->
             if do @needsHandler
                 "#{indent depth}<script-binding/>"
+            else if @_behaviours[0]._options?.length > 0
+                joinLn(
+                    for opt in @_behaviours[0]._options
+                        if opt.name?
+                            "#{indent depth}<#{opt.name}/>")
             else
-                @configOptions depth
-
+                "#{indent depth}<normal/>"
 
 ### Output
 
