@@ -227,9 +227,11 @@ An *output control* can send data to the hardware.
         doSend: (state) ->
             id = @ids[0]
             if state of @states
-                @script.mixxx.midi.sendShortMsg id.status(), id.midino, @states[state]
+                @script.mixxx.midi.sendShortMsg \
+                    id.status(), id.midino, @states[state]
             else
-                @script.mixxx.midi.sendShortMsg id.status(), id.midino, state
+                @script.mixxx.midi.sendShortMsg \
+                    id.status(), id.midino, state
 
         init: ->
 
