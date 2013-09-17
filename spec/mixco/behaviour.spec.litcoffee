@@ -32,6 +32,37 @@ Mocks
 Tests
 -----
 
+Test some of the basic options.
+
+    describe 'option', ->
+
+        option = behaviour.option
+
+        it 'has some linear transforms', ->
+            expect(option.invert.transform 32).toBe 95
+            expect(option.spread64.transform 32).toBe -32
+
+        it 'has some non-linear transforms', ->
+            expect(option.diff.transform 32, midiValue: 8).toBe 40
+            expect(option.hercjog.transform 32, midiValue: 8).toBe 40
+
+        it 'enables soft takeover on input mappings', ->
+            beh = behaviour.mapIn "[Test]", "test"
+            beh.script = do mock.testScript
+
+            option.softTakeover.enable beh
+            expect(beh.script.mixxx.engine.softTakeover)
+                .toHaveBeenCalledWith "[Test]", "test", true
+
+            option.softTakeover.disable beh
+            expect(beh.script.mixxx.engine.softTakeover)
+                .toHaveBeenCalledWith "[Test]", "test", false
+
+        it 'replaces dashes from option names', ->
+            expect(option.invert.name).toBe 'invert'
+            expect(option.softTakeover.name).toBe 'soft-takeover'
+
+
 Tests for the **Behaviour** base class.
 
     describe 'Behaviour', ->

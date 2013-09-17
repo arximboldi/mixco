@@ -27,6 +27,73 @@ behaviours to update it.
 
         send: undefined
 
+Options
+-------
+
+These modify a behaviour in the same way that the equivalent options
+for the `<option>` section of the Mixxx control mapping section do.
+These can be used either at *control* or *behaviour* level.  An option
+has the following interface:
+
+- A `name` with the name of the option in the XML file.
+- Optionally, a `transform` function that maps the received MIDI to a
+  transformed one.
+- Optionally, a `enable` and `disable` functions that take a behaviour
+  that they may affect.
+
+This `option` object contains all the available options in Mixxx, with
+names converted to idiomatic JavaScript -- e.g. *soft-takeover* becomes
+*softTakeover*.
+
+These impementations are simplifications of what there is in
+`MidiController::computeValue` in Mixxx.  Please check them from time
+to time.  Also the way we implement non-linear transforms is
+inconsistent with how Mixxx does it, but it should be though.
+
+    option = exports.option = do ->
+        result = {}
+        add    = (names..., option) ->
+            [mixxxName, name] = names
+            desc =
+                if isinstance option, Function
+                    transform:
+                        if option.length == 1
+                            option
+                        else
+                            (v1, b) -> v0 = option v1, b.midiValue
+                else
+                    option
+            desc.name = mixxxName
+            result[name ? mixxxName] = desc
+            result
+
+        rot64   = (sign) -> (v1, v0) ->
+            diff = v1 - 64.
+            diff =
+                if diff == -1 or diff == 1
+                then diff / 16
+                else diff - diff.sign()
+            (v0 + diff * sign).clamp 0, 127
+
+        add 'invert', (v) -> 127.0 - v
+        add 'rot64', rot64 1
+        add 'rot64inv', rot64 -1
+        add 'rot64fast', (v1, v0) -> (v0 + (v1 - 64) * 1.5).clamp 0, 127
+        add 'diff', (v1, v0) -> v0 + (if v1 > 64 then v1 - 128 else v1)
+        add 'button', (v) -> v != 0
+        add 'switch', (v) -> 1
+        add 'hercjog', (v1, v0) -> v0 + (if v1 > 64 then v1 - 128 else v1)
+        add 'spread64', (v) -> v - 64
+        add 'selectknob', (v) -> if v > 64 then v - 128 else v
+        add 'soft-takeover', 'softTakeover',
+            enable:  (b) ->
+                if isinstance b, exports.MapIn
+                    b.script.mixxx.engine.softTakeover \
+                        b.group, b.key, true
+            disable: (b) ->
+                if isinstance b, exports.MapIn
+                    b.script.mixxx.engine.softTakeover \
+                        b.group, b.key, false
 
 Behaviours
 ----------
@@ -313,26 +380,11 @@ of arguments.  If the argument is just a behaviour, it returns it.
         else
             behaviour
 
+The **soft** behaviour is a mapping with the `softTakeover` option
+enabled.
 
-The **Soft** behaviour defines a mapping with soft takeover enabled.
-
-    class exports.Soft extends exports.Map
-
-        enable: ->
-            super
-            @script.mixxx.engine.softTakeover @group, @key, true
-
-        disable: ->
-            @script.mixxx.engine.softTakeover @group, @key, false
-            super
-
-When soft takeover is enabled we have to process the events through
-the script.
-
-        directInMapping: -> null
-
-    exports.soft = factory exports.Soft
-
+    exports.soft = ->
+        exports.map(arguments...).option(option.softTakeover)
 
 The *set* behaviour sets a control to a spefic value whenever it is
 pressed.  The *toggle* behaviour instead sets it to two different
