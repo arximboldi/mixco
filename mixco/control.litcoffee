@@ -273,38 +273,29 @@ We should remove the send function before enabling behaviours.
 Lets provide a series of aliases to make scripts read more natural,
 and maybe also eventually add specifics to these.
 
-    exports.knob   = factory exports.InControl
+    exports.input  = factory exports.InControl
+    exports.output = factory exports.OutControl
+    exports.knob   = exports.input
     exports.slider = exports.knob
+    exports.button = ->
+        exports.input(arguments...)
+            .option behaviour.option.button
+    exports.meter  = exports.output
 
 
-#### Button
+#### Input and output
 
-Represents a hardware button.
+Represents a hardware control that can do both input and output.  This
+is often the case for buttons that have a LED.
 
-    class exports.Button extends exports.InControl
+    class exports.InOutControl extends multi exports.InControl,
+                                             exports.OutControl
 
-        configOptions: (depth) ->
-            "#{indent depth}<button/>"
+    exports.control   = factory exports.InOutControl
+    exports.ledButton = ->
+        exports.control(arguments...)
+            .option behaviour.option.button
 
-    exports.button = factory exports.Button
-
-
-#### LedButton
-
-Represents a hardware button with a LED that can represent a value it
-is mapped to.
-
-    class exports.LedButton extends multi exports.Button, exports.OutControl
-
-    exports.ledButton = factory exports.LedButton
-
-
-#### Meter
-
-Represents a visual element that is controlled by MIDI notes, like a
-LED volume meter.
-
-    exports.meter = factory exports.OutControl
 
 
 License
