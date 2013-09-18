@@ -172,8 +172,7 @@ Interface to receive MIDI and map the current value from MIDI.
 
         onMidiEvent: (ev) -> null
         getMidiValue: -> @value
-        @property 'midiValue', ->
-            do @getMidiValue
+        @property 'midiValue', -> @getMidiValue()
 
 ### Call
 
@@ -198,14 +197,14 @@ output of its actor based on its nested `output` *Value*.
 
         constructor: ->
             super
-            @output = do value.value
+            @output = value.value()
 
         enable: ->
             super
             if @actor?.send?
-                @_updateOutputCallback ?= => do @updateOutput
+                @_updateOutputCallback ?= => @updateOutput()
                 @output.on 'value', @_updateOutputCallback
-                do @updateOutput
+                @updateOutput()
 
         disable: ->
             if @_updateOutputCallback?
@@ -466,7 +465,7 @@ methods of the `control.Control` class.
             @else.when = => @_elseWhen arguments...
             super()
             @_wrapped = exports.toBehaviour wrapped...
-            @_condition.on 'value', => do @_update
+            @_condition.on 'value', => @_update()
             @_nextCondition = @_condition
 
         option: ->
@@ -489,11 +488,11 @@ methods of the `control.Control` class.
             super
             @_enableOn = args
             @_enableRequested = true
-            do @_update
+            @_update()
 
         disable: ->
             @_enableRequested = false
-            do @_update
+            @_update()
             super
 
         _update: ->

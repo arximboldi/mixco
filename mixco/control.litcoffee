@@ -147,7 +147,7 @@ An *input control* can proccess inputs from the hardware.
 
         init: (script) ->
             super
-            if do @needsHandler
+            if @needsHandler()
                 script.registerHandler \
                     ((args...) => @emit 'event', event args...),
                     @handlerId()
@@ -177,18 +177,19 @@ process the MIDI messages via the script, and it will emit a `event`
 signal when they are received.
 
         needsHandler: ->
-            @_behaviours.length != 1 or not do @_behaviours[0].directInMapping
+            @_behaviours.length != 1 or
+            not @_behaviours[0].directInMapping()
 
         handlerId: ->
             "x#{@ids[0].status().toString(16)}_x#{@ids[0].midino.toString(16)}"
 
         configInputs: (depth, script) ->
-            if do @needsHandler
+            if @needsHandler()
                 mapping =
                     group: "[Master]"
-                    key:   script.handlerKey do @handlerId
+                    key:   script.handlerKey @handlerId()
             else
-                mapping = do @_behaviours[0].directInMapping
+                mapping = @_behaviours[0].directInMapping()
             joinLn(@configInMapping depth, mapping, id for id in @ids)
 
         configInMapping: (depth, mapping, id) ->
@@ -204,7 +205,7 @@ signal when they are received.
             """
 
         configOptions: (depth) ->
-            if do @needsHandler
+            if @needsHandler()
                 "#{indent depth}<script-binding/>"
             else if @_behaviours[0]._options?.length > 0
                 joinLn(
@@ -249,10 +250,11 @@ We should remove the send function before enabling behaviours.
             super
 
         needsSend: ->
-            @_behaviours.length != 1 or not do @_behaviours[0].directOutMapping
+            @_behaviours.length != 1 or
+            not @_behaviours[0].directOutMapping()
 
         configOutputs: (depth, script) ->
-            mapping = not @needsSend() and do @_behaviours[0].directOutMapping
+            mapping = not @needsSend() and @_behaviours[0].directOutMapping()
             if mapping
                 options = joinLn [
                     xmlTag 'minimum', mapping.minimum, depth+1

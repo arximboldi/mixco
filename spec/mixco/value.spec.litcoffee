@@ -22,10 +22,10 @@ Tests for the **Value** base class.
             expect(v.value).toBe "hello"
 
         it "notifies when value changes", ->
-            callback = do createSpy
+            callback = createSpy()
             v = new Value
             v.on 'value', callback
-            do expect(callback).not.toHaveBeenCalled
+            expect(callback).not.toHaveBeenCalled()
             v.value = 5
             expect(callback).toHaveBeenCalledWith 5
 

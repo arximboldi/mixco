@@ -47,15 +47,15 @@ Tests
                 unrequire moduleName
                 module = require moduleName
                 script = module[scriptName]
-                script.mixxx = do mock.mixxx
+                script.mixxx = mock.mixxx()
 
             it "generates configuration without undefined values", ->
-                expect(do script.config)
+                expect(script.config())
                     .not.toMatch "undefined"
 
             it "initializes and shutsdown without launching exceptions", ->
-                do script.init
-                do script.shutdown
+                script.init()
+                script.shutdown()
 
 License
 -------

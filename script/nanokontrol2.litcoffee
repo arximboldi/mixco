@@ -74,7 +74,7 @@ the *transport section*. These are global buttons
 
 The *cycle* button will be used as modifier.
 
-            @cycle = do b.modifier
+            @cycle = b.modifier()
             @add c.ledButton(0x2e).does @cycle
 
 Most of the transport controls will have their behaviour defined
@@ -94,7 +94,7 @@ in many cases omit parentheses. Any of those was equivalent to writting:
 We can browse the playlist too. The load button is added later, per deck.
 
 
-            @marker = do b.modifier
+            @marker = b.modifier()
             @add c.ledButton(0x3C).does @marker
 
             g = "[Playlist]"

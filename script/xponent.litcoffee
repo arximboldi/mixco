@@ -72,7 +72,7 @@ channel.
   that there is a shift button per-deck, which only affects the
   controls of that deck.
 
-            shift = do b.modifier
+            shift = b.modifier()
             @add c.ledButton(noteId 0x2C).does shift
 
 * **12.** Pre-Fade Listen. Select which deck goes to the pre-hear.
@@ -222,7 +222,7 @@ channel.
 
 * **10.** Toggles *scratch* mode.
 
-            scratchMode = do b.switch
+            scratchMode = b.switch()
             @add c.ledButton(noteOnId 0x15).does scratchMode
 
 * **11.** The wheel does different functions...

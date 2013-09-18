@@ -78,8 +78,8 @@ operation on them.  It updates whenever one of them changes.
 
         constructor: (@reducer, @reduced...) ->
             for v in @reduced
-                v.on 'value', => do @update
-            do @update
+                v.on 'value', => @update()
+            @update()
 
         update: ->
             @value = @reduced
@@ -97,8 +97,8 @@ unary function.
     class exports.Transform extends exports.Value
 
         constructor: (@transformer, @transformed) ->
-            @transformed.on 'value', => do @update
-            do @update
+            @transformed.on 'value', => @update()
+            @update()
 
         update: ->
             @value = @transformer @transformed.value

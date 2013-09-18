@@ -48,7 +48,7 @@ Test some of the basic options.
 
         it 'enables soft takeover on input mappings', ->
             beh = behaviour.mapIn "[Test]", "test"
-            beh.script = do mock.testScript
+            beh.script = mock.testScript()
 
             option.softTakeover.enable beh
             expect(beh.script.mixxx.engine.softTakeover)
@@ -132,7 +132,7 @@ Tests for the **Output** basic behaviour.
 
         beforeEach ->
             output = new behaviour.Output
-            actor  = do mockActor
+            actor  = mockActor()
 
         it 'can accept actor without "send"', ->
             actor.send = undefined
@@ -168,8 +168,8 @@ Tests for the **InMap** behaviour.
                 group:  "[test]"
                 key:    "test"
                 initial: 42
-            actor = do mockActor
-            script = do mock.testScript
+            actor  = mockActor()
+            script = mock.testScript()
 
         it 'returns the value as midi value when not inversible transform', ->
             expect(map.value).toBe map.midiValue
@@ -201,8 +201,8 @@ Tests for the **Map** behaviour.
         beforeEach ->
             map    = behaviour.map "[Test]", "test"
             map2   = behaviour.map "[Test]", "test", "[Test2]", "test2"
-            actor  = do mockActor
-            script = do mock.testScript
+            actor  = mockActor()
+            script = mock.testScript()
 
         it 'does not listen to the Mixxx control unnecesarily', ->
             actor.send = undefined
@@ -213,12 +213,12 @@ Tests for the **Map** behaviour.
         it 'connects to the Mixxx control when actor has send', ->
             map.enable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Test]", "test", do script.handlerKey
+                .toHaveBeenCalledWith "[Test]", "test", script.handlerKey()
 
         it 'connects to output control when different from input', ->
             map2.enable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Test2]", "test2", do script.handlerKey
+                .toHaveBeenCalledWith "[Test2]", "test2", script.handlerKey()
 
         it 'direct maps output to the right parameter', ->
             expect(map.directOutMapping()).toEqual {
@@ -227,14 +227,16 @@ Tests for the **Map** behaviour.
                  group: "[Test2]", key: "test2", minimum: 1 }
 
         it 'direct maps input to the right parameter', ->
-            expect(map.directInMapping()).toEqual { group: "[Test]",  key: "test" }
-            expect(map2.directInMapping()).toEqual { group: "[Test]",  key: "test" }
+            expect(map.directInMapping()).toEqual {
+                group: "[Test]",  key: "test" }
+            expect(map2.directInMapping()).toEqual {
+                group: "[Test]",  key: "test" }
 
         it 'connects to the Mixxx control when someone is obsrving "value"', ->
             map.on "value", ->
             map.enable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Test]", "test", do script.handlerKey
+                .toHaveBeenCalledWith "[Test]", "test", script.handlerKey()
 
         it 'initializes the value and output with the current engine status', ->
             script.mixxx.engine.getValue = (group, key) ->
@@ -282,11 +284,11 @@ Tests for the **Map** behaviour.
 
         it 'does not direct map output when a custom transform is set', ->
             xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
-            expect(do xfader.directInMapping).toBe undefined
+            expect(xfader.directInMapping()).toBe undefined
 
         it 'does not direct map input when a custom transform is set', ->
             xfader = behaviour.map("[Master]", "crossfader").meter (v) -> v
-            expect(do xfader.directOutMapping).toBe undefined
+            expect(xfader.directOutMapping()).toBe undefined
 
         it 'does nothing when the transform return null', ->
             xfader = behaviour.map("[Master]", "crossfader").transform (v) ->
@@ -326,9 +328,9 @@ Tests for the **When** behaviour
 
         beforeEach ->
             condition = value.value false
-            wrapped   = do mockBehaviour
-            actor     = do mockActor
-            script    = do mock.testScript
+            wrapped   = mockBehaviour()
+            actor     = mockActor()
+            script    = mock.testScript()
             when_     = behaviour.when condition, wrapped
 
         it "does nothing when enabled and condition not satisifed", ->
@@ -359,7 +361,7 @@ Tests for the **When** behaviour
                 toHaveBeenCalledWith script, actor
 
         it "generates a new negated version on 'else", ->
-            wrapped2 = do mockBehaviour
+            wrapped2 = mockBehaviour()
             else_ = when_.else wrapped2
             condition.value = true
             else_.enable script, actor
@@ -401,8 +403,8 @@ Tests for the **PunchIn** behaviour
         beforeEach ->
             leftPunchIn  = behaviour.punchIn 0.5
             rightPunchIn = behaviour.punchIn -0.5
-            actor        = do mockActor
-            script       = do mock.testScript
+            actor        = mockActor()
+            script       = mock.testScript()
             script.mixxx.engine.getValue = (group, control) ->
                 expect(group).toBe "[Master]"
                 expect(control).toBe "crossfader"
@@ -413,15 +415,15 @@ Tests for the **PunchIn** behaviour
         it "does nothing when the crossfader is to the requested side", ->
             xfader = -0.75
             leftPunchIn.onMidiEvent value: 1
-            do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
+            expect(script.mixxx.engine.setValue).not.toHaveBeenCalled()
             leftPunchIn.onMidiEvent value: 0
-            do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
+            expect(script.mixxx.engine.setValue).not.toHaveBeenCalled()
 
             xfader = 0.75
             rightPunchIn.onMidiEvent value: 1
-            do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
+            expect(script.mixxx.engine.setValue).not.toHaveBeenCalled()
             rightPunchIn.onMidiEvent value: 0
-            do expect(script.mixxx.engine.setValue).not.toHaveBeenCalled
+            expect(script.mixxx.engine.setValue).not.toHaveBeenCalled()
 
         it "sets the crossfader to the middle and restores otherwise", ->
             xfader = 0.75
@@ -450,26 +452,26 @@ Tests for the **scratchEnable** behaviour
         scratch = null
 
         beforeEach ->
-            actor   = do mockActor
-            script  = do mock.testScript
+            actor   = mockActor()
+            script  = mock.testScript()
             scratch = behaviour.scratchEnable 1, 32, 33, 1, 0.4, false
             scratch.enable script, actor
 
         it 'enables scratch on button press', ->
-            do expect(script.mixxx.engine.scratchEnable)
-                .not.toHaveBeenCalled
+            expect(script.mixxx.engine.scratchEnable)
+                .not.toHaveBeenCalled()
 
             scratch.onMidiEvent value: 1
             expect(script.mixxx.engine.scratchEnable)
                 .toHaveBeenCalledWith 1, 32, 33, 1, 0.4, false
 
         it 'disables scratch on button release', ->
-            do expect(script.mixxx.engine.scratchDisable)
-                .not.toHaveBeenCalled
+            expect(script.mixxx.engine.scratchDisable)
+                .not.toHaveBeenCalled()
 
             scratch.onMidiEvent value: 0
-            do expect(script.mixxx.engine.scratchEnable)
-                .not.toHaveBeenCalled
+            expect(script.mixxx.engine.scratchEnable)
+                .not.toHaveBeenCalled()
             expect(script.mixxx.engine.scratchDisable)
                 .toHaveBeenCalledWith 1, false
 
@@ -483,14 +485,14 @@ Tests for the **scratchTick** behaviour
         scratch = null
 
         beforeEach ->
-            actor   = do mockActor
-            script  = do mock.testScript
+            actor   = mockActor()
+            script  = mock.testScript()
             scratch = behaviour.scratchTick 1, (v) -> v / 2
             scratch.enable script, actor
 
         it 'ticks the given deck scratch with the current transform', ->
-            do expect(script.mixxx.engine.scratchTick)
-                .not.toHaveBeenCalled
+            expect(script.mixxx.engine.scratchTick)
+                .not.toHaveBeenCalled()
 
             scratch.onMidiEvent value: 64
             expect(script.mixxx.engine.scratchTick)

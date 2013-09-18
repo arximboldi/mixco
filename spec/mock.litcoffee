@@ -46,9 +46,9 @@ Fake mixxx object
 -----------------
 
     exports.mixxx = ->
-        engine: do exports.engine
-        midi:   do exports.midi
-        script: do exports.script
+        engine: exports.engine()
+        midi:   exports.midi()
+        script: exports.script()
 
 Script
 ------
@@ -59,7 +59,7 @@ This test script class provides Mixxx object mocks.
 
         @property 'mixxx',
             get: ->
-                @_fakeMixxx or= do exports.mixxx
+                @_fakeMixxx or= exports.mixxx()
 
     exports.testScript = -> new exports.TestScript arguments...
 
