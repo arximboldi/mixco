@@ -103,9 +103,8 @@ automatically enables that option and returns `b`.
     exports.makeOptionsChooser = makeOptionsChooser = (obj) ->
         result = {}
         for key, opt of option
-            Object.defineProperty result, key, get: do ->
-                iter = opt
-                -> obj.option iter
+            Object.defineProperty result, key, get: do (opt) ->
+                -> obj.option opt
         result
 
 Behaviours
