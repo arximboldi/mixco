@@ -48,7 +48,7 @@ Controls that do not have a per-deck functionality.
 
 * **39.** Crossfader.
 
-            @add c.slider(ccId 0x07).does g, "crossfader"
+            @add c.slider(ccId 0x07).does b.soft g, "crossfader"
 
 Per deck controls
 -----------------
@@ -98,7 +98,8 @@ channel.
 
 * **23.** Per deck volume meters.
 
-            @add c.meter(c.ccIds 0x12+i, 3).does b.map(g, "VuMeter").meter()
+            @add c.meter(c.ccIds 0x12+i, 3)
+                .does b.mapOut(g, "VuMeter").meter()
 
 * **34.** Sync button. Adjust pitch and aligns grids to beatmatch both
   tracks. When *shift* is pressed, it only adjusts pitch, not phase.
@@ -109,7 +110,7 @@ channel.
 
 * **33.** Deck volume.
 
-            @add c.slider(ccId 0x07).does g, "volume"
+            @add c.slider(ccId 0x07).does b.soft g, "volume"
 
 * **38.** Punch-in/transform. While pressed, lets this track be heard
   overriding the corssfader.
@@ -136,8 +137,11 @@ channel.
 
             for idx in [0..4]
                 @add c.ledButton(noteId(0x17 + idx))
-                    .when(shift, g, "hotcue_#{idx+1}_clear", g, "hotcue_#{idx+1}_enabled")
-                    .else g, "hotcue_#{idx+1}_activate", g, "hotcue_#{idx+1}_enabled"
+                    .when(shift,
+                          g, "hotcue_#{idx+1}_clear",
+                          g, "hotcue_#{idx+1}_enabled")
+                    .else g, "hotcue_#{idx+1}_activate",
+                          g, "hotcue_#{idx+1}_enabled"
 
 - The little arrow buttons do *beatjump* -- jump forward or back by
   one beat. When *shift* is pressed, they select the previous or
@@ -246,8 +250,10 @@ channel.
             @add c.knob(ccId 0x16)
                 .when(shift, b.map("[Playlist]", "SelectTrackKnob")
                     .transform selectTrackKnobTransform)
-                .else.when(scratchMode, b.scratchTick i+1, (v) -> v-64)
+                .else.when(scratchMode,
+                    b.scratchTick(i+1).options.spread64)
                 .else b.map(g, "jog").transform (v) -> (v-64)/8.0
+
 
 * **26.** Temporarily nudges the pitch down or up. When **shift**,
 they do it in a smaller ammount.
