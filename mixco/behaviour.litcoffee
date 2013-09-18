@@ -71,7 +71,7 @@ inconsistent with how Mixxx does it, but it should be though.
             diff = v1 - 64.
             diff =
                 if diff == -1 or diff == 1
-                then diff / 16
+                then diff / 16.0
                 else diff - diff.sign()
             (v0 + diff * sign).clamp 0, 127
 
@@ -94,6 +94,19 @@ inconsistent with how Mixxx does it, but it should be though.
                 if isinstance b, exports.MapIn
                     b.script.mixxx.engine.softTakeover \
                         b.group, b.key, false
+
+The *makeOptionsChooser* object is used to implement easy adding of
+options by just accessing a nested attribute of an object.  For
+example, in a behaviour `b`, accessing `b.options.spread64`
+automatically enables that option and returns `b`.
+
+    exports.makeOptionsChooser = makeOptionsChooser = (obj) ->
+        result = {}
+        for key, opt of option
+            Object.defineProperty result, key, get: do ->
+                iter = opt
+                -> obj.option iter
+        result
 
 Behaviours
 ----------
@@ -136,13 +149,18 @@ given actor.
             delete @script
             delete @actor
 
-Adds an *option* to the behaviour.
+Adds an *option* to the behaviour, as seen above.  An *option chooser*
+syntax is also available.
 
         option: (options...) ->
             for opt in options
                 assert opt
             (@_options ?= []).push options...
             this
+
+        @property 'options', -> makeOptionsChooser @
+
+Add an *options* option chooser for easier syntax.
 
 Define a **directMapping** when the Behaviour can be mapped directly
 to a Mixxx actor. Note that this should not depend on conditions
@@ -559,7 +577,7 @@ engine scratch system.
             release: ->
                 @script.mixxx.engine.scratchDisable deck, ramp
 
-    exports.scratchTick = (deck, transform) ->
+    exports.scratchTick = (deck, transform = (x) -> x) ->
         exports.call (ev) ->
             engine = @script.mixxx.engine
             engine.scratchTick deck, transform ev.value

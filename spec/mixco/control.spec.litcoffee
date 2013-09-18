@@ -90,7 +90,7 @@ Tests for the **InControl** class.
                 group: "[master]"
                 key: "crossfader"
             beh1.option behaviour.option.invert
-            beh1.option behaviour.option.softTakeover
+            beh1.options.softTakeover
             control.does beh1
 
             expect(control.configInputs 0)
@@ -123,7 +123,7 @@ Tests for the **InControl** class.
             beh2.directInMapping = beh1.directInMapping
 
             beh1.option behaviour.option.invert
-            beh1.option behaviour.option.softTakeover
+            beh1.options.softTakeover
             control.does beh1
             control.does beh2
 

@@ -115,6 +115,14 @@ Tests for the **Behaviour** base class.
             behav.disable script, actor
             expect(opt.disable).toHaveBeenCalledWith behav
 
+        it 'can take options with an option chooser syntax', ->
+            behav.options.spread64
+            behav.options.softTakeover
+            expect(behav._options).toEqual [
+                behaviour.option.spread64
+                behaviour.option.softTakeover
+            ]
+
 Tests for the **Output** basic behaviour.
 
     describe 'Output', ->

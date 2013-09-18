@@ -153,13 +153,16 @@ An *input control* can proccess inputs from the hardware.
                     @handlerId()
 
 A input control can be configured with the same type of *options* that
-behaviours can.  These are documented in the `mixco.behaviour` module.
+behaviours can.  These are documented in the `mixco.behaviour`
+module. An *options chooser* syntax is also available.
 
         option: (options...) ->
             (@_options ?= []).push options...
             for beh in @_behaviours
                 beh.option options...
             this
+
+        @property 'options', -> behaviour.makeOptionsChooser @
 
         registerBehaviour: (beh) ->
             if @_options?
