@@ -194,6 +194,7 @@ output of its actor based on its nested `output` *Value*.
     class exports.Output extends exports.Behaviour
 
         minimum: 1
+        maximum: undefined
 
         constructor: ->
             super
@@ -201,7 +202,7 @@ output of its actor based on its nested `output` *Value*.
 
         enable: ->
             super
-            if @actor?.send?
+            if @actor.send?
                 @_updateOutputCallback ?= => @updateOutput()
                 @output.on 'value', @_updateOutputCallback
                 @updateOutput()
@@ -226,7 +227,7 @@ the value.  It can take an *initial* value too.
     class exports.Transform extends exports.Output
 
         constructor: (@transformer, initial=undefined) ->
-            super initial
+            super initial: initial
 
         onMidiEvent: (ev) ->
             @output.value = @value = @transformer ev.value
