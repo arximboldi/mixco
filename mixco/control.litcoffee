@@ -50,7 +50,7 @@ needed to identify a control based on notes or control signals.
 The **event** function returns an object representing an script event
 coming from Mixxx.
 
-    event = (channel, control, value, status, group) ->
+    exports.event = event = (channel, control, value, status, group) ->
         channel: channel
         control: control
         value: switch status >> 4

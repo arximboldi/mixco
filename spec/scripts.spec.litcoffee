@@ -57,6 +57,41 @@ Tests
                 script.init()
                 script.shutdown()
 
+The next is specially usefull.  Missing entries in the
+`mixco.transform` table are often found by these, among other trivial
+problems in the user scripts.
+
+We simulate here that we send values to all controls that are script
+mapped.  We run through the controls in different orders, increasing
+the likelihood of executing behaviours that lie under modifiers.  Note
+the check `ev.value == value` after creating the event -- this way we
+prevent sending the *note off* message of some buttons when we do not
+intend to.
+
+            it "does not break when receiving MIDI", ->
+                control  = require '../mixco/control'
+                sendValues = (values, order=1) ->
+                    for c in script.controls by order
+                        if c.needsHandler?()
+                            for id in c.ids
+                                for value in values
+                                    ev = control.event \
+                                        id.channel,
+                                        null,
+                                        value,
+                                        id.status(),
+                                        null
+                                    if ev.value == value
+                                        c.emit 'event', ev
+                script.init()
+                sendValues [127, 63, 0]
+                sendValues [127, 63, 0], -1
+                sendValues [127]
+                sendValues [127], -1
+                sendValues [0], -1
+                sendValues [0]
+                script.shutdown()
+
 License
 -------
 

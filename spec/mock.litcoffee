@@ -6,12 +6,13 @@ when needed*, reflecting [the official Mixxx documentation](
 http://mixxx.org/wiki/doku.php/midi_scripting).
 
     script = require '../mixco/script'
+    {assert} = require '../mixco/util'
 
 Engine
 ------
 
     exports.engine = ->
-        createSpyObj 'engine', [
+        obj = createSpyObj 'engine', [
             'getValue',       # (group, key)
             'setValue',       # (group, key, value)
             'softTakeover',   # (group, key, enable)
@@ -21,7 +22,21 @@ Engine
             'scratchTick',    # (int deck, int interval)
             'scratchDisable', # (int deck)
             'isScratching',   # (int deck)
+            'brake',          # (int deck, bool activate[, float factor, rate])
+            'spinback',       # (int deck, bool activate[, float factor, rate])
             ]
+        obj.getValue.andReturn 0
+        obj.connectControl.andCallFake do ->
+            connections = {}
+            (group, key, handler, disconnect) ->
+                id = [group, key, handler]
+                if disconnect
+                    assert id of connections
+                    delete connections[id]
+                else
+                    assert id not of connections
+                    connections[id] = true
+        obj
 
 Midi
 ----
