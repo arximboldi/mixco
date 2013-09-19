@@ -42,6 +42,8 @@ DOCS      = \
 
 all: $(SCRIPTS)
 
+framework: $(FRAMEWORK)
+
 doc: $(DOCS)
 	cp -r ./pic ./doc/
 
