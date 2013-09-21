@@ -9,7 +9,8 @@ paper](http://192.220.96.201/dylan/linearization-oopsla96.html)
 Module
 ------
 
-    {multi, mro, hierarchy, inherited, isinstance} = require '../../mixco/multi'
+    {multi, mro, hierarchy, inherited, isinstance, issubclass} =
+        require '../../mixco/multi'
 
 Hierarchies to test
 -------------------
@@ -107,7 +108,14 @@ magically get a superclass in a multiple inheritance context.
 Tests
 -----
 
-    describe 'multi', ->
+    describe 'mro', ->
+
+        it 'generates empty linearization for arbitrary object', ->
+            expect(mro {}).toEqual []
+
+        it 'generates empty linearization for null object', ->
+            expect(mro undefined).toEqual []
+            expect(mro null).toEqual []
 
         it 'generates a monotonic linearization', ->
             expect(mro Pedalo).toEqual [
@@ -122,6 +130,8 @@ Tests
             expect(mro EditableScrollablePane).toEqual [
                 EditableScrollablePane, ScrollablePane, EditablePane,
                 Pane, ScrollingMixin, EditingMixin, Object ]
+
+    describe 'multi', ->
 
         it 'calls super properly in multi case', ->
             obj = new D
@@ -152,7 +162,15 @@ Tests
             expect(-> multi D, C, B)
                 .toThrow new Error "Inconsistent multiple inheritance"
 
-        it 'can be dynamically type checked with isInstance', ->
+        it 'makes sure the next constructor after a root class', ->
+            obj = new Deriv
+            expect(obj.base1).toBe 'base1'
+            expect(obj.base2).toBe 'base2'
+            expect(obj.deriv).toBe 'deriv'
+
+    describe 'isinstance', ->
+
+        it 'checks the classes of an object even with multiple inheritance', ->
             expect(isinstance new D, D).toBe true
             expect(isinstance new D, B).toBe true
             expect(isinstance new D, C).toBe true
@@ -164,11 +182,19 @@ Tests
             expect(isinstance new Pedalo, A).toBe false
             expect(isinstance new Pedalo, SmallCatamaran).toBe true
 
-        it 'makes sure the next constructor after a root class', ->
-            obj = new Deriv
-            expect(obj.base1).toBe 'base1'
-            expect(obj.base2).toBe 'base2'
-            expect(obj.deriv).toBe 'deriv'
+    describe 'issubclass', ->
+
+        it 'checks the relationships of classes even with multiple inheritance', ->
+            expect(issubclass D, D).toBe true
+            expect(issubclass D, B).toBe true
+            expect(issubclass D, C).toBe true
+            expect(issubclass D, A).toBe true
+            expect(issubclass D, Object).toBe true
+            expect(issubclass A, Object).toBe true
+            expect(issubclass Object, A).toBe false
+            expect(issubclass Pedalo, D).toBe false
+            expect(issubclass Pedalo, A).toBe false
+            expect(issubclass Pedalo, SmallCatamaran).toBe true
 
 License
 -------

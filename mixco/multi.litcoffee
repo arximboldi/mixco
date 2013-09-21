@@ -125,7 +125,7 @@ mult-inherited classes:
 > assert mro(D).equals [D, B, C, A, Object]
 
     exports.mro = mro = (cls) ->
-        if not cls?
+        if not cls? or not cls::?
             []
         else if not cls::hasOwnProperty '__mro__'
             cls::__mro__ = [cls].concat mro inherited(cls)
@@ -172,8 +172,13 @@ returns whether the object is an instance of any of those classes. It
 is compatible with multi-inherited classes.
 
     exports.isinstance = (obj, classes...) ->
-        linearization = mro obj.constructor
-        return some classes, (cls) -> cls in linearization
+        exports.issubclass obj?.constructor, classes...
+
+The **issubclass** tells whether a class is a subtype of another type.
+
+    exports.issubclass = (klass, classes...) ->
+        linearization = mro klass
+        some classes, (cls) -> cls in linearization
 
 License
 -------
