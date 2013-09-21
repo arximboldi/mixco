@@ -199,24 +199,33 @@ channel.
 - The *loop* toggles the current loop on/off whenever there is a loop
   selected.
 
-            @add c.ledButton(noteId 0x2A).does g, "reloop_exit", g, "loop_enabled"
+            @add c.ledButton(noteId 0x2A).does \
+                g, "reloop_exit", g, "loop_enabled"
 
 - The numbers set and trigger a loop of 4, 8, 16 and 32 beats
   respectively. When *shift*, they set loops of 1/8, 1/2, 1 or 2
   long.
 
             @add c.ledButton(noteId 0x25)
-                .when(shift, g, "beatloop_0.125_activate", g, "beatloop_0.125_enabled")
-                .else g, "beatloop_4_activate", g, "beatloop_4_enabled"
+                .when(shift, g, "beatloop_0.125_activate",
+                      g, "beatloop_0.125_enabled")
+                .else g, "beatloop_4_activate",
+                      g, "beatloop_4_enabled"
             @add c.ledButton(noteId 0x26)
-                .when(shift, g, "beatloop_0.5_activate", g, "beatloop_0.5_enabled")
-                .else g, "beatloop_8_activate", g, "beatloop_8_enabled"
+                .when(shift, g, "beatloop_0.5_activate",
+                      g, "beatloop_0.5_enabled")
+                .else g, "beatloop_8_activate",
+                      g, "beatloop_8_enabled"
             @add c.ledButton(noteId 0x27)
-                .when(shift, g, "beatloop_1_activate", g, "beatloop_1_enabled")
-                .else g, "beatloop_16_activate", g, "beatloop_16_enabled"
+                .when(shift, g, "beatloop_1_activate",
+                      g, "beatloop_1_enabled")
+                .else g, "beatloop_16_activate",
+                      g, "beatloop_16_enabled"
             @add c.ledButton(noteId 0x28)
-                .when(shift, g, "beatloop_2_activate", g, "beatloop_2_enabled")
-                .else g, "beatloop_32_activate", g, "beatloop_32_enabled"
+                .when(shift, g, "beatloop_2_activate",
+                      g, "beatloop_2_enabled")
+                .else g, "beatloop_32_activate",
+                      g, "beatloop_32_enabled"
 
 ### The wheel and pitch section
 
