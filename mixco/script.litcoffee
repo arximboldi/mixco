@@ -4,27 +4,57 @@ mixco.script
 This module contains the main interface for defining custom Mixxx
 scripts.
 
-    util = require './util'
-
-    indent    = util.indent
-    xmlEscape = util.xmlEscape
-    catching  = util.catching
-    assert    = util.assert
-
+    {issubclass, mro} = require './multi'
+    {indent, xmlEscape, catching, assert} = require './util'
 
 Script
 ------
 
 First, the **register** function registers a instance of the class
-`scriptType` instance into the parent module.  The script instance
-will be exported as `Script.name`, and if the parent module is main,
-it will be executed.
+`scriptTypeOrDefinition` instance into the given module.
+`scriptTypeOrDefinition` can be either a `Script` subclass or an
+object definining overrides for `name`, `constructor` and optionally
+`init` and `shutdown`. The script instance will be exported as
+`Script.name`, and if the parent module is main, it will be executed.
 
-    exports.register = (targetModule, scriptType) ->
-        instance = new scriptType
+    exports.register = (targetModule, scriptTypeOrDefinition) ->
+        if not issubclass scriptTypeOrDefinition, exports.Script
+            scriptTypeOrDefinition = exports.create scriptTypeOrDefinition
+        instance = new scriptTypeOrDefinition
         targetModule.exports[instance.name] = instance
         if targetModule == require.main
             instance.main()
+
+    exports.create = (scriptDefinition) ->
+        assert scriptDefinition.name?,
+            "Script definition must have a name"
+        assert scriptDefinition.constructor?,
+            "Script definition must have a constructor"
+
+        {name, constructor, preinit, init, shutdown} =
+            scriptDefinition
+
+        class NewScript extends exports.Script
+            @property 'name', ->
+                name
+            constructor: ->
+                super
+                constructor.apply @, arguments
+                this
+            init: ->
+                preinit?.apply @, arguments
+                super
+                init?.apply @, arguments
+            shutdown: ->
+                shutdown?.apply @, arguments
+                super
+
+        special = ['name', 'constructor', 'init', 'shutdown']
+        for k, v of scriptDefinition
+            if k not in special
+                NewScript::[k] = v
+
+        NewScript
 
 
 Then, inherit from the **Script** class to define your own controller
@@ -65,12 +95,14 @@ lowercase*, which is how the script instance is registered in the
 target module, and how the script file should be called.
 
         @property 'name',
+            configurable: true
             get: ->
                 @constructor.name.toLowerCase()
 
 Use **add** to add controls to your script instance.
 
         add: (controls...) ->
+            assert not @_isInit, "Can only add controls in constructor"
             @controls.push controls...
 
 ### Mixxx protocol
@@ -79,12 +111,14 @@ These methos are called by Mixxx when the script is loaded or
 unloaded.
 
         init: catching ->
+            @_isInit = true
             for control in @controls
                 control.init this
 
         shutdown: catching ->
             for control in @controls
                 control.shutdown this
+            delete @_isInit
 
 ### Constructor
 

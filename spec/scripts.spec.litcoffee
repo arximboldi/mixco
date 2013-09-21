@@ -53,6 +53,10 @@ Tests
                 expect(script.config())
                     .not.toMatch "undefined"
 
+            it "is not empty", ->
+                expect(script.controls.length)
+                    .not.toBe 0
+
             it "initializes and shutsdown without launching exceptions", ->
                 script.init()
                 script.shutdown()

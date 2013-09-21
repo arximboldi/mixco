@@ -6,7 +6,8 @@ Tests for the `mixco.value` module.
 Module
 ------
 
-    {Script} = require '../../mixco/script'
+    {isinstance} = require '../../mixco/multi'
+    {Script, register} = require '../../mixco/script'
 
 
 Mocks
@@ -16,6 +17,8 @@ Mocks
 
 Tests
 -----
+
+Script class.
 
     describe 'Script', ->
 
@@ -27,6 +30,43 @@ Tests
         it 'configures controller id to be de script name', ->
             expect(script.config())
                 .toMatch "<controller id=\"testscript\">[^$]*</controller>"
+
+Script registration.
+
+    describe 'register', ->
+
+        it 'registers a class in the given NodeJs module', ->
+            testModule = exports: {}
+            register testModule, TestScript
+            expect(isinstance testModule.exports.testscript, TestScript)
+                .toBe true
+
+        it 'can generate a script type from a definition', ->
+            spy = createSpyObj 'scriptSpy', [
+                'constructor', 'preinit', 'init', 'shutdown' ]
+            testModule = exports: {}
+
+            register testModule,
+                name: 'awesome_script'
+                constructor: -> spy.constructor()
+                preinit: ->
+                    spy.preinit()
+                    expect(@_isInit).not.toBeDefined()
+                init: -> spy.init()
+                shutdown: -> spy.shutdown()
+                info: author: 'Jimmy Jazz'
+
+            script = testModule.exports.awesome_script
+            expect(script.name).toBe 'awesome_script'
+            expect(script.info.author).toBe 'Jimmy Jazz'
+            expect(spy.constructor).toHaveBeenCalled()
+
+            script.init()
+            expect(spy.preinit).toHaveBeenCalled()
+            expect(spy.init).toHaveBeenCalled()
+
+            script.shutdown()
+            expect(spy.shutdown).toHaveBeenCalled()
 
 License
 -------

@@ -22,19 +22,28 @@ function.
     behaviour = require '../mixco/behaviour'
     value     = require '../mixco/value'
 
+Also, lets define these couple of shortcuts to save typing.
+
+    c = control
+    b = behaviour
+    v = value
 
 The script
 ----------
 
 ### Declaration
 
-We start defining the script by creating a class that is called like
-the file but with
-[*CamelCase*](http://en.wikipedia.org/wiki/CamelCase) and inherits
-from `script.Script`. We have to register it too, and in CoffeeScript
-we can do this all in one line.
+We define the script with the **script.register** function, which will
+create the script instance.  As first parameter we pass the current
+module, that is contained in the special *NodeJS* variable
+`module`. The second parameter is an object with the actual script.
+The `name` attribute is compulsory as should be file name *without
+extension*.  It should be a valid JavaScript identifier -- i.e. start
+with a letter and contain only alfanumerical characters or underscore.
 
-    script.register module, class NanoKontrol2 extends script.Script
+    script.register module,
+
+        name: 'nanokontrol2'
 
 ### Metadata
 
@@ -52,12 +61,6 @@ preferences window in Mixxx when he selects the script.
             forums: ''
             wiki: ''
 
-Also, lets define these couple of shortcuts to save typing.
-
-        c = control
-        b = behaviour
-        v = value
-
 ### Constructor
 
 All the actual interesting stuff happens in the *constructor* of the
@@ -65,7 +68,6 @@ script. Here we will create the controls and add them to the script
 and define their behaviour.
 
         constructor: ->
-            super
 
 #### Transport section
 
@@ -240,7 +242,6 @@ we can initialize the state of Mixxx. In our case, we select the first
 deck, such that all transport buttons are directly functional.
 
         init: ->
-            super
             @decks.select 0
 
 License

@@ -10,13 +10,14 @@ functionallity of the controls.
 
     {assert}  = require '../mixco/util'
     script    = require '../mixco/script'
-    control   = require '../mixco/control'
-    behaviour = require '../mixco/behaviour'
-    value     = require '../mixco/value'
-    transform = require '../mixco/transform'
 
-    script.register module, class Xponent extends script.Script
+    c = require '../mixco/control'
+    b = require '../mixco/behaviour'
+    v = require '../mixco/value'
 
+    script.register module,
+
+        name: 'xponent'
         info:
             name: '[mixco] M-Audio Xponent'
             author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
@@ -27,18 +28,12 @@ functionallity of the controls.
             forums: ''
             wiki: ''
 
-        c = control
-        b = behaviour
-        v = value
-        t = transform
-
 Global section
 --------------
 
 Controls that do not have a per-deck functionality.
 
         constructor: ->
-            super
             ccId = (cc) -> c.ccIds cc, 2
             g  = "[Master]"
 
