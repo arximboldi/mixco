@@ -25,22 +25,22 @@ Features
   * Because of [Literate CoffeeScript][lcs], the mappings are well
     documented, and the code itself is interleaved with the
     documentation, encouraging DJs to modify them and remove the
-    artist/coder dicotomy. [See an example of it][script.nanokontrol2]
+    artist/coder dicotomy. [See an example of it][script.korg_nanokontrol2]
 
   [declarative]: http://en.wikipedia.org/wiki/Declarative_programming
   [fluent]: http://en.wikipedia.org/wiki/Fluent_interface
   [lcs]: http://coffeescript.org/#literate
-  [script.nanokontrol2]: script/nanokontrol2.html
+  [script.korg_nanokontrol2]: script/korg_nanokontrol2.html
 
 
 Supported hardware
 ------------------
 
-  - [Korg Nanokontrol 2][script.nanokontrol2]
-  - [M-Audio Xponent][script.xponent]
+  - [Korg Nanokontrol 2][script.korg_nanokontrol2]
+  - [M-Audio Xponent][script.maudio_xponent]
 
-  [script.nanokontrol2]: script/nanokontrol2.html
-  [script.xponent]: script/xponent.html
+  [script.korg_nanokontrol2]: script/korg_nanokontrol2.html
+  [script.maudio_xponent]: script/maudio_xponent.html
 
 
 Download
@@ -109,8 +109,8 @@ Documentation
 
 ### Scripts
 
-  * [script.nanokontrol2][script.nanokontrol2]
-  * [script.xponent][script.xponent]
+  * [script.korg_nanokontrol2][script.korg_nanokontrol2]
+  * [script.maudio_xponent][script.maudio_xponent]
 
 ### API
 
@@ -132,8 +132,8 @@ Documentation
   * [spec.mock][spec.mock]
   * [spec.scripts][spec.scripts]
 
-  [script.nanokontrol2]: script/nanokontrol2.html
-  [script.xponent]: script/xponent.html
+  [script.korg_nanokontrol2]: script/korg_nanokontrol2.html
+  [script.maudio_xponent]: script/maudio_xponent.html
 
   [mixco.behaviour]: mixco/behaviour.html
   [mixco.control]: mixco/control.html

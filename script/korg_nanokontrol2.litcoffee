@@ -1,12 +1,12 @@
-script.nanokontrol2
-===================
+script.korg_nanokontrol2
+========================
 
 Mixxx script file for the **Korg NanoKontrol2** controller.  The
 script is based on the [**Mixco** framework](../index.html).  This
 script description is a bit more verbose than others, at it tries to
 serve as **tutorial** on how to write your own controller scripts.
 
-  ![NanoKontrol2 Layout](../pic/nanokontrol2.jpg)
+  ![NanoKontrol2 Layout](../pic/korg_nanokontrol2.jpg)
 
 Dependencies
 ------------
@@ -43,7 +43,7 @@ with a letter and contain only alfanumerical characters or underscore.
 
     script.register module,
 
-        name: 'nanokontrol2'
+        name: 'korg_nanokontrol2'
 
 ### Metadata
 

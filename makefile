@@ -9,8 +9,8 @@
 
 
 SCRIPTS   = \
-	out/nanokontrol2.js out/nanokontrol2.midi.xml \
-	out/xponent.js out/xponent.midi.xml
+	out/korg_nanokontrol2.js out/korg_nanokontrol2.midi.xml \
+	out/maudio_xponent.js    out/maudio_xponent.midi.xml
 
 FRAMEWORK = \
 	tmp/mixco/behaviour.js \

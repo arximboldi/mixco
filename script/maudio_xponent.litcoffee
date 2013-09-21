@@ -1,12 +1,12 @@
-script.xponent
-==============
+script.maudio_xponent
+=====================
 
 Mixxx script file for the **M-Audio Xponent** controller.  The script
 is based on the [**Mixco** framework](../index.html).  The numbers in
 the following picture will be used in the script to describe the
 functionallity of the controls.
 
-  ![Xponent Layout](../pic/xponent.png)
+  ![Xponent Layout](../pic/maudio_xponent.png)
 
     {assert}  = require '../mixco/util'
     script    = require '../mixco/script'
@@ -17,7 +17,7 @@ functionallity of the controls.
 
     script.register module,
 
-        name: 'xponent'
+        name: 'maudio_xponent'
         info:
             name: '[mixco] M-Audio Xponent'
             author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
