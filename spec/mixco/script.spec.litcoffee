@@ -31,6 +31,11 @@ Script class.
             expect(script.config())
                 .toMatch "<controller id=\"testscript\">[^$]*</controller>"
 
+        it 'can generate configuration with partial metadata', ->
+            delete script.info.wiki
+            expect(script.config())
+                .not.toContain "undefined"
+
 Script registration.
 
     describe 'register', ->

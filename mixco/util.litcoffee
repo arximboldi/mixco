@@ -75,11 +75,10 @@ Throws an error if *value* is false.  The *error* can be a custom string.
 This tries to scape a string to be valid XML.
 
     exports.xmlEscape = (str) ->
-        str
-            .replace('&', '&amp;')
+        str?.replace('&', '&amp;')
             .replace('"', '&quot;')
             .replace('>', '&gt;')
-            .replace('<', '&lt;')
+            .replace('<', '&lt;') ? ''
 
 Generates a string that contains *depth* number of spaces.
 
