@@ -10,7 +10,8 @@
 
 SCRIPTS   = \
 	out/korg_nanokontrol2.js out/korg_nanokontrol2.midi.xml \
-	out/maudio_xponent.js    out/maudio_xponent.midi.xml
+	out/maudio_xponent.js    out/maudio_xponent.midi.xml \
+	out/novation_twitch.js   out/novation_twitch.midi.xml
 
 FRAMEWORK = \
 	tmp/mixco/behaviour.js \
@@ -30,8 +31,9 @@ DOCS      = \
 	doc/mixco/transform.html \
 	doc/mixco/util.html \
 	doc/mixco/value.html \
-	doc/script/nanokontrol2.html \
-	doc/script/xponent.html \
+	doc/script/korg_nanokontrol2.html \
+	doc/script/maudio_xponent.html \
+	doc/script/novation_twitch.html \
 	doc/spec/mixco/behaviour.spec.html \
 	doc/spec/mixco/control.spec.html \
 	doc/spec/mixco/multi.spec.html \
@@ -49,16 +51,25 @@ doc: $(DOCS)
 
 .SECONDARY:
 
+NODE       = node
+COFFEE     = coffee
+BROWSERIFY = browserify
+DOCCO      = docco
+
 tmp/%.js: %.litcoffee
 	@mkdir -p $(@D)
 	coffee -c -p $< > $@
+
+tmp/%.js: %.js
+	@mkdir -p $(@D)
+	cp -f $< $@
 
 out/%.js: tmp/script/%.js $(FRAMEWORK)
 	@echo
 	@echo \*\*\* Building $* JS script file
 	@echo
 	@mkdir -p $(@D)
-	browserify -r ./$< $< > $@
+	$(BROWSERIFY) -r ./$< $< > $@
 	echo ";$*=require('./$<').$*" >> $@
 
 out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
@@ -68,15 +79,27 @@ out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	coffee $< -g > $@
 
+out/%.midi.xml: tmp/script/%.js $(FRAMEWORK)
+	@echo
+	@echo \*\*\* Building $* XML mapping file
+	@echo
+	@mkdir -p $(@D)
+	node $< -g > $@
+
 doc/index.html: README.md
 	@mkdir -p $(@D)
-	docco -t docco/docco.jst -c docco/docco.css  -o $(@D) $<
+	$(DOCCO) -t docco/docco.jst -c docco/docco.css  -o $(@D) $<
 	mv $(@D)/README.html $@
 	cp -rf docco/public $(@D)
 
 doc/%.html: %.litcoffee
 	@mkdir -p $(@D)
-	docco -t docco/docco.jst -c docco/docco.css -o $(@D) $<
+	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
+	cp -rf docco/public $(@D)
+
+doc/%.html: %.js
+	@mkdir -p $(@D)
+	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
 	cp -rf docco/public $(@D)
 
 clean:

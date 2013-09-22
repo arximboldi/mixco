@@ -38,9 +38,11 @@ Supported hardware
 
   - [Korg Nanokontrol 2][script.korg_nanokontrol2]
   - [M-Audio Xponent][script.maudio_xponent]
+  - [Novation Twitch][script.novation_twitch]
 
   [script.korg_nanokontrol2]: script/korg_nanokontrol2.html
   [script.maudio_xponent]: script/maudio_xponent.html
+  [script.novation_twitch]: script/novation_twitch.html
 
 
 Download
@@ -111,6 +113,7 @@ Documentation
 
   * [script.korg_nanokontrol2][script.korg_nanokontrol2]
   * [script.maudio_xponent][script.maudio_xponent]
+  * [script.novation_twitch][script.novation_twitch]
 
 ### API
 

@@ -19,7 +19,7 @@ unloading all modules so exceptions reach the test system.
             delete require.cache[fullName]
 
     forEveryModuleInDir = (dirs..., fn) ->
-        module_exts = [ '.coffee', '.litcoffee' ]
+        module_exts = [ '.coffee', '.litcoffee', '.js' ]
         current_dir = path.basename require.resolve './scripts.spec.litcoffee'
         for dir in dirs
             for file in fs.readdirSync path.join current_dir, dir
