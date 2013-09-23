@@ -1,5 +1,5 @@
-script.korg_nanokontrol2
-========================
+script.nanokontrol2
+===================
 
 Mixxx script file for the **Korg NanoKontrol2** controller.  The
 script is based on the [**Mixco** framework](../index.html).

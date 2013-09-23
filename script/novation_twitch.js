@@ -1,5 +1,5 @@
-// script.novation_twitch
-// ======================
+// script.twitch
+// =============
 //
 // Mixx script file for the **Novation Twitch** controller.  The
 // script is based on the [**Mixco** framework](../index.html)
@@ -60,8 +60,7 @@ script.register(module, {
 	author: "Juan Pedro Bolivar Puente"
     },
 
-    // Constructor
-    // -----------
+    // ### Constructor
     //
     // The constructor contains the definition of the MIDI mapping.
     // Here we create all the different control objects and add them
@@ -73,8 +72,7 @@ script.register(module, {
 		.options.softTakeover)
     },
 
-    // Initialization
-    // --------------
+    // ### Initialization
     //
     // The `preinit` function is called before the MIDI controls are
     // initialized.  We are going to set the device in *basic mode*,
@@ -87,8 +85,7 @@ script.register(module, {
 	this.mixxx.midi.sendShortMsg(0xb7, 0x00, 0x00)
     },
 
-    // Shutdown
-    // --------
+    // ### Shutdown
     //
     // The documentation suggests to reset the device when the program
     // shuts down. This means that all the lights are turned off and

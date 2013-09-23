@@ -1,5 +1,5 @@
-script.maudio_xponent
-=====================
+script.xponent
+==============
 
 Mixxx script file for the **M-Audio Xponent** controller.  The script
 is based on the [**Mixco** framework](../index.html).  The numbers in
