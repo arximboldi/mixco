@@ -137,6 +137,7 @@ Documentation
 
   [script.korg_nanokontrol2]: script/korg_nanokontrol2.html
   [script.maudio_xponent]: script/maudio_xponent.html
+  [script.novation_twitch]: script/novation_twitch.html
 
   [mixco.behaviour]: mixco/behaviour.html
   [mixco.control]: mixco/control.html
