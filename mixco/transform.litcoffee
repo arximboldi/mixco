@@ -137,7 +137,10 @@ needed. Please make sure to keep it in sync with the official
         VuMeter:                    defaultT
         VuMeterL:                   defaultT
         VuMeterR:                   defaultT
-
+        lfoDepth:                   defaultT
+        lfoDelay:                   linearT 50.0, 10000.0
+        lfoPeriod:                  linearT 50000.0, 2000000.0
+        talkover:                   binaryT
 
 License
 -------

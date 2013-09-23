@@ -45,6 +45,37 @@ Controls that do not have a per-deck functionality.
 
             @add c.slider(ccId 0x07).does b.soft g, "crossfader"
 
+### Flanger effect
+
+The knobs and buttons in *24* and *25* are dedicated to FX.  We map *the
+three knobs of the right deck* to the master *flanger effect*
+parameters:
+
+  * LFO depth
+  * LFO delay
+  * LFO period
+
+Then *the two first FX on/off buttons in the right deck* enable the
+flanger on the left and right channels respectively.
+
+            @add [
+                c.slider(0x0c, 0x01).does b.soft "[Flanger]", "lfoDepth"
+                c.slider(0x0d, 0x01).does b.soft "[Flanger]", "lfoDelay"
+                c.slider(0x0e, 0x01).does b.soft "[Flanger]", "lfoPeriod"
+                c.ledButton(c.noteOnIds 0x0c, 0x01).does "[Channel1]", "flanger"
+                c.ledButton(c.noteOnIds 0x0d, 0x01).does "[Channel2]", "flanger"
+            ]
+
+### Microphone
+
+The *first FX knob and button control of the left deck* control the
+microphone *volume* and *talk enable* functions of the microphone.
+
+            @add [
+                c.slider(0x0c, 0x00).does b.soft "[Microphone]", "volume"
+                c.ledButton(c.noteOnIds 0x0c, 0x00).does "[Microphone]", "talkover"
+            ]
+
 Per deck controls
 -----------------
 
