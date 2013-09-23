@@ -7,13 +7,18 @@
 #  smart CoffeeScript file.
 #
 
+NODEJS     = node
+COFFEE     = coffee
+BROWSERIFY = browserify
+DOCCO      = docco
+JASMINE    = jasmine-node
 
-SCRIPTS   = \
+SCRIPTS    = \
 	out/korg_nanokontrol2.js out/korg_nanokontrol2.midi.xml \
 	out/maudio_xponent.js    out/maudio_xponent.midi.xml \
 	out/novation_twitch.js   out/novation_twitch.midi.xml
 
-FRAMEWORK = \
+FRAMEWORK  = \
 	tmp/mixco/behaviour.js \
 	tmp/mixco/control.js \
 	tmp/mixco/multi.js \
@@ -22,7 +27,7 @@ FRAMEWORK = \
 	tmp/mixco/util.js \
 	tmp/mixco/value.js
 
-DOCS      = \
+DOCS       = \
 	doc/index.html \
 	doc/mixco/behaviour.html \
 	doc/mixco/control.html \
@@ -51,14 +56,9 @@ doc: $(DOCS)
 
 .SECONDARY:
 
-NODE       = node
-COFFEE     = coffee
-BROWSERIFY = browserify
-DOCCO      = docco
-
 tmp/%.js: %.litcoffee
 	@mkdir -p $(@D)
-	coffee -c -p $< > $@
+	$(COFFEE) -c -p $< > $@
 
 tmp/%.js: %.js
 	@mkdir -p $(@D)
@@ -77,14 +77,14 @@ out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
 	@echo \*\*\* Building $* XML mapping file
 	@echo
 	@mkdir -p $(@D)
-	coffee $< -g > $@
+	$(COFFEE) $< -g > $@
 
 out/%.midi.xml: tmp/script/%.js $(FRAMEWORK)
 	@echo
 	@echo \*\*\* Building $* XML mapping file
 	@echo
 	@mkdir -p $(@D)
-	node $< -g > $@
+	$(NODEJS) $< -g > $@
 
 doc/index.html: README.md
 	@mkdir -p $(@D)
@@ -108,8 +108,8 @@ clean:
 	rm -rf ./tmp
 	find . -name "*~" -exec rm -f {} \;
 
+test:
+	$(JASMINE) --verbose --coffee spec
+
 upload-doc: doc
 	ncftpput -R -m -u u48595320 sinusoid.es /mixco doc/*
-
-test:
-	jasmine-node --verbose --coffee spec
