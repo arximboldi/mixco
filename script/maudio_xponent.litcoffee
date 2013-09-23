@@ -79,17 +79,21 @@ channel.
 
 * **20.** Filter and gain kills.
 
-            @add c.ledButton(noteId 0x08).does g, "filterLowKill"
-            @add c.ledButton(noteId 0x09).does g, "filterMidKill"
-            @add c.ledButton(noteId 0x0A).does g, "filterHighKill"
-            @add c.ledButton(noteId 0x0B).does g, "pregain_toggle"
+            @add [
+                c.ledButton(noteId 0x08).does g, "filterLowKill"
+                c.ledButton(noteId 0x09).does g, "filterMidKill"
+                c.ledButton(noteId 0x0A).does g, "filterHighKill"
+                c.ledButton(noteId 0x0B).does g, "pregain_toggle"
+            ]
 
 * **22.** Mixer EQ and gain.
 
-            @add c.knob(ccId 0x08).does g, "filterLow"
-            @add c.knob(ccId 0x09).does g, "filterMid"
-            @add c.knob(ccId 0x0A).does g, "filterHigh"
-            @add c.knob(ccId 0x0B).does b.soft g, "pregain"
+            @add [
+                c.knob(ccId 0x08).does g, "filterLow"
+                c.knob(ccId 0x09).does g, "filterMid"
+                c.knob(ccId 0x0A).does g, "filterHigh"
+                c.knob(ccId 0x0B).does b.soft g, "pregain"
+            ]
 
 * **23.** Per deck volume meters.
 
@@ -121,8 +125,8 @@ channel.
 
 * **30.** Back and forward.
 
-            @add c.ledButton(noteId 0x21).does g, "back"
-            @add c.ledButton(noteId 0x22).does g, "fwd"
+            @add [ c.ledButton(noteId 0x21).does g, "back"
+                   c.ledButton(noteId 0x22).does g, "fwd" ]
 
 * **31.** Includes several buttons...
 
@@ -142,12 +146,14 @@ channel.
   one beat. When *shift* is pressed, they select the previous or
   next item of the browser sidebar.
 
-            @add c.ledButton(noteId 0x1C)
-                .when(shift, "[Playlist]", "SelectPrevPlaylist")
-                .else b.beatJump g, -1
-            @add c.ledButton(noteId 0x1D)
-                .when(shift, "[Playlist]", "SelectNextPlaylist")
-                .else b.beatJump g, 1
+            @add [
+                c.ledButton(noteId 0x1C)
+                    .when(shift, "[Playlist]", "SelectPrevPlaylist")
+                    .else b.beatJump g, -1
+                c.ledButton(noteId 0x1D)
+                    .when(shift, "[Playlist]", "SelectNextPlaylist")
+                    .else b.beatJump g, 1
+            ]
 
 - The *lock* button does *key lock* -- i.e. makes tempo changes
   independent of pitch. When *shift* is pressed, it expands/collapses
@@ -183,13 +189,14 @@ channel.
   current playing position.  When *shift* is pressed, they halve and
   double the current loop size respectively.
 
-            @add c.ledButton(noteId 0x29)
-                .when(shift, g, "loop_halve")
-                .else g, "loop_in"
-            @add c.ledButton(noteId 0x2B)
-                .when(shift, g, "loop_double")
-                .else g, "loop_out"
-
+            @add [
+                c.ledButton(noteId 0x29)
+                    .when(shift, g, "loop_halve")
+                    .else g, "loop_in"
+                c.ledButton(noteId 0x2B)
+                    .when(shift, g, "loop_double")
+                    .else g, "loop_out"
+            ]
 
 - The *loop* toggles the current loop on/off whenever there is a loop
   selected.
@@ -201,26 +208,28 @@ channel.
   respectively. When *shift*, they set loops of 1/8, 1/2, 1 or 2
   long.
 
-            @add c.ledButton(noteId 0x25)
-                .when(shift, g, "beatloop_0.125_activate",
-                      g, "beatloop_0.125_enabled")
-                .else g, "beatloop_4_activate",
-                      g, "beatloop_4_enabled"
-            @add c.ledButton(noteId 0x26)
-                .when(shift, g, "beatloop_0.5_activate",
-                      g, "beatloop_0.5_enabled")
-                .else g, "beatloop_8_activate",
-                      g, "beatloop_8_enabled"
-            @add c.ledButton(noteId 0x27)
-                .when(shift, g, "beatloop_1_activate",
-                      g, "beatloop_1_enabled")
-                .else g, "beatloop_16_activate",
-                      g, "beatloop_16_enabled"
-            @add c.ledButton(noteId 0x28)
-                .when(shift, g, "beatloop_2_activate",
-                      g, "beatloop_2_enabled")
-                .else g, "beatloop_32_activate",
-                      g, "beatloop_32_enabled"
+            @add [
+                c.ledButton(noteId 0x25)
+                    .when(shift, g, "beatloop_0.125_activate",
+                          g, "beatloop_0.125_enabled")
+                    .else g, "beatloop_4_activate",
+                          g, "beatloop_4_enabled"
+                c.ledButton(noteId 0x26)
+                    .when(shift, g, "beatloop_0.5_activate",
+                          g, "beatloop_0.5_enabled")
+                    .else g, "beatloop_8_activate",
+                          g, "beatloop_8_enabled"
+                c.ledButton(noteId 0x27)
+                    .when(shift, g, "beatloop_1_activate",
+                          g, "beatloop_1_enabled")
+                    .else g, "beatloop_16_activate",
+                          g, "beatloop_16_enabled"
+                c.ledButton(noteId 0x28)
+                    .when(shift, g, "beatloop_2_activate",
+                          g, "beatloop_2_enabled")
+                    .else g, "beatloop_32_activate",
+                          g, "beatloop_32_enabled"
+            ]
 
 ### The wheel and pitch section
 
@@ -249,25 +258,29 @@ channel.
                     toggle = not toggle or Math.abs(val) > 16
                     if toggle then val.sign() else null
 
-            @add c.ledButton(noteId 0x16)
-                .when v.and(v.not(shift), scratchMode), b.scratchEnable i+1
-            @add c.knob(ccId 0x16)
-                .when(shift, b.map("[Playlist]", "SelectTrackKnob")
-                    .transform selectTrackKnobTransform)
-                .else.when(scratchMode,
-                    b.scratchTick(i+1).options.spread64)
-                .else b.map(g, "jog").transform (v) -> (v-64)/8.0
+            @add [
+                c.ledButton(noteId 0x16)
+                    .when v.and(v.not(shift), scratchMode), b.scratchEnable i+1
 
+                c.knob(ccId 0x16)
+                    .when(shift, b.map("[Playlist]", "SelectTrackKnob")
+                        .transform selectTrackKnobTransform)
+                    .else.when(scratchMode,
+                        b.scratchTick(i+1).options.spread64)
+                    .else b.map(g, "jog").transform (v) -> (v-64)/8.0
+            ]
 
 * **26.** Temporarily nudges the pitch down or up. When **shift**,
 they do it in a smaller ammount.
 
-            @add c.ledButton(noteId 0x10)
-                .when(shift, g, "rate_temp_down_small")
-                .else g, "rate_temp_down"
-            @add c.ledButton(noteId 0x11)
-                .when(shift, g, "rate_temp_up_small")
-                .else g, "rate_temp_up"
+            @add [
+                c.ledButton(noteId 0x10)
+                    .when(shift, g, "rate_temp_down_small")
+                    .else g, "rate_temp_down"
+                c.ledButton(noteId 0x11)
+                    .when(shift, g, "rate_temp_up_small")
+                    .else g, "rate_temp_up"
+            ]
 
 * **32.** Pitch slider, adjusts playing speed.
 

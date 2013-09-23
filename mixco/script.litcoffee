@@ -4,6 +4,7 @@ mixco.script
 This module contains the main interface for defining custom Mixxx
 scripts.
 
+    {flatten} = require 'underscore'
     {issubclass, mro} = require './multi'
     {indent, xmlEscape, catching, assert} = require './util'
 
@@ -103,7 +104,7 @@ Use **add** to add controls to your script instance.
 
         add: (controls...) ->
             assert not @_isInit, "Can only add controls in constructor"
-            @controls.push controls...
+            @controls.push flatten(controls)...
 
 ### Mixxx protocol
 
