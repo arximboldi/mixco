@@ -47,16 +47,16 @@ Controls that do not have a per-deck functionality.
 
 ### Flanger effect
 
-The knobs and buttons in *24* and *25* are dedicated to FX.  We map *the
-three knobs of the right deck* to the master *flanger effect*
-parameters:
+* The knobs and buttons in *24* and *25* are dedicated to FX.  We map
+  *the three knobs of the right deck* to the master *flanger effect*
+  parameters:
 
-  * LFO depth
-  * LFO delay
-  * LFO period
+  - LFO depth
+  - LFO delay
+  - LFO period
 
-Then *the two first FX on/off buttons in the right deck* enable the
-flanger on the left and right channels respectively.
+* Then *the two first FX on/off buttons in the right deck* enable the
+  flanger on the left and right channels respectively.
 
             @add [
                 c.slider(0x0c, 0x01).does b.soft "[Flanger]", "lfoDepth"
@@ -68,8 +68,8 @@ flanger on the left and right channels respectively.
 
 ### Microphone
 
-The *first FX knob and button control of the left deck* control the
-microphone *volume* and *talk enable* functions of the microphone.
+* The *first FX knob and button control of the left deck* control the
+  microphone *volume* and *talk enable* functions of the microphone.
 
             @add [
                 c.slider(0x0c, 0x00).does b.soft "[Microphone]", "volume"
