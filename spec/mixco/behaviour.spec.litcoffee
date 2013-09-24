@@ -435,6 +435,71 @@ Tests for the **Chooser** behaviour
             expect(engine.getValue "[Channel3]", "pfl").toBe false
             expect(engine.getValue "[Channel4]", "pfl").toBe true
 
+        it "can select before or after being enabled", ->
+            chooser.select 2
+            chooser.enable script, actor
+
+            chooser.onMidiEvent value: 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            expect(engine.getValue "[Channel3]", "pfl").toBe true
+            expect(engine.getValue "[Channel4]", "pfl").toBe false
+
+            chooser.select 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel3]", "pfl").toBe false
+            expect(engine.getValue "[Channel4]", "pfl").toBe false
+
+        it "assumes engine keeps exclusivity with auto-exclusive", ->
+            chooser = behaviour.chooser autoExclusive: true
+            chooser.add "[Channel1]", "pfl"
+            chooser.add "[Channel2]", "pfl"
+            chooser.enable script, actor
+
+            chooser.activate 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe 0
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+
+            chooser.activate 0
+            expect(engine.getValue "[Channel1]", "pfl").toBe true
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+
+        it "calls onDisable to materialize disabling", ->
+            spy = createSpyObj "disabler", ['onDisable']
+            chooser = behaviour.chooser onDisable: spy.onDisable
+            chooser.add "[Channel1]", "pfl"
+            chooser.add "[Channel2]", "pfl"
+            chooser.enable script, actor
+
+            chooser.onMidiEvent value: 1
+            expect(spy.onDisable).not.toHaveBeenCalled()
+
+            chooser.value = true
+            chooser.onMidiEvent value: 1
+            expect(spy.onDisable).toHaveBeenCalled()
+
+        it "reads value from optional second key", ->
+            spy = createSpyObj "disabler", ['onDisable']
+            chooser = behaviour.chooser()
+            chooser.add "[Channel1]", "pfl", "listen"
+            chooser.add "[Channel2]", "pfl", "listen"
+            chooser.enable script, actor
+
+            expect(script.mixxx.engine.connectControl)
+                .not.toHaveBeenCalledWith "[Channel1]", "pfl", jasmine.any(String)
+            expect(script.mixxx.engine.connectControl)
+                .toHaveBeenCalledWith "[Channel1]", "listen", jasmine.any(String)
+
+            engine.setValue "[Channel1]", "pfl", true
+            chooser._updateValue()
+            expect(chooser.value).toBe false
+
+            engine.setValue "[Channel1]", "pfl", false
+            engine.setValue "[Channel1]", "listen", true
+            chooser._updateValue()
+            expect(chooser.value).toBe true
+
 
 Tests for the **When** behaviour
 

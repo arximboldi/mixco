@@ -432,22 +432,24 @@ There are two ways of using it:
 
     class exports.Chooser extends exports.Output
 
-        constructor: ->
+        constructor: ({@autoExclusive, @onDisable} = {})->
             super
-            @_selectedIndex    = null
+            @_selectedIndex    = 0
             @_chooseOptions    = []
             @_chooseActivators = []
             @_chooseHandles    = []
 
-The **add** method adds an option and returns the activator for it.
+The **add** method adds an option and returns the activator for
+it. The parameter *listen* is a second optional key that is used for
+retreiving the value as opposed to setting it.
 
-        add: (group, key) ->
+        add: (group, key, listen=null) ->
             idx       = @_chooseOptions.length
             activator = exports.map(group, key)
                 .transform (val) =>
                     if val > 0 then @activate idx
                     null
-            @_chooseOptions.push [group, key]
+            @_chooseOptions.push [group, key, listen]
             @_chooseActivators.push activator
             activator
 
@@ -456,15 +458,17 @@ The **add** method adds an option and returns the activator for it.
             @_updateValueHandler ?= script.registerHandler =>
                 @_updateValue()
             engine = script.mixxx.engine
-            for [group, key] in @_chooseOptions
-                engine.connectControl group, key, @_updateValueHandler
+            for [group, key, listen] in @_chooseOptions
+                listen ?= key
+                engine.connectControl group, listen, @_updateValueHandler
             @_updateValue()
 
         disable: (script) ->
             assert @_updateValueHandler
             engine = script.mixxx.engine
-            for [group, key] in @_chooseOptions
-                engine.connectControl group, key, @_updateValueHandler, true
+            for [group, key, listen] in @_chooseOptions
+                listen ?= key
+                engine.connectControl group, listen, @_updateValueHandler, true
             super
 
         activator: (idx) ->
@@ -480,33 +484,45 @@ The **add** method adds an option and returns the activator for it.
             @_update
                 index:  idx
                 enable: true
-            true
+            @
+
+        select: (idx) ->
+            if @actor?
+                @_update
+                    index:  idx
+                    enable: true
+            else
+                @_selectedIndex = idx
+            @
 
         onMidiEvent: (event) ->
             if event.value
-                @_update
-                    enable: not @value
+                enable = not @value
+                @_update enable: enable
+                if not enable
+                    @onDisable?()
 
         _update: ({index, enable}={}) ->
             enable ?= @value
             index  ?= @_selectedIndex
             script  = @script ? @_chooseActivators[index].script
 
-            [group, key] = @_chooseOptions[index]
+            [group, key, listen] = @_chooseOptions[index]
             script.mixxx.engine.setValue group, key, enable
-            for [group, key], idx in @_chooseOptions
-                if idx != index
-                    script.mixxx.engine.setValue group, key, false
+            if not @autoExclusive or not enable
+                for [group, key], idx in @_chooseOptions
+                    if idx != index
+                        script.mixxx.engine.setValue group, key, false
 
             @_selectedIndex = index
-            this
 
         _updateValue:->
             if @script?
                 engine = @script.mixxx.engine
                 @value = @output.value =
-                    _.some @_chooseOptions, ([group, key]) ->
-                        engine.getValue group, key
+                    _.some @_chooseOptions, ([group, key, listen]) ->
+                        listen ?= key
+                        engine.getValue group, listen
 
     exports.chooser = factory exports.Chooser
 
@@ -692,6 +708,25 @@ track.
                 else
                     step = 0
                     pos * 127
+
+The **beatEffect** is creates a *chooser* of that can be used for beat
+loops or rolls.  The `channel` parameter is the usual deck name, the
+`type` parameter can be set to `"roll"` to enable rolling.
+
+    exports.beatEffect = (channel, type='') ->
+        sizes = [ "0.0625", "0.125", "0.25", "0.5", "1",
+                  "2", "4", "8", "16", "32", "64" ]
+        result = exports.chooser
+            autoExclusive: true
+            onDisable: ->
+                engine = @script.mixxx.engine
+                if type != 'roll' and engine.getValue channel, "loop_enabled"
+                    engine.setValue channel, "reloop_exit", true
+        for size in sizes
+            result.add channel,
+                       "beatloop#{type}_#{size}_activate",
+                       "beatloop_#{size}_enabled"
+        result.select 4
 
 License
 -------

@@ -38,10 +38,12 @@ Engine
             (group, key, handler, disconnect) ->
                 id = [group, key, handler]
                 if disconnect
-                    assert id of connections
+                    assert id of connections,
+                        "Disconnect not connect control: #{group}, #{key}"
                     delete connections[id]
                 else
-                    assert id not of connections
+                    assert id not of connections,
+                        "Connect connected control: #{group}, #{key}"
                     connections[id] = true
         obj
 

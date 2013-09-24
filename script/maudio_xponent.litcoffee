@@ -45,36 +45,35 @@ Controls that do not have a per-deck functionality.
 
             @add c.slider(ccId 0x07).does b.soft g, "crossfader"
 
-### Flanger effect
+### Effects
 
-* The knobs and buttons in *24* and *25* are dedicated to FX.  We map
-  *the three knobs of the right deck* to the master *flanger effect*
-  parameters:
+Most of knobs and buttons in **24** and **25** are dedicated to effects.
+Some of them are mapped per-deck --see later-- but the *flanger
+parameters are mapped globally:
 
-  - LFO depth
-  - LFO delay
-  - LFO period
+* The *first knob* of the *left deck* is the *LFO depth*.
 
-* Then *the two first FX on/off buttons in the right deck* enable the
-  flanger on the left and right channels respectively.
+            @add c.slider(0x0c, 0x00).does b.soft "[Flanger]", "lfoDepth"
 
-            @add [
-                c.slider(0x0c, 0x01).does b.soft "[Flanger]", "lfoDepth"
-                c.slider(0x0d, 0x01).does b.soft "[Flanger]", "lfoDelay"
-                c.slider(0x0e, 0x01).does b.soft "[Flanger]", "lfoPeriod"
-                c.ledButton(c.noteOnIds 0x0c, 0x01).does "[Channel1]", "flanger"
-                c.ledButton(c.noteOnIds 0x0d, 0x01).does "[Channel2]", "flanger"
-            ]
+* The *first knob* of the *right deck* is the *LFO delay*.
+
+            @add c.slider(0x0c, 0x01).does b.soft "[Flanger]", "lfoDelay"
+
+* The *second knob* of the *right deck* is the *LFO period*.
+
+            @add c.slider(0x0d, 0x01).does b.soft "[Flanger]", "lfoPeriod"
 
 ### Microphone
 
-* The *first FX knob and button control of the left deck* control the
-  microphone *volume* and *talk enable* functions of the microphone.
+* The *second knob* the *left deck* controls the microphone *volume*.
 
-            @add [
-                c.slider(0x0c, 0x00).does b.soft "[Microphone]", "volume"
-                c.ledButton(c.noteOnIds 0x0c, 0x00).does "[Microphone]", "talkover"
-            ]
+            @add c.slider(0x0d, 0x00).does b.soft "[Microphone]", "volume"
+
+* The *second button* of the *left deck* controls the microphone
+  *enable*.
+
+            @add c.ledButton(c.noteOnIds 0x0d, 0x00).does \
+                "[Microphone]", "talkover"
 
 Per deck controls
 -----------------
@@ -261,6 +260,35 @@ channel.
                     .else g, "beatloop_32_activate",
                           g, "beatloop_32_enabled"
             ]
+
+
+### Effects
+
+* In the **24** group, the *first button* enables the *flanger effect* for
+  each deck.
+
+            @add c.ledButton(noteOnId 0x0c).does g, "flanger"
+
+* The *third knob and button* in **24** and **25** enable a *beat loop*
+  effect, similar to those of the looping section but with resolution
+  controllable with a knob for more drastic effects.
+
+            beatloop = b.beatEffect g
+            @add [
+                c.knob(ccId 0x0e).does beatloop.selector()
+                c.ledButton(noteOnId 0x0e).does beatloop
+            ]
+
+* The *fourth knob and button* in **24** and **25** enable a *beat
+  roll* effect. It works like the beat loop, but the playing position
+  is restored when turned off.
+
+            beatroll = b.beatEffect g, 'roll'
+            @add [
+                c.knob(ccId 0x0f).does beatroll.selector()
+                c.ledButton(noteOnId 0x0f).does beatroll
+            ]
+
 
 ### The wheel and pitch section
 
