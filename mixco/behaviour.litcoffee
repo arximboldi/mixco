@@ -9,7 +9,7 @@ This module contains all the functionallity that lets you add
     value     = require './value'
     {indent, assert, factory, copy} = require './util'
     {multi, isinstance} = require './multi'
-    {reduce} = require 'underscore'
+    _ = require 'underscore'
 
 Actor
 -----
@@ -128,7 +128,7 @@ given actor.
             @_eventListener = (ev) =>
                 if @_options?
                     ev = copy ev
-                    ev.value = reduce @_options,
+                    ev.value = _.reduce @_options,
                         ((x, o) => o.transform?(x, @) ? x),
                         ev.value
                 @onMidiEvent ev
@@ -417,37 +417,96 @@ value on press or release.
 
 ### Chooser
 
-The **Chooser** lets you select a toggle control of the groups
-(e.g. decks), such that is enabled only one at a time.  One clear
-use-case is selecting the pre-hear `pfl` track, such that only one
-track has pre-hear enabled at a time.
+The **Chooser** can select in a exclusive way one of a series of
+boolean toggles. One clear use-case is selecting the pre-hear `pfl`
+track, such that only one track has pre-hear enabled at a time.
 
-    class exports.Chooser
+There are two ways of using it:
 
-        constructor: (@_key, @_groupN = (n) -> "[Channel#{n+1}]") ->
-            @_decks = []
-            @_selected = null
+ * With **activators**.  Each activator is a boolean behaviour that
+   turns on the option of a given index.
 
-The **choose** method retuns a behaviour that enables the control of
-the Nth group, starting from zero.  These objects can also be used
-as *condition* to enable certain controls when this option is
-selected.
+ * With the **selector**.  The selector maps a continuous control to one
+   of the options.  The the chooser itself can be used to turn the
+   selected option on/off.
 
-        choose: (n) ->
-            result = @_decks[n]
-            if not result
-                result = exports.map(@_groupN(n), @_key).transform => @select n
-                @_decks[n] = result
-            result
+    class exports.Chooser extends exports.Output
 
-The **select** method enables the control on the Nth group.
+        constructor: ->
+            super
+            @_selectedIndex    = null
+            @_chooseOptions    = []
+            @_chooseActivators = []
+            @_chooseHandles    = []
 
-        select: (n) ->
-            @_selected = n
-            for deck, n in @_decks
-                deck.script?.mixxx.engine.setValue \
-                    @_groupN(n), @_key, (@_selected == n)
-            null
+The **add** method adds an option and returns the activator for it.
+
+        add: (group, key) ->
+            idx       = @_chooseOptions.length
+            activator = exports.map(group, key)
+                .transform (val) =>
+                    if val > 0 then @activate idx
+                    null
+            @_chooseOptions.push [group, key]
+            @_chooseActivators.push activator
+            activator
+
+        enable: (script) ->
+            super
+            @_updateValueHandler ?= script.registerHandler =>
+                @_updateValue()
+            engine = script.mixxx.engine
+            for [group, key] in @_chooseOptions
+                engine.connectControl group, key, @_updateValueHandler
+            @_updateValue()
+
+        disable: (script) ->
+            assert @_updateValueHandler
+            engine = script.mixxx.engine
+            for [group, key] in @_chooseOptions
+                engine.connectControl group, key, @_updateValueHandler, true
+            super
+
+        activator: (idx) ->
+            assert 0 <= idx < @_chooseOptions.length
+            @_chooseActivators[idx]
+
+        selector: ->
+            exports.call (ev) =>
+                @_update
+                    index: Math.floor ev.value / 128.0 * @_chooseOptions.length
+
+        activate: (idx) ->
+            @_update
+                index:  idx
+                enable: true
+            true
+
+        onMidiEvent: (event) ->
+            if event.value
+                @_update
+                    enable: not @value
+
+        _update: ({index, enable}={}) ->
+            enable ?= @value
+            index  ?= @_selectedIndex
+            script  = @script ? @_chooseActivators[index].script
+
+            [group, key] = @_chooseOptions[index]
+            script.mixxx.engine.setValue group, key, enable
+            for [group, key], idx in @_chooseOptions
+                if idx != index
+                    script.mixxx.engine.setValue group, key, false
+
+            @_selectedIndex = index
+            this
+
+        _updateValue:->
+            if @script?
+                engine = @script.mixxx.engine
+                @value = @output.value =
+                    _.some @_chooseOptions, ([group, key]) ->
+                        engine.getValue group, key
 
     exports.chooser = factory exports.Chooser
 

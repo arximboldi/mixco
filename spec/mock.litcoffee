@@ -25,7 +25,14 @@ Engine
             'brake',          # (int deck, bool activate[, float factor, rate])
             'spinback',       # (int deck, bool activate[, float factor, rate])
             ]
-        obj.getValue.andReturn 0
+
+        do ->
+            values = {}
+            obj.getValue.andCallFake (group, key) ->
+                values[[group, key]] ? 0
+            obj.setValue.andCallFake (group, key, value)->
+                values[[group, key]] = value
+
         obj.connectControl.andCallFake do ->
             connections = {}
             (group, key, handler, disconnect) ->

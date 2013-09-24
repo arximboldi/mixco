@@ -315,6 +315,126 @@ Tests for the **Map** behaviour.
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Channel1]", "keylock", false
 
+Tests for the **Chooser** behaviour
+
+    describe 'Chooser', ->
+        actor   = null
+        script  = null
+        chooser = null
+        engine  = null
+
+        beforeEach ->
+            chooser = behaviour.chooser()
+            actor   = mockActor()
+            script  = mock.testScript()
+            engine  = script.mixxx.engine
+            chooser.add "[Channel1]", "pfl"
+            chooser.add "[Channel2]", "pfl"
+            chooser.add "[Channel3]", "pfl"
+            chooser.add "[Channel4]", "pfl"
+
+        it "activates the right option, when chooser is enabled", ->
+            chooser.enable script, actor
+
+            chooser.activate 0
+            expect(engine.getValue "[Channel1]", "pfl").toBe true
+            expect(engine.getValue "[Channel2]", "pfl").toBe false
+
+            chooser.activate 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+
+        it "activates the right option, when first activator is enabled", ->
+            chooser.activator(0).enable script, actor
+            chooser.activate 0
+            expect(engine.getValue "[Channel1]", "pfl").toBe true
+            expect(engine.getValue "[Channel2]", "pfl").toBe false
+
+        it "activates the right option, when second activator is enabled", ->
+            chooser.activator(1).enable script, actor
+            chooser.activate 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+
+        it "activators activate when they receive non-zero value", ->
+            chooser.activator(0).enable script, actor
+            chooser.activator(1).enable script, actor
+
+            chooser.activator(1).onMidiEvent value: 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+
+            chooser.activator(0).onMidiEvent value: 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe true
+            expect(engine.getValue "[Channel2]", "pfl").toBe false
+
+            chooser.activator(1).onMidiEvent value: 0
+            expect(engine.getValue "[Channel1]", "pfl").toBe true
+            expect(engine.getValue "[Channel2]", "pfl").toBe false
+
+        it "toggles the selected option on or off", ->
+            chooser.enable script, actor
+            chooser.activate 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            chooser._updateValue() # simulate callback
+
+            chooser.onMidiEvent value: 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            chooser._updateValue() # simulate callback
+
+            chooser.onMidiEvent value: 1
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+
+        it "connects and disconnects from controls", ->
+            chooser.enable script, actor
+            expect(script.mixxx.engine.connectControl)
+                .toHaveBeenCalledWith "[Channel1]", "pfl", jasmine.any(String)
+            expect(script.mixxx.engine.connectControl)
+                .toHaveBeenCalledWith "[Channel2]", "pfl", jasmine.any(String)
+
+            chooser.disable script, actor
+            expect(script.mixxx.engine.connectControl)
+                .toHaveBeenCalledWith "[Channel1]", "pfl", jasmine.any(String), true
+            expect(script.mixxx.engine.connectControl)
+                .toHaveBeenCalledWith "[Channel2]", "pfl", jasmine.any(String), true
+
+        it "initialzies its value to true", ->
+            engine.setValue "[Channel1]", "pfl", true
+            chooser.enable script, actor
+            expect(chooser.value).toBe true
+
+        it "initialzies its value to false", ->
+            chooser.enable script, actor
+            expect(chooser.value).toBe false
+
+        it "can select with a selector knob", ->
+            selector = chooser.selector()
+            chooser.enable script, actor
+            selector.enable script, actor
+            chooser.activate 0
+            chooser._updateValue()
+
+            selector.onMidiEvent value: 32
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel3]", "pfl").toBe false
+            expect(engine.getValue "[Channel4]", "pfl").toBe false
+
+            selector.onMidiEvent value: 80
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            expect(engine.getValue "[Channel3]", "pfl").toBe true
+            expect(engine.getValue "[Channel4]", "pfl").toBe false
+
+            selector.onMidiEvent value: 120
+            expect(engine.getValue "[Channel1]", "pfl").toBe false
+            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            expect(engine.getValue "[Channel3]", "pfl").toBe false
+            expect(engine.getValue "[Channel4]", "pfl").toBe true
+
 
 Tests for the **When** behaviour
 

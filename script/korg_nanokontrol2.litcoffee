@@ -130,7 +130,7 @@ Also, this will let us change the behaviour of some *transport*
 controls depending on which deck is *selected* -- i.e, has prehear
 enabled.
 
-            @decks = b.chooser "pfl"
+            @decks = b.chooser()
 
 Finally we add the per-deck controls, that are defined in `addDeck`.
 
@@ -158,7 +158,7 @@ Then the two first "control sections" are mapped like:
   * R: Play button for the deck.
   * The fader controls the volume of the deck.
 
-            @add c.ledButton(0x20 + offset[0]).does @decks.choose i
+            @add c.ledButton(0x20 + offset[0]).does @decks.add g, "pfl"
             @add c.ledButton(0x30 + offset[0]).does g, "cue_default"
             @add c.ledButton(0x40 + offset[0]).does g, "play"
             @add c.slider(0x00 + offset[0]).does g, "volume"
@@ -182,29 +182,29 @@ behave as *nudge* buttons for the selected track, but we want the
 condition combinator to mix the conditions. We also use `control.else.when`
 to simplify the negative condition.
 
-            chooseCycle = v.and @cycle, @decks.choose i
+            chooseCycle = v.and @cycle, @decks.activator i
             @nudgeUpButton
                 .when(chooseCycle, b.toggle 0, 0.5, g, "wheel")
-                .else.when @decks.choose(i), b.toggle 0, 0.1, g, "wheel"
+                .else.when @decks.activator(i), b.toggle 0, 0.1, g, "wheel"
             @nudgeDownButton
                 .when(chooseCycle, b.toggle 0, -0.5, g, "wheel")
-                .else.when @decks.choose(i), b.toggle 0, -0.1, g, "wheel"
+                .else.when @decks.activator(i), b.toggle 0, -0.1, g, "wheel"
 
 Depending on the selected track we map some of the transport buttons.
 For example, the *track<* and *track>* buttons control the selected
 track *fast forward* and *fast rewind*.
 
-            @fwdButton.when @decks.choose(i), g, "fwd"
-            @backButton.when @decks.choose(i), g, "back"
+            @fwdButton.when @decks.activator(i), g, "fwd"
+            @backButton.when @decks.activator(i), g, "back"
 
 Load the selected track in the selected deck.
 
-            @loadTrack.when @decks.choose(i), g, "LoadSelectedTrack"
+            @loadTrack.when @decks.activator(i), g, "LoadSelectedTrack"
 
 Synchronize to the other track.
 
-            @sync.when @decks.choose(i), g, "beatsync"
-            @syncTempo.when @decks.choose(i), g, "beatsync_tempo"
+            @sync.when @decks.activator(i), g, "beatsync"
+            @syncTempo.when @decks.activator(i), g, "beatsync_tempo"
 
 
 Then, we have some looping related buttons in the middle. Also, these
@@ -243,7 +243,7 @@ we can initialize the state of Mixxx. In our case, we select the first
 deck, such that all transport buttons are directly functional.
 
         init: ->
-            @decks.select 0
+            @decks.activate 0
 
 License
 -------

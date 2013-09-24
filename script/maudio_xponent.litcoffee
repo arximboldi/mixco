@@ -83,7 +83,7 @@ We add the two decks with the `addDeck(idx)` function. In the
 *Xponent*, each MIDI message is repeated per-deck on a different
 channel.
 
-            @decks = b.chooser "pfl"
+            @decks = b.chooser()
             @addDeck 0
             @addDeck 1
 
@@ -103,7 +103,7 @@ channel.
 
 * **12.** Pre-Fade Listen. Select which deck goes to the pre-hear.
 
-            @add c.ledButton(noteOnId 0x14).does @decks.choose(i)
+            @add c.ledButton(noteOnId 0x14).does @decks.add g, "pfl"
 
 ### The mixer
 
