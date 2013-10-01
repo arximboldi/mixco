@@ -63,6 +63,23 @@ parameters are mapped globally:
 
             @add c.slider(0x0d, 0x01).does b.soft "[Flanger]", "lfoPeriod"
 
+* **16.* When in *MIDI mode*, the touch pad can be used to control the
+  *depth* and *delay* for the flanger effect on the Y and X axis
+  *respectively.
+
+            @add [
+                c.control(0x09, 0x02).does "[Flanger]", "lfoDepth"
+                c.control(0x08, 0x02).does "[Flanger]", "lfoDelay"
+            ]
+
+* *17.* and *18.* When in *MIDI mode*, the touch pad buttons *toggle
+   the flanger* effect for the left and right channel respectively.
+
+            @add [
+                c.button(c.noteOnIds 0x00, 0x02).does "[Channel1]", "flanger"
+                c.button(c.noteOnIds 0x01, 0x02).does "[Channel2]", "flanger"
+            ]
+
 ### Microphone
 
 * The *second knob* the *left deck* controls the microphone *volume*.
@@ -288,7 +305,6 @@ channel.
                 c.knob(ccId 0x0f).does beatroll.selector()
                 c.ledButton(noteOnId 0x0f).does beatroll
             ]
-
 
 ### The wheel and pitch section
 
