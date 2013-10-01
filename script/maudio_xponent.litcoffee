@@ -6,6 +6,12 @@ is based on the [**Mixco** framework](../index.html).  The numbers in
 the following picture will be used in the script to describe the
 functionallity of the controls.
 
+### Note about button lights
+
+To get the button lights to be properly controlled by Mixxx,
+*hold the lock and second hotcue button* simultaneously while the
+controller is turned on.
+
   ![Xponent Layout](../pic/maudio_xponent.png)
 
     {assert}  = require '../mixco/util'
@@ -63,7 +69,7 @@ parameters are mapped globally:
 
             @add c.slider(0x0d, 0x01).does b.soft "[Flanger]", "lfoPeriod"
 
-* **16.* When in *MIDI mode*, the touch pad can be used to control the
+* **16.** When in *MIDI mode*, the touch pad can be used to control the
   *depth* and *delay* for the flanger effect on the Y and X axis
   *respectively.
 
@@ -72,7 +78,7 @@ parameters are mapped globally:
                 c.control(0x08, 0x02).does "[Flanger]", "lfoDelay"
             ]
 
-* *17.* and *18.* When in *MIDI mode*, the touch pad buttons *toggle
+* **17.** and **18.** When in *MIDI mode*, the touch pad buttons *toggle
    the flanger* effect for the left and right channel respectively.
 
             @add [
