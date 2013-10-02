@@ -67,9 +67,81 @@ script.register(module, {
     // to the script instance.
 
     constructor: function() {
+
+	// #### Master section
+	//
+	// Here we map the controls that are relate are not duplicated
+	// per-deck and control the master output, like the
+	// *crossfader* or the *microphone*.  Note that the pre-hear
+	// volume and mix knobs are handled directly by the integrated
+	// soundcard of the controller.  This means that, if using an
+	// external soundcard, you can not control the respective
+	// Mixxx parameters from the controller.
 	this.add(
-	    c.slider(0x08, 7).does("[Master]", "crossfader")
-		.options.softTakeover)
+	    c.slider(0x08, 0x07).does(b.soft("[Master]", "crossfader")),
+
+	    c.knob(0x03, 0xB).does(b.soft("[Microphone]", "volume")),
+	    c.ledButton(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
+	)
+
+	// ### Per deck controls
+	//
+	// We use a `behaviou.chooser` for the PFL selection.  This
+	// will make sure that only one prehear channel is selected at
+	// a time for greater convenience.
+	//
+	// Then, we define a `addDeck` function that will add the
+	// actual controls for each of the decks.
+
+	this.decks = b.chooser()
+	this.addDeck(0)
+	this.addDeck(1)
+    },
+
+    addDeck: function(i) {
+	var g           = "[Channel" + (i+1) + "]"
+	var ccId        = function(cc)   { return c.ccIds(cc, 0x07+i) }
+	var noteId      = function(note) { return c.noteIds(note, 0x07+i) }
+	var noteIdShift = function(note) { return c.noteIds(note, 0x09+i) }
+
+	// #### Main section
+	//
+	// This section contains all the per-deck buttons that are in
+	// the central part of the controller, including the EQ,
+	// volume and prehear selection controls.
+
+	this.add(
+	    c.ledButton(noteId(0x0A)).does(this.decks.add(g, "pfl")),
+
+	    c.slider(ccId(0x07)).does(g, "volume"),
+	    c.knob(ccId(0x46)).does(g, "filterLow"),
+	    c.knob(ccId(0x47)).does(g, "filterMid"),
+	    c.knob(ccId(0x48)).does(g, "filterHigh"),
+	    c.knob(ccId(0x09)).does(b.soft(g, "pregain"))
+	)
+
+	// Since Mixxx does not have many per-channel effects, the
+	// **Fader FX** we use as a knob-controlled beat roll effect.
+	//
+	// **TODO** we need the chooser knob to accept relative steps for
+	// this.
+
+	// #### Transport
+	//
+	// The transport section controls *play, cue, keylock and
+	// sync*.  When *shift* is *on*, the sync will synchronize
+	// only tempo, otherwise it also matches the phase. Also, the
+	// play button will do a *reverse* toggle when shift is held.
+
+	this.add(
+	    c.ledButton(noteId(0x17)).does(g, "play"),
+	    c.ledButton(noteIdShift(0x17)).does(g, "reverse"),
+	    c.ledButton(noteId(0x16)).does(g, "cue_default"),
+	    c.ledButton(noteId(0x12)).does(g, "keylock"),
+	    c.ledButton(noteId(0x13)).does(g, "beatsync"),
+	    c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
+	)
+
     },
 
     // ### Initialization
