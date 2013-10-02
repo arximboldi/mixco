@@ -6,12 +6,6 @@ is based on the [**Mixco** framework](../index.html).  The numbers in
 the following picture will be used in the script to describe the
 functionallity of the controls.
 
-### Note about button lights
-
-To get the button lights to be properly controlled by Mixxx,
-*hold the lock and second hotcue button* simultaneously while the
-controller is turned on.
-
   ![Xponent Layout](../pic/maudio_xponent.png)
 
     {assert}  = require '../mixco/util'
@@ -384,6 +378,23 @@ they do it in a smaller ammount.
             @add c.ledButton(noteId 0x13)
                 .when(shift, g, "LoadSelectedTrack")
                 .else b.spinback i+1
+
+Initialization
+--------------
+
+Unlike old Mixxx versions, this script initializes the device properly
+for light feedback.  The trick of holding the two and key button on
+initalization are no longer required.
+
+        preinit: ->
+            msg = [0xF0, 0x00, 0x20, 0x08, 0x00, 0x00, 0x63, 0x0E,
+                   0x16, 0x40, 0x00, 0x01, 0xF7]
+            @mixxx.midi.sendSysexMsg msg, msg.length
+
+        shutdown: ->
+            msg = [0xF0, 0x00, 0x20, 0x08, 0x00, 0x00, 0x63, 0x0E,
+                   0x16, 0x40, 0x00, 0x00, 0xF7]
+            @mixxx.midi.sendSysexMsg msg, msg.length
 
 License
 -------

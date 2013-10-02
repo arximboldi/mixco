@@ -52,8 +52,8 @@ Midi
 
     exports.midi = ->
         createSpyObj 'engine', [
-            'sendShortMsg',     # (status, id, value)
-            'sendSysexMessage', # (data, length)
+            'sendShortMsg', # (status, id, value)
+            'sendSysexMsg', # (data, length)
             ]
 
 
