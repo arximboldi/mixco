@@ -9,7 +9,7 @@ This module contains all the functionallity that lets you add
     value     = require './value'
     {indent, assert, factory, copy} = require './util'
     {multi, isinstance} = require './multi'
-    _ = require 'underscore'
+    _ = {extend} = require 'underscore'
 
 Actor
 -----
@@ -499,6 +499,14 @@ knob.  It keeps the fractional part of the computed index in its
             @_chooseSelectors.push selector
             selector
 
+The **momentary** behaviour will toggle the chooser while the button
+is pressed, not otherwise.
+
+        momentary: ->
+            exports.action
+                press:   => @_update enable: true
+                release: => @_update enable: false
+
         activate: (idx) ->
             @_update
                 index:  idx
@@ -524,16 +532,17 @@ knob.  It keeps the fractional part of the computed index in its
         _update: ({index, enable}={}) ->
             enable ?= @value
             index  ?= @_selectedIndex
-            script  = @script ? @_chooseActivators[index].script
+            index   = index.clamp 0, @_chooseOptions.length-1
 
-            [group, key, listen] = @_chooseOptions[index]
-            script.mixxx.engine.setValue group, key, enable
-            if not @autoExclusive or not enable
-                for [group, key], idx in @_chooseOptions
-                    if idx != index
-                        script.mixxx.engine.setValue group, key, false
-
-            @_selectedIndex = index
+            if index != @_selectedIndex or enable != @value
+                script  = @script ? @_chooseActivators[index].script
+                [group, key, listen] = @_chooseOptions[index]
+                script.mixxx.engine.setValue group, key, enable
+                if not @autoExclusive or not enable
+                    for [group, key], idx in @_chooseOptions
+                        if idx != index
+                            script.mixxx.engine.setValue group, key, false
+                @_selectedIndex = index
 
         _updateValue:->
             if @script?
