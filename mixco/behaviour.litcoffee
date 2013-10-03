@@ -232,6 +232,9 @@ the value.  It can take an *initial* value too.
         onMidiEvent: (ev) ->
             @output.value = @value = @transformer ev.value
 
+        getMidiValue: ->
+            @transformer.inverse?(@value) ? @value
+
     exports.transform = factory exports.Transform
     exports.modifier  = -> exports.transform transform.binaryT, false
     exports.switch    = -> exports.transform (-> not @value), false
@@ -437,6 +440,7 @@ There are two ways of using it:
             @_selectedIndex    = 0
             @_chooseOptions    = []
             @_chooseActivators = []
+            @_chooseSelectors  = []
             @_chooseHandles    = []
 
 The **add** method adds an option and returns the activator for
@@ -475,10 +479,25 @@ retreiving the value as opposed to setting it.
             assert 0 <= idx < @_chooseOptions.length
             @_chooseActivators[idx]
 
+The **selector** can be used to select to control selection with a
+knob.  It keeps the fractional part of the computed index in its
+`value`, thus allowing usage with relative encoders.
+
         selector: ->
-            exports.call (ev) =>
-                @_update
-                    index: Math.floor ev.value / 128.0 * @_chooseOptions.length
+            select = (v) =>
+                v = (v / 128.0 * @_chooseOptions.length)
+                    .clamp 0, @_chooseOptions.length-1
+                @_update index: Math.floor v
+                v
+            select.inverse = (v) => v / @_chooseOptions.length * 128.0
+
+            selector = extend exports.transform(select),
+                _updateValue: (newv) ->
+                    if Math.floor(newv) != Math.floor(@value)
+                        @value = @output.value = newv
+
+            @_chooseSelectors.push selector
+            selector
 
         activate: (idx) ->
             @_update
@@ -523,7 +542,9 @@ retreiving the value as opposed to setting it.
                     _.some @_chooseOptions, ([group, key, listen]) ->
                         listen ?= key
                         engine.getValue group, listen
-
+                for selector in @_chooseSelectors
+                    selector._updateValue @_selectedIndex
+            @
     exports.chooser = factory exports.Chooser
 
 

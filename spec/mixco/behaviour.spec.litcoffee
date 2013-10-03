@@ -435,6 +435,42 @@ Tests for the **Chooser** behaviour
             expect(engine.getValue "[Channel3]", "pfl").toBe false
             expect(engine.getValue "[Channel4]", "pfl").toBe true
 
+        it "selector value is transformed back to MIDI", ->
+            selector = chooser.selector()
+            chooser.enable script, actor
+            selector.enable script, actor
+            chooser.activate 0
+            chooser._updateValue()
+
+            chooser.select 0
+            chooser._updateValue()
+            expect(selector.midiValue).toBe 0
+
+            chooser.select 1
+            chooser._updateValue()
+            expect(selector.midiValue).toBe 32
+
+            chooser.select 2
+            chooser._updateValue()
+            expect(selector.midiValue).toBe 64
+
+            chooser.select 3
+            chooser._updateValue()
+            expect(selector.midiValue).toBe 96
+
+        it "selector value keeps MIDI offset", ->
+            selector = chooser.selector()
+            chooser.enable script, actor
+            selector.enable script, actor
+            chooser.activate 0
+            chooser._updateValue()
+
+            selector.onMidiEvent value: 36
+            expect(selector.midiValue).toBe 36
+
+            selector._updateValue 1
+            expect(selector.midiValue).toBe 36
+
         it "can select before or after being enabled", ->
             chooser.select 2
             chooser.enable script, actor
