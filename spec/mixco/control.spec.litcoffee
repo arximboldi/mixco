@@ -134,6 +134,20 @@ Tests for the **InControl** class.
                     \s*</options>
                 ///
 
+        it "configures as script binding when option without name", ->
+            beh1 = new Behaviour
+            beh1.directInMapping = ->
+                group: "[master]"
+                key: "crossfader"
+            control.does beh1.option {}
+
+            expect(control.configInputs 0, mock.testScript())
+                .toMatch ///
+                    \s*<options>
+                    \s*<script-binding/>
+                    \s*</options>
+                ///
+
         it "configures as normal when no options", ->
             beh1 = new Behaviour
             beh1.directInMapping = ->

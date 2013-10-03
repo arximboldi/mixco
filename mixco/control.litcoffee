@@ -6,6 +6,7 @@ Defines different hardware controls.
     {multi} = require './multi'
     {indent, hexStr, assert, factory, xmlTag, joinLn} = require './util'
     behaviour = require './behaviour'
+    {some} = require 'underscore'
 
 Constants
 ---------
@@ -179,7 +180,8 @@ signal when they are received.
 
         needsHandler: ->
             @_behaviours.length != 1 or
-            not @_behaviours[0].directInMapping()
+                not @_behaviours[0].directInMapping() or
+                some @_behaviours[0]._options, (opt) -> not opt.name
 
         handlerId: ->
             "x#{@ids[0].status().toString(16)}_x#{@ids[0].midino.toString(16)}"
