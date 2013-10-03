@@ -285,7 +285,10 @@ and maybe also eventually add specifics to these.
     exports.slider = exports.knob
     exports.button = ->
         exports.input(arguments...)
-            .option behaviour.option.button
+            .options.button
+    exports.encoder = ->
+        exports.input(arguments...)
+            .options.diff
     exports.meter  = exports.output
 
 
