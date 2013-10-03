@@ -29,11 +29,11 @@
 // modules are usable too when writing your script with the *Mixco*
 // framework.
 
+var _      = require('underscore')
 var script = require('../mixco/script')
-
-var c = require('../mixco/control')
-var b = require('../mixco/behaviour')
-var v = require('../mixco/value')
+var c      = require('../mixco/control')
+var b      = require('../mixco/behaviour')
+var v      = require('../mixco/value')
 
 // The script
 // ----------
@@ -66,7 +66,7 @@ script.register(module, {
     // Here we create all the different control objects and add them
     // to the script instance.
 
-    constructor: function() {
+    constructor: function () {
 
 	// #### Master section
 	//
@@ -104,11 +104,16 @@ script.register(module, {
 	this.addDeck(1)
     },
 
-    addDeck: function(i) {
+    addDeck: function (i) {
 	var g           = "[Channel" + (i+1) + "]"
-	var ccId        = function(cc)   { return c.ccIds(cc, 0x07+i) }
-	var noteId      = function(note) { return c.noteIds(note, 0x07+i) }
-	var noteIdShift = function(note) { return c.noteIds(note, 0x09+i) }
+	var ccId        = function (cc)   { return c.ccIds(cc, 0x07+i) }
+	var ccIdShift   = function (cc)   { return c.ccIds(cc, 0x09+i) }
+	var ccIdAll     = function (cc)   { return _.union(ccId(cc),
+							   ccIdShift(cc)) }
+	var noteId      = function (note) { return c.noteIds(note, 0x07+i) }
+	var noteIdShift = function (note) { return c.noteIds(note, 0x09+i) }
+	var noteIdAll   = function (cc)   { return _.union(noteId(cc),
+							   noteIdShift(cc)) }
 
 	// #### Mixer section
 	//
@@ -130,9 +135,9 @@ script.register(module, {
 	//   looproll effect*. Effect can be turned on by pressing the
 	//   knob or the on/off button.
 
-	faderfx = b.beatEffect(g, 'roll')
+	var faderfx = b.beatEffect(g, 'roll')
 	this.add(
-	    c.knob(ccId(0x06)).does(faderfx.selector().options.diff),
+	    c.encoder(ccId(0x06)).does(faderfx.selector()),
 	    c.control(noteId(0x06)).does(faderfx.momentary()),
 	    c.ledButton(noteId(0x0D)).does(faderfx)
 	)
@@ -148,12 +153,55 @@ script.register(module, {
 	this.add(
 	    c.ledButton(noteId(0x17)).does(g, "play"),
 	    c.ledButton(noteIdShift(0x17)).does(g, "reverse"),
-	    c.ledButton(noteId(0x16)).does(g, "cue_default"),
-	    c.ledButton(noteId(0x12)).does(g, "keylock"),
+	    c.ledButton(noteIdAll(0x16)).does(g, "cue_default"),
+	    c.ledButton(noteIdAll(0x12)).does(g, "keylock"),
 	    c.ledButton(noteId(0x13)).does(g, "beatsync"),
 	    c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
 	)
 
+	// #### Beat grid
+	//
+	// * The *adjust* button *aligns the beatgrid* to the current
+	//   play position.
+
+	this.add(c.ledButton(noteIdAll(0x11)).does(g, "beats_translate_curpos"))
+
+	// * The *set* button toggles loop and hot-cue *quantization*
+	//   on or off.
+
+	this.add(c.ledButton(noteIdAll(0x10)).does(g, "quantize"))
+
+	// #### Pitch and transport bar
+	//
+	// * The *pitch* encoder moves the pitch slider up and
+	//   down. When it is pressed, it moves it more subtlely.
+
+	var fineRateFactor = 1/10
+	var fineRateOn     = b.modifier()
+	this.add(
+	    c.button(noteIdAll(0x03)).does(fineRateOn),
+	    c.knob(ccIdAll(0x03))
+		.when(fineRateOn, b.map(g, "rate").option({
+		    transform: function (v, b) {
+			diff = v > 64 ? v - 128 : v
+			return b.midiValue + diff * fineRateFactor
+		    }}))
+		.else_(b.map(g, "rate").options.diff))
+
+	// * In *drop* mode, the touch strip scrolls through the song.
+
+	this.add(c.slider(ccId(0x34)).does(g, "playposition"))
+
+	// * In *swipe* mode, the touch strip nudges the pitch up and
+	//   down.  When *shift* is held it simulates scratching.
+
+	this.add(
+	    c.input(ccId(0x35)).does(g, "jog").option({
+		transform: function (v) {
+		    return (v > 64 ? v - 128 : v) / 3
+		}}),
+	    c.encoder(ccIdShift(0x35)).does(b.scratchTick(i+1)),
+	    c.encoder(noteIdShift(0x35)).does(b.scratchEnable(i+1)))
     },
 
     // ### Initialization
@@ -164,7 +212,7 @@ script.register(module, {
     // done by the device -- this will simplify the script and let
     // have direct lower latency mappings more often.
 
-    preinit: function() {
+    preinit: function () {
 	this.mixxx.midi.sendShortMsg(0xb7, 0x00, 0x6f)
 	this.mixxx.midi.sendShortMsg(0xb7, 0x00, 0x00)
     },
@@ -176,7 +224,7 @@ script.register(module, {
     // the device is in basic mode, ready to be used by some other
     // program.
 
-    shutdown: function() {
+    shutdown: function () {
 	this.mixxx.midi.sendShortMsg(0xb7, 0x00, 0x00)
     }
 
