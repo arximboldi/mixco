@@ -671,7 +671,7 @@ engine scratch system.
     exports.scratchEnable = (deck,
                              intervalsPerRev = 128*4,
                              rpm             = 44.0,
-                             alpha           = 1.0/8.0,
+                             alpha           = 1.0 / 8.0,
                              beta            = 1.0 / 8.0 / 32.0,
                              ramp            = true) ->
         exports.action
