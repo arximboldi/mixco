@@ -6,6 +6,9 @@ Methods to transform MIDI values to Mixxx control values.
 Utilities
 ---------
 
+    identity         = (v) -> v
+    identity.inverse = identity
+
     binary           = (v, oldv) -> if oldv? then not oldv else v > 0
     binary.inverse   = (v)       -> if v > 0 then 1 else 0
 
@@ -26,6 +29,7 @@ Utilities
         result.inverse = (v)       -> 127 * f.inverse(v, args...)
         result
 
+    identityT = identity
     binaryT   = transform binary
     linearT   = -> transform linear, arguments...
     centeredT = -> transform centered, arguments...
@@ -34,8 +38,10 @@ Utilities
     exports.binaryT   = binaryT
     exports.linearT   = linearT
     exports.centeredT = centeredT
+    exports.identityT = identityT
     exports.defaultT  = defaultT
 
+    exports.identity  = identity
     exports.binary    = binary
     exports.linear    = linear
     exports.centered  = centered
@@ -102,7 +108,7 @@ needed. Please make sure to keep it in sync with the official
         hotcue_6_clear:             binaryT
         hotcue_7_activate:          binaryT
         hotcue_7_clear:             binaryT
-        jog:                        linearT -3.0, 3.0
+        jog:                        identityT
         keylock:                    binaryT
         LoadSelectedTrack:          binaryT
         loop_double:                binaryT
