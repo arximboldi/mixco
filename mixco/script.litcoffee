@@ -32,7 +32,7 @@ object definining overrides for `name`, `constructor` and optionally
         assert scriptDefinition.constructor?,
             "Script definition must have a constructor"
 
-        {name, constructor, preinit, init, shutdown} =
+        {name, constructor, preinit, init, shutdown, postshutdown} =
             scriptDefinition
 
         class NewScript extends exports.Script
@@ -49,6 +49,7 @@ object definining overrides for `name`, `constructor` and optionally
             shutdown: ->
                 shutdown?.apply @, arguments
                 super
+                postshutdown?.apply @, arguments
 
         special = ['name', 'constructor', 'init', 'shutdown']
         for k, v of scriptDefinition

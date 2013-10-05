@@ -439,7 +439,7 @@ There are two ways of using it:
 
         constructor: ({@autoExclusive, @onDisable} = {})->
             super
-            @_selectedIndex    = 0
+            @_selectedIndex    = null
             @_chooseOptions    = []
             @_chooseActivators = []
             @_chooseSelectors  = []
@@ -534,12 +534,13 @@ is pressed, not otherwise.
         _update: ({index, enable}={}) ->
             enable ?= @value
             index  ?= @_selectedIndex
-            index   = index.clamp 0, @_chooseOptions.length-1
+            index   = index?.clamp 0, @_chooseOptions.length-1
 
             if index != @_selectedIndex or enable != @value
                 script  = @script ? @_chooseActivators[index].script
-                [group, key, listen] = @_chooseOptions[index]
-                script.mixxx.engine.setValue group, key, enable
+                if index?
+                    [group, key, listen] = @_chooseOptions[index]
+                    script.mixxx.engine.setValue group, key, enable
                 if not @autoExclusive or not enable
                     for [group, key], idx in @_chooseOptions
                         if idx != index

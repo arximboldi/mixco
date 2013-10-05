@@ -304,6 +304,10 @@ script.register(module, {
 	this.mixxx.midi.sendShortMsg(0xb7, 0x00, 0x00)
     },
 
+    init: function () {
+	this.decks.activate(0)
+    },
+
     // ### Shutdown
     //
     // The documentation suggests to reset the device when the program
@@ -311,7 +315,7 @@ script.register(module, {
     // the device is in basic mode, ready to be used by some other
     // program.
 
-    shutdown: function () {
+    postshutdown: function () {
 	this.mixxx.midi.sendShortMsg(0xb7, 0x00, 0x00)
     }
 

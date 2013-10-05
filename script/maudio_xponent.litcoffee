@@ -391,7 +391,10 @@ initalization are no longer required.
                    0x16, 0x40, 0x00, 0x01, 0xF7]
             @mixxx.midi.sendSysexMsg msg, msg.length
 
-        shutdown: ->
+        init: ->
+            @decks.activate 0
+
+        postshutdown: ->
             msg = [0xF0, 0x00, 0x20, 0x08, 0x00, 0x00, 0x63, 0x0E,
                    0x16, 0x40, 0x00, 0x00, 0xF7]
             @mixxx.midi.sendSysexMsg msg, msg.length
