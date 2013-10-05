@@ -4,7 +4,7 @@ mixco.control
 Defines different hardware controls.
 
     {multi} = require './multi'
-    {indent, hexStr, assert, factory, xmlTag, joinLn} = require './util'
+    {indent, hexStr, assert, factory, xmlTag, joinLn, printer} = require './util'
     behaviour = require './behaviour'
     {some} = require 'underscore'
 
@@ -224,18 +224,22 @@ An *output control* can send data to the hardware.
 
     class exports.OutControl extends exports.Control
 
-        states:
+        _states:
             on:  0x7f
             off: 0x00
 
         send: (state) ->
             @doSend state
 
+        states: (states) ->
+            @_states = states
+            @
+
         doSend: (state) ->
             id = @ids[0]
-            if state of @states
+            if state of @_states
                 @script.mixxx.midi.sendShortMsg \
-                    id.status(), id.midino, @states[state]
+                    id.status(), id.midino, @_states[state]
             else
                 @script.mixxx.midi.sendShortMsg \
                     id.status(), id.midino, state
@@ -272,8 +276,8 @@ We should remove the send function before enabling behaviours.
                 #{indent depth+1}<group>#{mapping.group}</group>
                 #{indent depth+1}<key>#{mapping.key}</key>
                 #{id.configMidi depth+1}
-                #{indent depth+1}<on>#{hexStr @states['on']}</on>
-                #{indent depth+1}<off>#{hexStr @states['off']}</off>
+                #{indent depth+1}<on>#{hexStr @_states['on']}</on>
+                #{indent depth+1}<off>#{hexStr @_states['off']}</off>
                 #{options}
                 #{indent depth}</output>
                 """
