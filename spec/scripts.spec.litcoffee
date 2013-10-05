@@ -52,6 +52,8 @@ Tests
             it "generates configuration without undefined values", ->
                 expect(script.config())
                     .not.toMatch "undefined"
+                expect(script.config())
+                    .not.toMatch "NaN"
 
             it "is not empty", ->
                 expect(script.controls.length)
