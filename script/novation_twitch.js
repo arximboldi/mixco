@@ -124,11 +124,11 @@ script.register(module, {
 	// * *Volume* fader and *low*, *mid*, *high* and *trim* knobs.
 
 	this.add(
-	    c.slider(ccId(0x07)).does(g, "volume"),
-	    c.knob(ccId(0x46)).does(g, "filterLow"),
-	    c.knob(ccId(0x47)).does(g, "filterMid"),
-	    c.knob(ccId(0x48)).does(g, "filterHigh"),
-	    c.knob(ccId(0x09)).does(b.soft(g, "pregain"))
+	    c.slider(ccIdAll(0x07)).does(g, "volume"),
+	    c.knob(ccIdAll(0x46)).does(g, "filterLow"),
+	    c.knob(ccIdAll(0x47)).does(g, "filterMid"),
+	    c.knob(ccIdAll(0x48)).does(g, "filterHigh"),
+	    c.knob(ccIdAll(0x09)).does(b.soft(g, "pregain"))
 	)
 
 	// * The **fader FX** we use as a knob-controlled *beat
@@ -137,9 +137,9 @@ script.register(module, {
 
 	var faderfx = b.beatEffect(g, 'roll')
 	this.add(
-	    c.encoder(ccId(0x06)).does(faderfx.selector()),
-	    c.control(noteId(0x06)).does(faderfx.momentary()),
-	    c.ledButton(noteId(0x0D)).does(faderfx)
+	    c.encoder(ccIdAll(0x06)).does(faderfx.selector()),
+	    c.control(noteIdAll(0x06)).does(faderfx.momentary()),
+	    c.ledButton(noteIdAll(0x0D)).does(faderfx)
 	)
 
 	// #### Deck play
@@ -151,9 +151,9 @@ script.register(module, {
 	//   held.
 
 	this.add(
-	    c.ledButton(noteId(0x17)).does(g, "play"),
-	    c.ledButton(noteIdShift(0x17)).does(g, "reverse"),
-	    c.ledButton(noteIdAll(0x16)).does(g, "cue_default"),
+	    c.ledButton(noteIdAll(0x17)).does(g, "play"),
+	    c.ledButton(noteIdShift(0x16)).does(g, "reverse"),
+	    c.ledButton(noteId(0x16)).does(g, "cue_default"),
 	    c.ledButton(noteIdAll(0x12)).does(g, "keylock"),
 	    c.ledButton(noteId(0x13)).does(g, "beatsync"),
 	    c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
@@ -186,7 +186,8 @@ script.register(module, {
 			diff = v > 64 ? v - 128 : v
 			return b.midiValue + diff * fineRateFactor
 		    }}))
-		.else_(b.map(g, "rate").options.diff))
+		.else_(b.map(g, "rate").options.diff)
+	)
 
 	// * In *drop* mode, the touch strip scrolls through the song.
 
