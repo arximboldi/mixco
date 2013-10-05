@@ -150,10 +150,23 @@ script.register(module, {
 	//   the play button will do a *reverse* toggle when shift is
 	//   held.
 
+	var coloredLed = function (base, intensity) {
+	    return base + intensity
+	}
+	var redLed     = _.partial(coloredLed, 0x00)
+	var amberLed   = _.partial(coloredLed, 0x40)
+	var greenLed   = _.partial(coloredLed, 0x70)
+	var ledPad     = function (ids, color) {
+	    return c.ledButton(ids).states({
+		on:  color(0xf),
+		off: color(0x1)
+	    })
+	}
+
 	this.add(
-	    c.ledButton(noteIdAll(0x17)).does(g, "play"),
-	    c.ledButton(noteIdShift(0x16)).does(g, "reverse"),
-	    c.ledButton(noteId(0x16)).does(g, "cue_default"),
+	    ledPad(noteIdAll(0x17), greenLed).does(g, "play"),
+	    ledPad(noteIdShift(0x16), amberLed).does(g, "reverse"),
+	    ledPad(noteId(0x16), redLed).does(g, "cue_default"),
 	    c.ledButton(noteIdAll(0x12)).does(g, "keylock"),
 	    c.ledButton(noteId(0x13)).does(g, "beatsync"),
 	    c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
@@ -204,6 +217,51 @@ script.register(module, {
 	    c.slider(ccIdShift(0x35)).does(b.scratchTick(i+1))
 		.options.selectknob,
 	    c.button(noteIdShift(0x47)).does(b.scratchEnable(i+1, 128)))
+
+	// #### Performance modes
+	//
+	// * In *hot-cues* mode, the performance buttons control the
+	//   hot cues.  One may *clear* hot-cues with *shift*.
+
+	for (var j = 0; j < 8; ++j)
+	    this.add(
+		ledPad(noteId(0x60+j), amberLed).does(
+		    g, "hotcue_" + (j+1) + "_activate",
+		    g, "hotcue_" + (j+1) + "_enabled"),
+		ledPad(noteIdShift(0x60+j), amberLed).does(
+		    g, "hotcue_" + (j+1) + "_clear",
+		    g, "hotcue_" + (j+1) + "_enabled")
+	    )
+
+	// * In *auto-loop* mode, the pads select *loops* of sizes
+	//   1/16, 1/8, 1/4, 1/2, 1, 2, 4 or 8 beats.  On *shift*, it
+	//   creates loops of sizes 1, 2, 4, 8, 16, 32 or 64 beats.
+
+	loopSize = [ "0.0625", "0.125", "0.25", "0.5",
+		     "1",      "2",     "4",    "8",
+		     "16",     "32",    "64" ]
+	for (var j = 0; j < 8; ++j)
+	    this.add(ledPad(noteId(0x70+j), greenLed).does(
+		g, "beatloop_" + loopSize[j] + "_toggle",
+		g, "beatloop_" + loopSize[j] + "_enabled"))
+	for (var j = 0; j < 7; ++j)
+	    this.add(ledPad(noteIdShift(0x70+j), greenLed).does(
+		g, "beatloop_" + loopSize[4+j] + "_toggle",
+		g, "beatloop_" + loopSize[4+j] + "_enabled"))
+
+	// * In *loop-roll* mode, it same as the beatloop mode but the
+	//   effect is momentary and returns the playhead to where it
+	//   would have been without looping.
+
+	for (var j = 0; j < 8; ++j)
+	    this.add(ledPad(noteId(0x78+j), greenLed).does(
+		g, "beatlooproll_" + loopSize[j] + "_activate",
+		g, "beatloop_" + loopSize[j] + "_enabled"))
+	for (var j = 0; j < 7; ++j)
+	    this.add(ledPad(noteIdShift(0x78+j), greenLed).does(
+		g, "beatlooproll_" + loopSize[4+j] + "_activate",
+		g, "beatloop_" + loopSize[4+j] + "_enabled"))
+
     },
 
     // ### Initialization
