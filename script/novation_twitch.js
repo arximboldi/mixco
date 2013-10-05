@@ -79,16 +79,45 @@ script.register(module, {
 
 	this.add(c.slider(0x08, 0x07).does(b.soft("[Master]", "crossfader")))
 
-	// #### Microphone
+	// #### Mic/aux and effects
 	//
-	// Note that the pre-hear button is controlled directly by the
-	// integrated soundcard.
-	//
+	// Sadly, the buttons *Aux*, *Deck A*, *Deck B* and *Pre-hear*
+	// of the effects and microphone sections are controlled by
+	// the hardware in a bit of a useless way, so they do nothing
+	// -- other than light up when they are pressed.
+
+	var ccIdFxBanks = function (index) {
+	    banks  = 5
+	    params = 4
+	    ids    = []
+	    for (var j = 0; j < banks; ++j)
+		ids.push.apply(ids, c.ccIds(index + params * j, 0xB))
+	    return ids
+	}
+
 	// * Microphone *volume* control and *on/off* button.
 
 	this.add(
-	    c.knob(0x03, 0xB).does(b.soft("[Microphone]", "volume")),
+	    c.knob(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "volume")),
 	    c.ledButton(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
+	)
+
+	// * The knobs in the *Master FX* section are mapped to
+	//   *depth*, *delay* and *period* -- in this order.
+
+	var fastEncoder = function () {
+	    factor = 3
+	    return c.input.apply(this, arguments)
+		.option({transform: function(v, b) {
+		    return (b.midiValue + factor * (v > 64 ? v - 128 : v))
+			.clamp(0, 128)
+		}})
+	}
+
+	this.add(
+	    c.knob(ccIdFxBanks(0x0)).does("[Flanger]", "lfoDepth"),
+	    fastEncoder(ccIdFxBanks(0x1)).does("[Flanger]", "lfoDelay"),
+	    fastEncoder(ccIdFxBanks(0x2)).does("[Flanger]", "lfoPeriod")
 	)
 
 	// ### Per deck controls
@@ -142,7 +171,14 @@ script.register(module, {
 	    c.ledButton(noteIdAll(0x0D)).does(faderfx)
 	)
 
-	// #### Deck play
+	// #### Effects
+	//
+	// * In the *Master FX* section, the *FX Select* left and
+	//   right enable the flanger in the direction of the arrow.
+
+	c.ledButton(c.noteIds(0x20+i, 0xB)).does(g, "flanger")
+
+	// #### Deck transport
 	//
 	// * The transport section controls *play, cue, keylock and
 	//   sync*.  When *shift* is *on*, the sync will synchronize
