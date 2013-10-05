@@ -9,7 +9,7 @@ This module contains all the functionallity that lets you add
     value     = require './value'
     {indent, assert, factory, copy} = require './util'
     {multi, isinstance} = require './multi'
-    _ = {extend} = require 'underscore'
+    _ = {extend, bind} = require 'underscore'
 
 Actor
 -----
@@ -205,7 +205,8 @@ output of its actor based on its nested `output` *Value*.
             if @actor.send?
                 @_updateOutputCallback ?= => @updateOutput()
                 @output.on 'value', @_updateOutputCallback
-                @updateOutput()
+            if @actor.doSend?
+                @updateOutput @actor.doSend
 
         disable: ->
             if @_updateOutputCallback?
@@ -213,9 +214,10 @@ output of its actor based on its nested `output` *Value*.
                 @_updateOutputCallback = undefined
             super
 
-        updateOutput: ->
-            @actor.send if Math.abs(@output.value) >= @minimum \
-                then 'on' else 'off'
+        updateOutput: (sendfn=null) ->
+            sendfn ?= @actor.send
+            sendfn.call @actor, (if Math.abs(@output.value) >= @minimum \
+                then 'on' else 'off')
 
 
 ### Transform

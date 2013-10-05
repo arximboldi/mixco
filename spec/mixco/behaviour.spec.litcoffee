@@ -16,6 +16,7 @@ Mocks
     mock = require '../mock'
 
     mockActor = -> createSpyObj 'actor', [
+        'doSend',
         'send',
         'on',
         'addListener',
@@ -143,7 +144,13 @@ Tests for the **Output** basic behaviour.
         it 'initializes the actor depending on pre-enable value', ->
             output.output.value = 1
             output.enable {}, actor
-            expect(actor.send).toHaveBeenCalledWith 'on'
+            expect(actor.doSend).toHaveBeenCalledWith 'on'
+
+        it 'initializes the actor even if it denies output', ->
+            actor.send = undefined
+            output.output.value = 1
+            output.enable {}, actor
+            expect(actor.doSend).toHaveBeenCalledWith 'on'
 
         it 'sends "on" value when value is above or equal minimum', ->
             output.enable {}, actor
