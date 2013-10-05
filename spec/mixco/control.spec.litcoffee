@@ -180,24 +180,15 @@ Tests for the **OutControl** class.
             expect(config).not.toContain("<maximum>")
 
         it "configures an output for every midi id that is not a note off", ->
-            control = new OutControl union c.ccIds(0x42), c.noteIds(0x33)
-            behave  = new Behaviour
-            control.does behave
+            script = new mock.TestScript "script"
+            control = new OutControl
+            spyOn(control, 'doSend')
 
-            behave.directOutMapping = -> {}
-            config = control.configOutputs 0
-            expect(config).toMatch ///
-                    \s*<status>0xb0</status>
-                    \s*<midino>0x42</midino>
-                ///
-            expect(config).toMatch ///
-                    \s*<status>0x90</status>
-                    \s*<midino>0x33</midino>
-                ///
-            expect(config).not.toMatch ///
-                    \s*<status>0x80</status>
-                    \s*<midino>0x33</midino>
-                ///
+            control.init script
+            expect(control.doSend).not.toHaveBeenCalledWith 'disable'
+            control.shutdown script
+            expect(control.doSend).toHaveBeenCalledWith 'disable'
+
 
 License
 -------

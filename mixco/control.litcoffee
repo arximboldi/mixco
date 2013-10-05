@@ -6,7 +6,7 @@ Defines different hardware controls.
     {multi} = require './multi'
     {indent, hexStr, assert, factory, xmlTag, joinLn, printer} = require './util'
     behaviour = require './behaviour'
-    {some} = require 'underscore'
+    {some, extend} = require 'underscore'
 
 Constants
 ---------
@@ -224,15 +224,18 @@ An *output control* can send data to the hardware.
 
     class exports.OutControl extends exports.Control
 
-        _states:
-            on:  0x7f
-            off: 0x00
+        constructor: ->
+            super
+            @_states =
+                on:      0x7f
+                off:     0x00
+                disable: 0x00
 
         send: (state) ->
             @doSend state
 
         states: (states) ->
-            @_states = states
+            extend @_states, states
             @
 
         doSend: (state) ->
@@ -253,7 +256,7 @@ We should remove the send function before enabling behaviours.
             super
 
         shutdown: ->
-            @doSend 'off'
+            @doSend 'disable'
             super
 
         needsSend: ->
