@@ -259,6 +259,10 @@ We should remove the send function before enabling behaviours.
         configOutputs: (depth, script) ->
             mapping = not @needsSend() and @_behaviours[0].directOutMapping()
             if mapping
+                joinLn(@configOutMapping depth, mapping, id for id in @ids)
+
+        configOutMapping: (depth, mapping, id) ->
+            if id.message != MIDI_NOTE_OFF
                 options = joinLn [
                     xmlTag 'minimum', mapping.minimum, depth+1
                     xmlTag 'maximum', mapping.maximum, depth+1
@@ -267,7 +271,7 @@ We should remove the send function before enabling behaviours.
                 #{indent depth}<output>
                 #{indent depth+1}<group>#{mapping.group}</group>
                 #{indent depth+1}<key>#{mapping.key}</key>
-                #{@ids[0].configMidi depth+1}
+                #{id.configMidi depth+1}
                 #{indent depth+1}<on>#{hexStr @states['on']}</on>
                 #{indent depth+1}<off>#{hexStr @states['off']}</off>
                 #{options}

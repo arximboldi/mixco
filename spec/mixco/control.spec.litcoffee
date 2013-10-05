@@ -3,10 +3,11 @@ spec.mixco.behaviour
 
 Tests for behaviours.
 
+    {union} = require 'underscore'
     mock = require '../mock'
 
+    c = {MIDI_CC, Control, InControl, OutControl} = require '../../mixco/control'
 
-    {MIDI_CC, Control, InControl, OutControl} = require '../../mixco/control'
     {Behaviour} = behaviour = require '../../mixco/behaviour'
 
 Tests
@@ -169,16 +170,34 @@ Tests for the **OutControl** class.
             behave.directOutMapping = ->
                 minimum: 1
                 maximum: 2
-            expect(control.configOutputs 0)
-                .toContain("<minimum>1</minimum>")
-            expect(control.configOutputs 0)
-                .toContain("<maximum>2</maximum>")
+            config = control.configOutputs 0
+            expect(config).toContain("<minimum>1</minimum>")
+            expect(config).toContain("<maximum>2</maximum>")
 
             behave.directOutMapping = -> {}
-            expect(control.configOutputs 0)
-                .not.toContain("<minimum>")
-            expect(control.configOutputs 0)
-                .not.toContain("<maximum>")
+            config = control.configOutputs 0
+            expect(config).not.toContain("<minimum>")
+            expect(config).not.toContain("<maximum>")
+
+        it "configures an output for every midi id that is not a note off", ->
+            control = new OutControl union c.ccIds(0x42), c.noteIds(0x33)
+            behave  = new Behaviour
+            control.does behave
+
+            behave.directOutMapping = -> {}
+            config = control.configOutputs 0
+            expect(config).toMatch ///
+                    \s*<status>0xb0</status>
+                    \s*<midino>0x42</midino>
+                ///
+            expect(config).toMatch ///
+                    \s*<status>0x90</status>
+                    \s*<midino>0x33</midino>
+                ///
+            expect(config).not.toMatch ///
+                    \s*<status>0x80</status>
+                    \s*<midino>0x33</midino>
+                ///
 
 License
 -------
