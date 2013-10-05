@@ -200,8 +200,9 @@ script.register(module, {
 		transform: function (v) {
 		    return (v > 64 ? v - 128 : v) / 3
 		}}),
-	    c.encoder(ccIdShift(0x35)).does(b.scratchTick(i+1)),
-	    c.encoder(noteIdShift(0x35)).does(b.scratchEnable(i+1)))
+	    c.slider(ccIdShift(0x35)).does(b.scratchTick(i+1))
+		.options.selectknob,
+	    c.button(noteIdShift(0x47)).does(b.scratchEnable(i+1, 128)))
     },
 
     // ### Initialization
