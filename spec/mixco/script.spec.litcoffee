@@ -3,15 +3,8 @@ spec.mixco.value
 
 Tests for the `mixco.value` module.
 
-Module
-------
-
     {isinstance} = require '../../mixco/multi'
     {Script, register} = require '../../mixco/script'
-
-
-Mocks
------
 
     class TestScript extends Script
 

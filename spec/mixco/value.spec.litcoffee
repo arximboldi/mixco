@@ -3,9 +3,6 @@ spec.mixco.value
 
 Tests for the `mixco.value` module.
 
-Module
-------
-
     {Value, Reduce, Const, transform} = require '../../mixco/value'
 
 Tests

@@ -6,9 +6,6 @@ Tests for multiple inheritance support.
 Most test heterarchies are taken from the [original C3
 paper](http://192.220.96.201/dylan/linearization-oopsla96.html)
 
-Module
-------
-
     {multi, mro, hierarchy, inherited, isinstance, issubclass} =
         require '../../mixco/multi'
 
@@ -103,7 +100,7 @@ magically get a superclass in a multiple inheritance context.
         constructor: ->
             super
             @deriv = 'deriv'
- 
+
 
 Tests
 -----

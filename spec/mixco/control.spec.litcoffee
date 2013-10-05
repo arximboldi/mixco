@@ -3,14 +3,8 @@ spec.mixco.behaviour
 
 Tests for behaviours.
 
-Mocks
------
-
     mock = require '../mock'
 
-
-Module
-------
 
     {MIDI_CC, Control, InControl, OutControl} = require '../../mixco/control'
     {Behaviour} = behaviour = require '../../mixco/behaviour'
