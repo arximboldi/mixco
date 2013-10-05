@@ -102,22 +102,16 @@ script.register(module, {
 	    c.ledButton(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
 	)
 
+
 	// * The knobs in the *Master FX* section are mapped to
 	//   *depth*, *delay* and *period* -- in this order.
 
-	var fastEncoder = function () {
-	    factor = 3
-	    return c.input.apply(this, arguments)
-		.option({transform: function(v, b) {
-		    return (b.midiValue + factor * (v > 64 ? v - 128 : v))
-			.clamp(0, 128)
-		}})
-	}
-
 	this.add(
 	    c.knob(ccIdFxBanks(0x0)).does("[Flanger]", "lfoDepth"),
-	    fastEncoder(ccIdFxBanks(0x1)).does("[Flanger]", "lfoDelay"),
-	    fastEncoder(ccIdFxBanks(0x2)).does("[Flanger]", "lfoPeriod")
+	    c.encoder(ccIdFxBanks(0x1)).does("[Flanger]", "lfoDelay")
+		.option(scaledDiff(3)),
+	    c.encoder(3, ccIdFxBanks(0x2)).does("[Flanger]", "lfoPeriod")
+		.option(scaledDiff(3))
 	)
 
 	// ### Per deck controls
@@ -223,19 +217,16 @@ script.register(module, {
 	// #### Pitch and transport bar
 	//
 	// * The *pitch* encoder moves the pitch slider up and
-	//   down. When it is pressed, it moves it more subtlely.
+	//   down. When it is pressed, it moves it pitch faster.
 
-	var fineRateFactor = 1/10
-	var fineRateOn     = b.modifier()
+	var coarseRateFactor = 1/10
+	var coarseRateOn     = b.modifier()
 	this.add(
-	    c.button(noteIdAll(0x03)).does(fineRateOn),
+	    c.button(noteIdAll(0x03)).does(coarseRateOn),
 	    c.knob(ccIdAll(0x03))
-		.when(fineRateOn, b.map(g, "rate").option({
-		    transform: function (v, b) {
-			diff = v > 64 ? v - 128 : v
-			return b.midiValue + diff * fineRateFactor
-		    }}))
-		.else_(b.map(g, "rate").options.diff)
+		.when (coarseRateOn,
+		       b.map(g, "rate").option(scaledDiff(2)))
+		.else_(b.map(g, "rate").option(scaledDiff(1/12)))
 	)
 
 	// * In *drop* mode, the touch strip scrolls through the song.
@@ -325,6 +316,22 @@ script.register(module, {
     }
 
 });
+
+// Utilities
+// ---------
+//
+// The *scaledDiff* function returns a behaviour option that is useful
+// to define encoders with a specific sensitivity, which is useful to
+// correct the issues of the stepped encoders.
+
+function scaledDiff (factor) {
+    return {
+	transform: function(v, b) {
+	    var diff = factor * (v > 64 ? v - 128 : v)
+	    return (b.midiValue + diff).clamp(0, 128)
+	}
+    }
+}
 
 // >  Copyright (C) 2013 Juan Pedro Bolívar Puente
 // >
