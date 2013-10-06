@@ -60,6 +60,10 @@ tmp/%.js: %.litcoffee
 	@mkdir -p $(@D)
 	$(COFFEE) -c -p $< > $@
 
+tmp/%.js: %.coffee
+	@mkdir -p $(@D)
+	$(COFFEE) -c -p $< > $@
+
 tmp/%.js: %.js
 	@mkdir -p $(@D)
 	cp -f $< $@
@@ -73,6 +77,13 @@ out/%.js: tmp/script/%.js $(FRAMEWORK)
 	echo ";$*=require('./$<').$*" >> $@
 
 out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
+	@echo
+	@echo \*\*\* Building $* XML mapping file
+	@echo
+	@mkdir -p $(@D)
+	$(COFFEE) $< -g > $@
+
+out/%.midi.xml: script/%.coffee $(FRAMEWORK)
 	@echo
 	@echo \*\*\* Building $* XML mapping file
 	@echo
