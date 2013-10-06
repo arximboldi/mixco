@@ -18,19 +18,24 @@ Features
   * Your script file is a single [Literate CoffeeScript][lcs] file.
   * The file can be executed to generate the XML mapping and converted
     to JS to be used as the controller script.
-  * It will create direct mappings to controls whenever possible, but
-    this is transparent to the script writer.
+  * The generated XML file bypasses the script whenever possible for
+    lower latency, but this is transparent to the script writer.
   * The API is very [fluent][fluent] and
     [declarative][declarative].
   * Because of [Literate CoffeeScript][lcs], the mappings are well
     documented, and the code itself is interleaved with the
     documentation, encouraging DJs to modify them and remove the
     artist/coder dicotomy. [See an example of it][script.korg_nanokontrol2]
+  * The [Node.js][nodejs] libraries can be used in the scripts.
+  * Scripts can be written in JavaScript or CoffeeScript too.
+  * Tests are automatically generated for every script, so you can
+    find errors in your script before loading it in Mixxx.
 
   [declarative]: http://en.wikipedia.org/wiki/Declarative_programming
   [fluent]: http://en.wikipedia.org/wiki/Fluent_interface
   [lcs]: http://coffeescript.org/#literate
   [script.korg_nanokontrol2]: script/korg_nanokontrol2.html
+  [nodejs]: http://nodejs.org/
 
 
 Supported hardware
