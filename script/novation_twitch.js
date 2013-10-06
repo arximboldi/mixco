@@ -114,6 +114,34 @@ script.register(module, {
 		.option(scaledDiff(3))
 	)
 
+	// #### Browse
+	//
+	// * The *back* and *fwd* can be used to scroll the sidebar.
+
+	this.add(c.button(c.noteIds(0x54, 0x7)).does(
+	    "[Playlist]", "SelectPrevPlaylist"))
+	this.add(c.button(c.noteIds(0x56, 0x7)).does(
+	    "[Playlist]", "SelectNextPlaylist"))
+
+	// * The *scroll* encoder scrolles the current view.  When
+	//   pressed it moves faster.
+
+	scrollFaster = b.modifier()
+	this.add(
+	    c.button(c.noteIds(0x55, 0x7)).does(scrollFaster),
+	    c.knob(0x55, 0x7)
+		.when (scrollFaster,
+		       b.map("[Playlist]", "SelectTrackKnob")
+		       .option(scaledSelectKnob(8)))
+		.else_(b.map("[Playlist]", "SelectTrackKnob")
+		       .options.selectknob)
+	)
+
+	// * The *area* button expand or collapses the selected
+	//   element cathegory in the sidebar.
+
+	this.add(c.ledButton(c.noteIds(0x50, 0x7)).does(
+	    "[Playlist]", "ToggleSelectedSidebarItem"))
 	// ### Per deck controls
 	//
 	// We use a `behaviou.chooser` for the PFL selection.  This
@@ -171,6 +199,14 @@ script.register(module, {
 	//   right enable the flanger in the direction of the arrow.
 
 	c.ledButton(c.noteIds(0x20+i, 0xB)).does(g, "flanger")
+
+	// #### Browse
+	//
+	// * The *load A* or *load B* buttons load the selected track
+	//   to the given deck.
+
+	this.add(c.ledButton(c.noteIds(0x52+i, 0x7))
+		 .does(g, "LoadSelectedTrack"))
 
 	// #### Deck transport
 	//
@@ -333,6 +369,14 @@ function scaledDiff (factor) {
 	transform: function(v, b) {
 	    var diff = factor * (v > 64 ? v - 128 : v)
 	    return (b.midiValue + diff).clamp(0, 128)
+	}
+    }
+}
+
+function scaledSelectKnob (factor) {
+    return {
+	transform: function(v, b) {
+	    return factor * (v > 64 ? v - 128 : v)
 	}
     }
 }
