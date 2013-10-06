@@ -189,6 +189,27 @@ Tests for the **OutControl** class.
             control.shutdown script
             expect(control.doSend).toHaveBeenCalledWith 'disable'
 
+        it "sends midi to all outputs that are not a note off", ->
+            script = new mock.TestScript "script"
+            control = new OutControl union c.ccIds(0x42), c.noteIds(0x33)
+
+            control.init script
+            control.doSend 'on'
+
+            expect(script.mixxx.midi.sendShortMsg)
+                .toHaveBeenCalledWith control.ids[0].status(),
+                                      control.ids[0].midino,
+                                      0x7f
+            expect(script.mixxx.midi.sendShortMsg)
+                .toHaveBeenCalledWith control.ids[1].status(),
+                                      control.ids[1].midino,
+                                      0x7f
+            expect(script.mixxx.midi.sendShortMsg)
+                .not
+                .toHaveBeenCalledWith control.ids[2].status(),
+                                      control.ids[2].midino,
+                                      0x7f
+
 
 License
 -------
