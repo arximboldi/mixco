@@ -228,6 +228,24 @@ script.register(module, {
 	    ledPad(noteId(0x16), redLed).does(g, "cue_default"),
 	    ledPad(noteIdShift(0x16), amberLed).does(g, "reverse")
 	)
+
+	// * The *keylock* button toggles the pitch-independent time
+	//   stretching.  On *shift*, it toggles *slip mode*, in which
+	//   loops and scratching continue playback on the background
+	//   thus returning the playhead to where the track would have
+	//   been.
+
+	slipMode = b.switch_()
+	this.add(
+	    c.ledButton(noteId(0x12)).does(g, "keylock"),
+	    c.ledButton(noteIdShift(0x12)).does(slipMode)
+	)
+
+	// * The *sync* button aligns phase and tempo of this track to
+	//   the one of the other deck.  On *shift*, it aligns tempo
+	//   only.
+
+	this.add(
 	    c.ledButton(noteId(0x13)).does(g, "beatsync"),
 	    c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
 	)
@@ -271,9 +289,13 @@ script.register(module, {
 		transform: function (v) {
 		    return (v > 64 ? v - 128 : v) / 3
 		}}),
+
 	    c.slider(ccIdShift(0x35)).does(b.scratchTick(i+1))
 		.options.selectknob,
-	    c.button(noteIdShift(0x47)).does(b.scratchEnable(i+1, 128)))
+	    c.button(noteIdShift(0x47))
+		.does(b.scratchEnable(i+1, 128))
+		.when(slipMode, b.map(g, "slip_enabled").options.switch_)
+	)
 
 	// #### Performance modes
 	//
