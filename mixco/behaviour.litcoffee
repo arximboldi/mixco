@@ -7,7 +7,7 @@ This module contains all the functionallity that lets you add
     events    = require 'events'
     transform = require './transform'
     value     = require './value'
-    {indent, assert, factory, copy} = require './util'
+    {indent, assert, factory, copy, printer} = require './util'
     {multi, isinstance} = require './multi'
     _ = {extend, bind} = require 'underscore'
 
@@ -649,10 +649,10 @@ script-only button actions with a press and a release event.
     exports.action = factory exports.Action
 
 
-**PunchIn** tries to mimic the punch-in functionaility of a mixer by setting the
-crossfader to the center.  The threshold must be either positive or
-negative for the left channel and indicates how far the crossfader has
-to be from the center for punch-in to have effect.
+**PunchIn** tries to mimic the punch-in functionaility of a mixer by
+setting the crossfader to the center.  The threshold must be either
+positive or negative for the left channel and indicates how far the
+crossfader has to be from the center for punch-in to have effect.
 
     exports.punchIn = (threshold) ->
         oldxfader = undefined
@@ -764,6 +764,39 @@ loops or rolls.  The `channel` parameter is the usual deck name, the
                        "beatloop#{type}_#{size}_activate",
                        "beatloop_#{size}_enabled"
         result.select 4
+
+The **stutter** does a stutter effect --i.e. quickly turns volume up
+and down-- while pressed.
+
+Note that *soft takeover must be disabled* for the pregain parameter
+for this effect to work because it works ticking periodically and
+turning the gain up and down.
+
+    exports.stutter = (group, beats=0.25) ->
+        tick = ->
+            engine  = @script.mixxx.engine
+            gain    = engine.getValue group, "pregain"
+            newgain =
+                if gain > 0
+                    @_oldgain = gain; 0
+                else
+                    @_oldgain
+            engine.setValue group, "pregain", newgain
+
+        exports.action
+            press: ->
+                engine         = @script.mixxx.engine
+                bpm            = engine.getValue group, "bpm"
+                delta          = beats * 60000 / bpm
+                @_timerHandle ?= @script.registerHandler bind tick, @
+                @_timerId     ?= engine.beginTimer delta, @_timerHandle
+
+            release: ->
+                engine = @script.mixxx.engine
+                engine.stopTimer @_timerId
+                engine.setValue group, "pregain", @_oldgain if @_oldgain?
+                delete @_timerId
+                delete @_oldgain
 
 License
 -------

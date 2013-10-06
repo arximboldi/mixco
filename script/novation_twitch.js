@@ -179,7 +179,7 @@ script.register(module, {
 	    c.knob(ccIdAll(0x46)).does(g, "filterLow"),
 	    c.knob(ccIdAll(0x47)).does(g, "filterMid"),
 	    c.knob(ccIdAll(0x48)).does(g, "filterHigh"),
-	    c.knob(ccIdAll(0x09)).does(b.soft(g, "pregain"))
+	    c.knob(ccIdAll(0x09)).does(g, "pregain")
 	)
 
 	// * The **fader FX** we use as a knob-controlled *beat
@@ -332,6 +332,14 @@ script.register(module, {
 	this.add(
 	    ledPad(noteIdAll(0x6C), greenLed).does(b.spinback(i+1)),
 	    ledPad(noteIdAll(0x6D), greenLed).does(b.brake(i+1))
+	)
+
+	// * The buttons *7 and 7* perform a stutter effect at
+	//   different speeds.
+
+	this.add(
+	    ledPad(noteIdAll(0x6E), amberLed).does(b.stutter(g, 1/8)),
+	    ledPad(noteIdAll(0x6F), amberLed).does(b.stutter(g, 1/4))
 	)
 
 	// ##### Auto loop

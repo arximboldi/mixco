@@ -16,6 +16,8 @@ Engine
             'getValue',       # (group, key)
             'setValue',       # (group, key, value)
             'softTakeover',   # (group, key, enable)
+            'beginTimer',     # (delay, handler) -> id
+            'stopTimer',      # (id)
             'connectControl', # (group, key, handler[, disconnnect])
             'scratchEnable',  # (int deck, int intervalsPerRev, float rpm,
                               #  alpha, beta, ramp)
