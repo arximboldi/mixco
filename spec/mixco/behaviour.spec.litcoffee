@@ -9,6 +9,7 @@ Module
     util      = require '../../mixco/util'
     value     = require '../../mixco/value'
     behaviour = require '../../mixco/behaviour'
+    transform = require '../../mixco/transform'
 
 Mocks
 -----
@@ -162,6 +163,58 @@ Tests for the **Output** basic behaviour.
             output.output.value = 1
             output.output.value = 0
             expect(actor.send).toHaveBeenCalledWith 'off'
+
+Tests for the **Transform** behaviour.
+
+    describe 'Transform', ->
+
+        it 'can take an initial value as second parameter', ->
+            t = behaviour.transform (->), 42
+            expect(t.value).toBe 42
+
+        it 'sets its value and output to the transformed MIDI input', ->
+            t = behaviour.transform (v) -> v * 2
+
+            t.onMidiEvent value: 3
+            expect(t.value).toBe 6
+            expect(t.output.value).toBe 6
+            expect(t.midiValue).toBe 6
+
+            t.onMidiEvent value: 6
+            expect(t.value).toBe 12
+            expect(t.output.value).toBe 12
+            expect(t.midiValue).toBe 12
+
+        it 'can inverse the transform to reconstruct the midi values', ->
+            f = (v) -> v * 2
+            f.inverse = (v) -> v / 2
+            t = behaviour.transform f
+
+            t.onMidiEvent value: 3
+            expect(t.value).toBe 6
+            expect(t.midiValue).toBe 3
+
+        it 'does not set its value when the transform gives a nully value', ->
+            t = behaviour.transform (v) -> if v != 42 then v * 2
+
+            t.onMidiEvent value: 3
+            expect(t.value).toBe 6
+
+            t.onMidiEvent value: 42
+            expect(t.value).toBe 6
+
+            t.onMidiEvent value: 0
+            expect(t.value).toBe 0
+
+        it 'can take non-linear transforms', ->
+            t = behaviour.transform transform.binaryT
+
+            t.onMidiEvent value: 3
+            expect(t.value).toBe true
+
+            t.onMidiEvent value: 3
+            expect(t.value).toBe false
+
 
 Tests for the **InMap** behaviour.
 

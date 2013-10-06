@@ -82,6 +82,7 @@ inconsistent with how Mixxx does it, but it should be though.
         add 'diff', (v1, v0) -> v0 + (if v1 > 64 then v1 - 128 else v1)
         add 'button', (v) -> v != 0
         add 'switch', (v) -> 1
+        result.switch_ = result.switch
         add 'hercjog', (v1, v0) -> v0 + (if v1 > 64 then v1 - 128 else v1)
         add 'spread64', (v) -> v - 64
         add 'selectknob', (v) -> if v > 64 then v - 128 else v
@@ -232,15 +233,17 @@ the value.  It can take an *initial* value too.
             super initial: initial
 
         onMidiEvent: (ev) ->
-            @output.value = @value = @transformer ev.value
+            result = @transformer ev.value, @midiValue
+            if result?
+                @output.value = @value = result
 
         getMidiValue: ->
             @transformer.inverse?(@value) ? @value
 
     exports.transform = factory exports.Transform
-    exports.modifier  = -> exports.transform transform.binaryT, false
-    exports.switch    = -> exports.transform (-> not @value), false
-
+    exports.modifier  = -> exports.transform transform.momentaryT, false
+    exports.switch    = -> exports.transform transform.binaryT, false
+    exports.switch_   = exports.switch
 
 ### Mappings
 
@@ -714,11 +717,11 @@ The **spinback** and **brake** functionalities just call the
 equivalent methods in the engine.
 
     exports.spinback = (deck, args...) ->
-        exports.switch().on 'value', ->
+        exports.modifier().on 'value', ->
             @script.mixxx.engine.spinback deck, @value, args...
 
     exports.brake = (deck, args...) ->
-        exports.switch().on 'value', ->
+        exports.modifier().on 'value', ->
             @script.mixxx.engine.brake deck, @value, args...
 
 The **playhead** sends the current position meter a MIDI value and

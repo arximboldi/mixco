@@ -55,7 +55,6 @@ coming from Mixxx.
         channel: channel
         control: control
         value: switch status >> 4
-            when MIDI_NOTE_OFF  then 0
             when MIDI_PITCHBEND then (value * 128.0 + control) / 128.0
             else value
         status: status
