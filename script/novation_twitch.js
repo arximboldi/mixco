@@ -190,7 +190,7 @@ script.register(module, {
 	this.add(
 	    c.encoder(ccIdAll(0x06)).does(faderfx.selector()),
 	    c.control(noteIdAll(0x06)).does(faderfx.momentary()),
-	    c.ledButton(noteIdAll(0x0D)).does(faderfx)
+	    c.ledButton(noteIdAll(0x0D)).does(faderfx.options.switch_)
 	)
 
 	// #### Effects
