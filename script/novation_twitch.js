@@ -170,7 +170,7 @@ script.register(module, {
 	//
 	// * Pre-hear deck selection.
 
-	this.add(c.ledButton(noteId(0x0A)).does(this.decks.add(g, "pfl")))
+	this.add(c.ledButton(noteIdAll(0x0A)).does(this.decks.add(g, "pfl")))
 
 	// * *Volume* fader and *low*, *mid*, *high* and *trim* knobs.
 
