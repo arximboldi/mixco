@@ -198,7 +198,7 @@ script.register(module, {
 	// * In the *Master FX* section, the *FX Select* left and
 	//   right enable the flanger in the direction of the arrow.
 
-	c.ledButton(c.noteIds(0x20+i, 0xB)).does(g, "flanger")
+	this.add(c.ledButton(c.noteIds(0x20+i, 0xB)).does(g, "flanger"))
 
 	// #### Browse
 	//
