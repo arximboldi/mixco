@@ -299,6 +299,8 @@ script.register(module, {
 
 	// #### Performance modes
 	//
+	// ##### Hot cues
+	//
 	// * In *hot-cues* mode, the performance buttons control the
 	//   hot cues.  One may *clear* hot-cues with *shift*.
 
@@ -312,6 +314,28 @@ script.register(module, {
 		    g, "hotcue_" + (j+1) + "_enabled")
 	    )
 
+	// ##### Slicer
+	//
+	// There is no functionality like a *slicer* in Mixxx, but we
+	// reuse these pads for various purposes in this mode.
+	//
+	// * The buttons *1 to 4* trigger the first four samplers.
+	//   The sample plays as long as the button is held.
+
+	for (var j = 0; j < 4; ++j)
+	    this.add(ledPad(noteIdAll(0x68+j), redLed).does(
+		"[Sampler" + (j+1) + "]", "cue_preview"))
+
+	// * The buttons *5 and 6* trigger a *spinback* and *brake*
+	//   effect respectively.
+
+	this.add(
+	    ledPad(noteIdAll(0x6C), greenLed).does(b.spinback(i+1)),
+	    ledPad(noteIdAll(0x6D), greenLed).does(b.brake(i+1))
+	)
+
+	// ##### Auto loop
+	//
 	// * In *auto-loop* mode, the pads select *loops* of sizes
 	//   1/16, 1/8, 1/4, 1/2, 1, 2, 4 or 8 beats.  On *shift*, it
 	//   creates loops of sizes 1, 2, 4, 8, 16, 32 or 64 beats.
@@ -328,6 +352,8 @@ script.register(module, {
 		g, "beatloop_" + loopSize[4+j] + "_toggle",
 		g, "beatloop_" + loopSize[4+j] + "_enabled"))
 
+	// ##### Loop roll
+	//
 	// * In *loop-roll* mode, it same as the beatloop mode but the
 	//   effect is momentary and returns the playhead to where it
 	//   would have been without looping.
