@@ -97,6 +97,11 @@ doc/%.html: %.litcoffee
 	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
 	cp -rf docco/public $(@D)
 
+doc/%.html: %.coffee
+	@mkdir -p $(@D)
+	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
+	cp -rf docco/public $(@D)
+
 doc/%.html: %.js
 	@mkdir -p $(@D)
 	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<

@@ -1,18 +1,12 @@
-spec.mixco.behaviour
-====================
+# spec.mixco.behaviour
+# ====================
 
-Tests for behaviours.
-
-Module
-------
+describe 'mixco.behaviour', ->
 
     util      = require '../../mixco/util'
     value     = require '../../mixco/value'
     behaviour = require '../../mixco/behaviour'
     transform = require '../../mixco/transform'
-
-Mocks
------
 
     mock = require '../mock'
 
@@ -30,11 +24,6 @@ Mocks
         spyOn(mocked, 'onMidiEvent').andCallThrough()
         mocked
 
-
-Tests
------
-
-Test some of the basic options.
 
     describe 'option', ->
 
@@ -64,8 +53,6 @@ Test some of the basic options.
             expect(option.invert.name).toBe 'invert'
             expect(option.softTakeover.name).toBe 'soft-takeover'
 
-
-Tests for the **Behaviour** base class.
 
     describe 'Behaviour', ->
 
@@ -125,7 +112,6 @@ Tests for the **Behaviour** base class.
                 behaviour.option.softTakeover
             ]
 
-Tests for the **Output** basic behaviour.
 
     describe 'Output', ->
 
@@ -164,7 +150,6 @@ Tests for the **Output** basic behaviour.
             output.output.value = 0
             expect(actor.send).toHaveBeenCalledWith 'off'
 
-Tests for the **Transform** behaviour.
 
     describe 'Transform', ->
 
@@ -216,8 +201,6 @@ Tests for the **Transform** behaviour.
             expect(t.value).toBe false
 
 
-Tests for the **InMap** behaviour.
-
     describe 'InMap', ->
         map    = null
         actor  = null
@@ -249,7 +232,6 @@ Tests for the **InMap** behaviour.
             expect(map.value).toBe 32
             expect(map.midiValue).toBe 22
 
-Tests for the **Map** behaviour.
 
     describe 'Map', ->
 
@@ -375,7 +357,6 @@ Tests for the **Map** behaviour.
             expect(script.mixxx.engine.setValue)
                 .toHaveBeenCalledWith "[Channel1]", "keylock", false
 
-Tests for the **Chooser** behaviour
 
     describe 'Chooser', ->
         actor   = null
@@ -457,9 +438,11 @@ Tests for the **Chooser** behaviour
 
             chooser.disable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Channel1]", "pfl", jasmine.any(String), true
+                .toHaveBeenCalledWith "[Channel1]", "pfl",
+                    jasmine.any(String), true
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Channel2]", "pfl", jasmine.any(String), true
+                .toHaveBeenCalledWith "[Channel2]", "pfl",
+                    jasmine.any(String), true
 
         it "initialzies its value to true", ->
             engine.setValue "[Channel1]", "pfl", true
@@ -597,8 +580,6 @@ Tests for the **Chooser** behaviour
             expect(chooser.value).toBe true
 
 
-Tests for the **When** behaviour
-
     describe 'When', ->
 
         condition = null
@@ -671,7 +652,6 @@ Tests for the **When** behaviour
                 behaviour.option.invert
             ]
 
-Tests for the **PunchIn** behaviour
 
     describe 'PunchIn', ->
 
@@ -724,8 +704,6 @@ Tests for the **PunchIn** behaviour
                 .toHaveBeenCalledWith "[Master]", "crossfader", -0.75
 
 
-Tests for the **scratchEnable** behaviour
-
     describe 'scratchEnable', ->
 
         actor   = null
@@ -757,8 +735,6 @@ Tests for the **scratchEnable** behaviour
                 .toHaveBeenCalledWith 1, false
 
 
-Tests for the **scratchTick** behaviour
-
     describe 'scratchTick', ->
 
         actor   = null
@@ -783,20 +759,20 @@ Tests for the **scratchTick** behaviour
             expect(script.mixxx.engine.scratchTick)
                 .toHaveBeenCalledWith 1, 16
 
-License
--------
-
->  Copyright (C) 2013 Juan Pedro Bolívar Puente
->
->  This program is free software: you can redistribute it and/or
->  modify it under the terms of the GNU General Public License as
->  published by the Free Software Foundation, either version 3 of the
->  License, or (at your option) any later version.
->
->  This program is distributed in the hope that it will be useful,
->  but WITHOUT ANY WARRANTY; without even the implied warranty of
->  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->  GNU General Public License for more details.
->
->  You should have received a copy of the GNU General Public License
->  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# License
+# -------
+#
+# >  Copyright (C) 2013 Juan Pedro Bolívar Puente
+# >
+# >  This program is free software: you can redistribute it and/or
+# >  modify it under the terms of the GNU General Public License as
+# >  published by the Free Software Foundation, either version 3 of the
+# >  License, or (at your option) any later version.
+# >
+# >  This program is distributed in the hope that it will be useful,
+# >  but WITHOUT ANY WARRANTY; without even the implied warranty of
+# >  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# >  GNU General Public License for more details.
+# >
+# >  You should have received a copy of the GNU General Public License
+# >  along with this program.  If not, see <http://www.gnu.org/licenses/>.

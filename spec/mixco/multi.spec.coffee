@@ -1,19 +1,21 @@
-spec.mixco.multi
-================
+# spec.mixco.multi
+# ================
+#
+# Tests for multiple inheritance support.
+#
+# Most test heterarchies are taken from the [original C3
+# paper](http://192.220.96.201/dylan/linearization-oopsla96.html)
 
-Tests for multiple inheritance support.
-
-Most test heterarchies are taken from the [original C3
-paper](http://192.220.96.201/dylan/linearization-oopsla96.html)
+describe 'mixco.multi', ->
 
     {multi, mro, hierarchy, inherited, isinstance, issubclass} =
         require '../../mixco/multi'
 
-Hierarchies to test
--------------------
-
-Class heterarchy from the Dylan paper, figure 5. Make sure the
-linearization respects the *Extended Precedence Graph*.
+    # Hierarchies to test
+    # -------------------
+    #
+    # Class heterarchy from the Dylan paper, figure 5. Make sure the
+    # linearization respects the *Extended Precedence Graph*.
 
     class Pane
     class EditingMixin
@@ -22,16 +24,16 @@ linearization respects the *Extended Precedence Graph*.
     class ScrollablePane extends multi Pane, ScrollingMixin
     class EditableScrollablePane extends multi ScrollablePane, EditablePane
 
-Class heterarchy from the Dylan paper, figure 4. Example of
-compatibility with CLOS.
+    # Class heterarchy from the Dylan paper, figure 4. Example of
+    # compatibility with CLOS.
 
     class ChoiceWidget
     class PopupMixin
     class Menu extends ChoiceWidget
     class NewPopupMenu extends multi Menu, PopupMixin, ChoiceWidget
 
-Class heterarchy from the Dylan paper, figure 2.  Make sure
-linearization is monotonic.
+    # Class heterarchy from the Dylan paper, figure 2.  Make sure
+    # linearization is monotonic.
 
     class Boat
     class DayBoat extends Boat
@@ -42,7 +44,8 @@ linearization is monotonic.
     class SmallCatamaran extends SmallMultiHull
     class Pedalo extends multi PedalWheelBoat, SmallCatamaran
 
-Hierarchy of classes with methods and constructors that use super.
+    # Hierarchy of classes with methods and constructors that use
+    # super.
 
     class A
         constructor: ->
@@ -85,8 +88,9 @@ Hierarchy of classes with methods and constructors that use super.
             @g = 'g'
         method: -> "G>#{super}"
 
-Hierarchy of classes where classes that only inherit from `object`
-magically get a superclass in a multiple inheritance context.
+    # Hierarchy of classes where classes that only inherit from
+    # `object` magically get a superclass in a multiple inheritance
+    # context.
 
     class Base1
         constructor: ->
@@ -101,9 +105,8 @@ magically get a superclass in a multiple inheritance context.
             super
             @deriv = 'deriv'
 
-
-Tests
------
+    # Tests
+    # -----
 
     describe 'mro', ->
 
@@ -193,20 +196,20 @@ Tests
             expect(issubclass Pedalo, A).toBe false
             expect(issubclass Pedalo, SmallCatamaran).toBe true
 
-License
--------
-
->  Copyright (C) 2013 Juan Pedro Bolívar Puente
->
->  This program is free software: you can redistribute it and/or
->  modify it under the terms of the GNU General Public License as
->  published by the Free Software Foundation, either version 3 of the
->  License, or (at your option) any later version.
->
->  This program is distributed in the hope that it will be useful,
->  but WITHOUT ANY WARRANTY; without even the implied warranty of
->  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->  GNU General Public License for more details.
->
->  You should have received a copy of the GNU General Public License
->  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# License
+# -------
+#
+# >  Copyright (C) 2013 Juan Pedro Bolívar Puente
+# >
+# >  This program is free software: you can redistribute it and/or
+# >  modify it under the terms of the GNU General Public License as
+# >  published by the Free Software Foundation, either version 3 of the
+# >  License, or (at your option) any later version.
+# >
+# >  This program is distributed in the hope that it will be useful,
+# >  but WITHOUT ANY WARRANTY; without even the implied warranty of
+# >  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# >  GNU General Public License for more details.
+# >
+# >  You should have received a copy of the GNU General Public License
+# >  along with this program.  If not, see <http://www.gnu.org/licenses/>.

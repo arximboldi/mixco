@@ -1,17 +1,12 @@
-spec.mixco.value
-================
+# spec.mixco.value
+# ================
 
-Tests for the `mixco.value` module.
+describe 'mixco.script', ->
 
     {isinstance} = require '../../mixco/multi'
     {Script, register} = require '../../mixco/script'
 
     class TestScript extends Script
-
-Tests
------
-
-Script class.
 
     describe 'Script', ->
 
@@ -28,8 +23,6 @@ Script class.
             delete script.info.wiki
             expect(script.config())
                 .not.toContain "undefined"
-
-Script registration.
 
     describe 'register', ->
 
@@ -66,20 +59,20 @@ Script registration.
             script.shutdown()
             expect(spy.shutdown).toHaveBeenCalled()
 
-License
--------
-
->  Copyright (C) 2013 Juan Pedro Bolívar Puente
->
->  This program is free software: you can redistribute it and/or
->  modify it under the terms of the GNU General Public License as
->  published by the Free Software Foundation, either version 3 of the
->  License, or (at your option) any later version.
->
->  This program is distributed in the hope that it will be useful,
->  but WITHOUT ANY WARRANTY; without even the implied warranty of
->  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->  GNU General Public License for more details.
->
->  You should have received a copy of the GNU General Public License
->  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# License
+# -------
+#
+# >  Copyright (C) 2013 Juan Pedro Bolívar Puente
+# >
+# >  This program is free software: you can redistribute it and/or
+# >  modify it under the terms of the GNU General Public License as
+# >  published by the Free Software Foundation, either version 3 of the
+# >  License, or (at your option) any later version.
+# >
+# >  This program is distributed in the hope that it will be useful,
+# >  but WITHOUT ANY WARRANTY; without even the implied warranty of
+# >  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# >  GNU General Public License for more details.
+# >
+# >  You should have received a copy of the GNU General Public License
+# >  along with this program.  If not, see <http://www.gnu.org/licenses/>.
