@@ -102,7 +102,6 @@ script.register(module, {
 	    c.ledButton(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
 	)
 
-
 	// * The knobs in the *Master FX* section are mapped to
 	//   *depth*, *delay* and *period* -- in this order.
 
@@ -142,6 +141,7 @@ script.register(module, {
 
 	this.add(c.ledButton(c.noteIds(0x50, 0x7)).does(
 	    "[Playlist]", "ToggleSelectedSidebarItem"))
+
 	// ### Per deck controls
 	//
 	// We use a `behaviou.chooser` for the PFL selection.  This
@@ -210,30 +210,24 @@ script.register(module, {
 
 	// #### Deck transport
 	//
-	// * The transport section controls *play, cue, keylock and
-	//   sync*.  When *shift* is *on*, the sync will synchronize
-	//   only tempo, otherwise it also matches the phase. Also,
-	//   the play button will do a *reverse* toggle when shift is
-	//   held.
+	// * The *play* and *cue* buttons work as expected. On
+	//   *shift*, the cue button does a reverse effect.
 
-	var coloredLed = function (base, intensity) {
-	    return base + intensity
-	}
-	var redLed     = _.partial(coloredLed, 0x00)
-	var amberLed   = _.partial(coloredLed, 0x40)
-	var greenLed   = _.partial(coloredLed, 0x70)
-	var ledPad     = function (ids, color) {
+	var redLed   = 0x00
+	var amberLed = 0x40
+	var greenLed = 0x70
+	var ledPad   = function (ids, color) {
 	    return c.ledButton(ids).states({
-		on:  color(0xf),
-		off: color(0x1)
+		on:  color + 0xf,
+		off: color + 0x1
 	    })
 	}
 
 	this.add(
 	    ledPad(noteIdAll(0x17), greenLed).does(g, "play"),
-	    ledPad(noteIdShift(0x16), amberLed).does(g, "reverse"),
 	    ledPad(noteId(0x16), redLed).does(g, "cue_default"),
-	    c.ledButton(noteIdAll(0x12)).does(g, "keylock"),
+	    ledPad(noteIdShift(0x16), amberLed).does(g, "reverse")
+	)
 	    c.ledButton(noteId(0x13)).does(g, "beatsync"),
 	    c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
 	)
