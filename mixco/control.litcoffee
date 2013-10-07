@@ -76,6 +76,7 @@ Base class for all control types.
             if not (@ids instanceof Array)
                 @ids = ccIds @ids, args...
             @_behaviours = []
+            @_controlRegistry?(@)
 
 The following set of methods define the behaviour of the control. A
 control can have several behaviours at the same time. Note that when
@@ -139,6 +140,15 @@ Thera are three kinds of behaviours we can associate to the control:
         registerBehaviour: (b) -> b
         configInputs: (depth, script) ->
         configOutputs: (depth, script) ->
+
+The **setRegistry** is a class method that is called by the scripts to
+automate the registration of the controls.  It is called directly by
+the scripts base class.
+
+        setRegistry: (registry) ->
+            assert not @_controlRegistry? or not registry?
+            @_controlRegistry = registry
+
 
 ### Input
 

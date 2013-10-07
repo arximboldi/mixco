@@ -77,7 +77,7 @@ script.register(module, {
 	//
 	// * *Crossfader* slider.
 
-	this.add(c.slider(0x08, 0x07).does(b.soft("[Master]", "crossfader")))
+	c.slider(0x08, 0x07).does(b.soft("[Master]", "crossfader"))
 
 	// #### Mic/aux and effects
 	//
@@ -97,50 +97,45 @@ script.register(module, {
 
 	// * Microphone *volume* control and *on/off* button.
 
-	this.add(
-	    c.knob(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "volume")),
-	    c.ledButton(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
-	)
+	c.knob(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "volume"))
+	c.ledButton(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
 
 	// * The knobs in the *Master FX* section are mapped to
 	//   *depth*, *delay* and *period* -- in this order.
 
-	this.add(
-	    c.knob(ccIdFxBanks(0x0)).does("[Flanger]", "lfoDepth"),
-	    c.encoder(ccIdFxBanks(0x1)).does("[Flanger]", "lfoDelay")
-		.option(scaledDiff(3)),
-	    c.encoder(3, ccIdFxBanks(0x2)).does("[Flanger]", "lfoPeriod")
-		.option(scaledDiff(3))
-	)
+	c.knob(ccIdFxBanks(0x0)).does("[Flanger]", "lfoDepth")
+	c.encoder(ccIdFxBanks(0x1)).does("[Flanger]", "lfoDelay")
+	    .option(scaledDiff(3))
+	c.encoder(3, ccIdFxBanks(0x2)).does("[Flanger]", "lfoPeriod")
+	    .option(scaledDiff(3))
 
 	// #### Browse
 	//
 	// * The *back* and *fwd* can be used to scroll the sidebar.
 
-	this.add(c.button(c.noteIds(0x54, 0x7)).does(
-	    "[Playlist]", "SelectPrevPlaylist"))
-	this.add(c.button(c.noteIds(0x56, 0x7)).does(
-	    "[Playlist]", "SelectNextPlaylist"))
+	c.button(c.noteIds(0x54, 0x7)).does(
+	    "[Playlist]", "SelectPrevPlaylist")
+	c.button(c.noteIds(0x56, 0x7)).does(
+	    "[Playlist]", "SelectNextPlaylist")
 
 	// * The *scroll* encoder scrolles the current view.  When
 	//   pressed it moves faster.
 
 	scrollFaster = b.modifier()
-	this.add(
-	    c.button(c.noteIds(0x55, 0x7)).does(scrollFaster),
-	    c.knob(0x55, 0x7)
-		.when (scrollFaster,
-		       b.map("[Playlist]", "SelectTrackKnob")
+
+        c.button(c.noteIds(0x55, 0x7)).does(scrollFaster)
+	c.knob(0x55, 0x7)
+	    .when (scrollFaster,
+                   b.map("[Playlist]", "SelectTrackKnob")
 		       .option(scaledSelectKnob(8)))
-		.else_(b.map("[Playlist]", "SelectTrackKnob")
+	    .else_(b.map("[Playlist]", "SelectTrackKnob")
 		       .options.selectknob)
-	)
 
 	// * The *area* button expand or collapses the selected
 	//   element cathegory in the sidebar.
 
-	this.add(c.ledButton(c.noteIds(0x50, 0x7)).does(
-	    "[Playlist]", "ToggleSelectedSidebarItem"))
+	c.ledButton(c.noteIds(0x50, 0x7)).does(
+	    "[Playlist]", "ToggleSelectedSidebarItem")
 
 	// ### Per deck controls
 	//
@@ -170,43 +165,38 @@ script.register(module, {
 	//
 	// * Pre-hear deck selection.
 
-	this.add(c.ledButton(noteIdAll(0x0A)).does(this.decks.add(g, "pfl")))
+	c.ledButton(noteIdAll(0x0A)).does(this.decks.add(g, "pfl"))
 
 	// * *Volume* fader and *low*, *mid*, *high* and *trim* knobs.
 
-	this.add(
-	    c.slider(ccIdAll(0x07)).does(g, "volume"),
-	    c.knob(ccIdAll(0x46)).does(g, "filterLow"),
-	    c.knob(ccIdAll(0x47)).does(g, "filterMid"),
-	    c.knob(ccIdAll(0x48)).does(g, "filterHigh"),
-	    c.knob(ccIdAll(0x09)).does(g, "pregain")
-	)
+	c.slider(ccIdAll(0x07)).does(g, "volume")
+	c.knob(ccIdAll(0x46)).does(g, "filterLow")
+	c.knob(ccIdAll(0x47)).does(g, "filterMid")
+	c.knob(ccIdAll(0x48)).does(g, "filterHigh")
+	c.knob(ccIdAll(0x09)).does(g, "pregain")
 
 	// * The **fader FX** we use as a knob-controlled *beat
 	//   looproll effect*. Effect can be turned on by pressing the
 	//   knob or the on/off button.
 
 	var faderfx = b.beatEffect(g, 'roll')
-	this.add(
-	    c.encoder(ccIdAll(0x06)).does(faderfx.selector()),
-	    c.control(noteIdAll(0x06)).does(faderfx.momentary()),
-	    c.ledButton(noteIdAll(0x0D)).does(faderfx.options.switch_)
-	)
+	c.encoder(ccIdAll(0x06)).does(faderfx.selector())
+	c.control(noteIdAll(0x06)).does(faderfx.momentary())
+	c.ledButton(noteIdAll(0x0D)).does(faderfx.options.switch_)
 
 	// #### Effects
 	//
 	// * In the *Master FX* section, the *FX Select* left and
 	//   right enable the flanger in the direction of the arrow.
 
-	this.add(c.ledButton(c.noteIds(0x20+i, 0xB)).does(g, "flanger"))
+	c.ledButton(c.noteIds(0x20+i, 0xB)).does(g, "flanger")
 
 	// #### Browse
 	//
 	// * The *load A* or *load B* buttons load the selected track
 	//   to the given deck.
 
-	this.add(c.ledButton(c.noteIds(0x52+i, 0x7))
-		 .does(g, "LoadSelectedTrack"))
+	c.ledButton(c.noteIds(0x52+i, 0x7)).does(g, "LoadSelectedTrack")
 
 	// #### Deck transport
 	//
@@ -223,11 +213,9 @@ script.register(module, {
 	    })
 	}
 
-	this.add(
-	    ledPad(noteIdAll(0x17), greenLed).does(g, "play"),
-	    ledPad(noteId(0x16), redLed).does(g, "cue_default"),
-	    ledPad(noteIdShift(0x16), amberLed).does(g, "reverse")
-	)
+	ledPad(noteIdAll(0x17), greenLed).does(g, "play")
+	ledPad(noteId(0x16), redLed).does(g, "cue_default")
+	ledPad(noteIdShift(0x16), amberLed).does(g, "reverse")
 
 	// * The *keylock* button toggles the pitch-independent time
 	//   stretching.  On *shift*, it toggles *slip mode*, in which
@@ -236,31 +224,27 @@ script.register(module, {
 	//   been.
 
 	slipMode = b.switch_()
-	this.add(
-	    c.ledButton(noteId(0x12)).does(g, "keylock"),
-	    c.ledButton(noteIdShift(0x12)).does(slipMode)
-	)
+	c.ledButton(noteId(0x12)).does(g, "keylock")
+	c.ledButton(noteIdShift(0x12)).does(slipMode)
 
 	// * The *sync* button aligns phase and tempo of this track to
 	//   the one of the other deck.  On *shift*, it aligns tempo
 	//   only.
 
-	this.add(
-	    c.ledButton(noteId(0x13)).does(g, "beatsync"),
-	    c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
-	)
+	c.ledButton(noteId(0x13)).does(g, "beatsync")
+	c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
 
 	// #### Beat grid
 	//
 	// * The *adjust* button *aligns the beatgrid* to the current
 	//   play position.
 
-	this.add(c.ledButton(noteIdAll(0x11)).does(g, "beats_translate_curpos"))
+	c.ledButton(noteIdAll(0x11)).does(g, "beats_translate_curpos")
 
 	// * The *set* button toggles loop and hot-cue *quantization*
 	//   on or off.
 
-	this.add(c.ledButton(noteIdAll(0x10)).does(g, "quantize"))
+	c.ledButton(noteIdAll(0x10)).does(g, "quantize")
 
 	// #### Pitch and transport bar
 	//
@@ -269,33 +253,27 @@ script.register(module, {
 
 	var coarseRateFactor = 1/10
 	var coarseRateOn     = b.modifier()
-	this.add(
-	    c.button(noteIdAll(0x03)).does(coarseRateOn),
-	    c.knob(ccIdAll(0x03))
-		.when (coarseRateOn,
-		       b.map(g, "rate").option(scaledDiff(2)))
-		.else_(b.map(g, "rate").option(scaledDiff(1/12)))
-	)
+
+	c.button(noteIdAll(0x03)).does(coarseRateOn)
+	c.knob(ccIdAll(0x03))
+	    .when (coarseRateOn,
+		   b.map(g, "rate").option(scaledDiff(2)))
+	    .else_(b.map(g, "rate").option(scaledDiff(1/12)))
 
 	// * In *drop* mode, the touch strip scrolls through the song.
 
-	this.add(c.slider(ccId(0x34)).does(g, "playposition"))
+	c.slider(ccId(0x34)).does(g, "playposition")
 
 	// * In *swipe* mode, the touch strip nudges the pitch up and
 	//   down.  When *shift* is held it simulates scratching.
 
-	this.add(
-	    c.input(ccId(0x35)).does(g, "jog").option({
-		transform: function (v) {
-		    return (v > 64 ? v - 128 : v) / 3
-		}}),
-
-	    c.slider(ccIdShift(0x35)).does(b.scratchTick(i+1))
-		.options.selectknob,
-	    c.button(noteIdShift(0x47))
-		.does(b.scratchEnable(i+1, 128))
-		.when(slipMode, b.map(g, "slip_enabled").options.switch_)
-	)
+	c.input(ccId(0x35)).does(g, "jog")
+            .option(scaledSelectKnob(1/3))
+	c.slider(ccIdShift(0x35)).does(b.scratchTick(i+1))
+	    .options.selectknob,
+	c.button(noteIdShift(0x47))
+	    .does(b.scratchEnable(i+1, 128))
+	    .when(slipMode, b.map(g, "slip_enabled").options.switch_)
 
 	// #### Performance modes
 	//
@@ -304,15 +282,14 @@ script.register(module, {
 	// * In *hot-cues* mode, the performance buttons control the
 	//   hot cues.  One may *clear* hot-cues with *shift*.
 
-	for (var j = 0; j < 8; ++j)
-	    this.add(
-		ledPad(noteId(0x60+j), amberLed).does(
-		    g, "hotcue_" + (j+1) + "_activate",
-		    g, "hotcue_" + (j+1) + "_enabled"),
-		ledPad(noteIdShift(0x60+j), amberLed).does(
-		    g, "hotcue_" + (j+1) + "_clear",
-		    g, "hotcue_" + (j+1) + "_enabled")
-	    )
+	for (var j = 0; j < 8; ++j) {
+	    ledPad(noteId(0x60+j), amberLed).does(
+		g, "hotcue_" + (j+1) + "_activate",
+		g, "hotcue_" + (j+1) + "_enabled")
+	    ledPad(noteIdShift(0x60+j), amberLed).does(
+		g, "hotcue_" + (j+1) + "_clear",
+		g, "hotcue_" + (j+1) + "_enabled")
+        }
 
 	// ##### Slicer
 	//
@@ -323,24 +300,20 @@ script.register(module, {
 	//   The sample plays as long as the button is held.
 
 	for (var j = 0; j < 4; ++j)
-	    this.add(ledPad(noteIdAll(0x68+j), redLed).does(
-		"[Sampler" + (j+1) + "]", "cue_preview"))
+	    ledPad(noteIdAll(0x68+j), redLed).does(
+		"[Sampler" + (j+1) + "]", "cue_preview")
 
 	// * The buttons *5 and 6* trigger a *spinback* and *brake*
 	//   effect respectively.
 
-	this.add(
-	    ledPad(noteIdAll(0x6C), greenLed).does(b.spinback(i+1)),
-	    ledPad(noteIdAll(0x6D), greenLed).does(b.brake(i+1))
-	)
+	ledPad(noteIdAll(0x6C), greenLed).does(b.spinback(i+1))
+	ledPad(noteIdAll(0x6D), greenLed).does(b.brake(i+1))
 
 	// * The buttons *7 and 7* perform a stutter effect at
 	//   different speeds.
 
-	this.add(
-	    ledPad(noteIdAll(0x6E), amberLed).does(b.stutter(g, 1/8)),
-	    ledPad(noteIdAll(0x6F), amberLed).does(b.stutter(g, 1/4))
-	)
+	ledPad(noteIdAll(0x6E), amberLed).does(b.stutter(g, 1/8))
+	ledPad(noteIdAll(0x6F), amberLed).does(b.stutter(g, 1/4))
 
 	// ##### Auto loop
 	//
@@ -352,13 +325,13 @@ script.register(module, {
 		     "1",      "2",     "4",    "8",
 		     "16",     "32",    "64" ]
 	for (var j = 0; j < 8; ++j)
-	    this.add(ledPad(noteId(0x70+j), greenLed).does(
+	    ledPad(noteId(0x70+j), greenLed).does(
 		g, "beatloop_" + loopSize[j] + "_toggle",
-		g, "beatloop_" + loopSize[j] + "_enabled"))
+		g, "beatloop_" + loopSize[j] + "_enabled")
 	for (var j = 0; j < 7; ++j)
-	    this.add(ledPad(noteIdShift(0x70+j), greenLed).does(
+	    ledPad(noteIdShift(0x70+j), greenLed).does(
 		g, "beatloop_" + loopSize[4+j] + "_toggle",
-		g, "beatloop_" + loopSize[4+j] + "_enabled"))
+		g, "beatloop_" + loopSize[4+j] + "_enabled")
 
 	// ##### Loop roll
 	//
@@ -367,13 +340,13 @@ script.register(module, {
 	//   would have been without looping.
 
 	for (var j = 0; j < 8; ++j)
-	    this.add(ledPad(noteId(0x78+j), greenLed).does(
+	    ledPad(noteId(0x78+j), greenLed).does(
 		g, "beatlooproll_" + loopSize[j] + "_activate",
-		g, "beatloop_" + loopSize[j] + "_enabled"))
+		g, "beatloop_" + loopSize[j] + "_enabled")
 	for (var j = 0; j < 7; ++j)
-	    this.add(ledPad(noteIdShift(0x78+j), greenLed).does(
+	    ledPad(noteIdShift(0x78+j), greenLed).does(
 		g, "beatlooproll_" + loopSize[4+j] + "_activate",
-		g, "beatloop_" + loopSize[4+j] + "_enabled"))
+		g, "beatloop_" + loopSize[4+j] + "_enabled")
 
     },
 
@@ -415,19 +388,14 @@ script.register(module, {
 // correct the issues of the stepped encoders.
 
 function scaledDiff (factor) {
-    return {
-	transform: function(v, v0) {
-	    var diff = factor * (v > 64 ? v - 128 : v)
-	    return (v0 + diff).clamp(0, 128)
-	}
+    return function (v, v0) {
+	return (v0 + factor * (v > 64 ? v - 128 : v)).clamp(0, 128)
     }
 }
 
 function scaledSelectKnob (factor) {
-    return {
-	transform: function(v, b) {
-	    return factor * (v > 64 ? v - 128 : v)
-	}
+    return function (v, b) {
+	return factor * (v > 64 ? v - 128 : v)
     }
 }
 

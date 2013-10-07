@@ -45,11 +45,11 @@ Controls that do not have a per-deck functionality.
 
 * **27.** Pre-hear mix.
 
-            @add c.knob(ccId 0x0D).does g, "headMix"
+            c.knob(ccId 0x0D).does g, "headMix"
 
 * **39.** Crossfader.
 
-            @add c.slider(ccId 0x07).does b.soft g, "crossfader"
+            c.slider(ccId 0x07).does b.soft g, "crossfader"
 
 ### Effects
 
@@ -59,43 +59,39 @@ parameters are mapped globally:
 
 * The *first knob* of the *left deck* is the *LFO depth*.
 
-            @add c.slider(0x0c, 0x00).does b.soft "[Flanger]", "lfoDepth"
+            c.slider(0x0c, 0x00).does b.soft "[Flanger]", "lfoDepth"
 
 * The *first knob* of the *right deck* is the *LFO delay*.
 
-            @add c.slider(0x0c, 0x01).does b.soft "[Flanger]", "lfoDelay"
+            c.slider(0x0c, 0x01).does b.soft "[Flanger]", "lfoDelay"
 
 * The *second knob* of the *right deck* is the *LFO period*.
 
-            @add c.slider(0x0d, 0x01).does b.soft "[Flanger]", "lfoPeriod"
+            c.slider(0x0d, 0x01).does b.soft "[Flanger]", "lfoPeriod"
 
 * **16.** When in *MIDI mode*, the touch pad can be used to control the
   *depth* and *delay* for the flanger effect on the Y and X axis
   *respectively.
 
-            @add [
-                c.control(0x09, 0x02).does "[Flanger]", "lfoDepth"
-                c.control(0x08, 0x02).does "[Flanger]", "lfoDelay"
-            ]
+            c.control(0x09, 0x02).does "[Flanger]", "lfoDepth"
+            c.control(0x08, 0x02).does "[Flanger]", "lfoDelay"
 
 * **17.** and **18.** When in *MIDI mode*, the touch pad buttons *toggle
    the flanger* effect for the left and right channel respectively.
 
-            @add [
-                c.button(c.noteOnIds 0x00, 0x02).does "[Channel1]", "flanger"
-                c.button(c.noteOnIds 0x01, 0x02).does "[Channel2]", "flanger"
-            ]
+            c.button(c.noteOnIds 0x00, 0x02).does "[Channel1]", "flanger"
+            c.button(c.noteOnIds 0x01, 0x02).does "[Channel2]", "flanger"
 
 ### Microphone
 
 * The *second knob* the *left deck* controls the microphone *volume*.
 
-            @add c.slider(0x0d, 0x00).does b.soft "[Microphone]", "volume"
+            c.slider(0x0d, 0x00).does b.soft "[Microphone]", "volume"
 
 * The *second button* of the *left deck* controls the microphone
   *enable*.
 
-            @add c.ledButton(c.noteOnIds 0x0d, 0x00).does \
+            c.ledButton(c.noteOnIds 0x0d, 0x00).does \
                 "[Microphone]", "talkover"
 
 Per deck controls
@@ -121,65 +117,61 @@ channel.
   controls of that deck.
 
             shift = b.modifier()
-            @add ledButtonFixed(noteId 0x2C).does shift
+            ledButtonFixed(noteId 0x2C).does shift
 
 * **12.** Pre-Fade Listen. Select which deck goes to the pre-hear.
 
-            @add c.ledButton(noteOnId 0x14).does @decks.add g, "pfl"
+            c.ledButton(noteOnId 0x14).does @decks.add g, "pfl"
 
 ### The mixer
 
 
 * **20.** Filter and gain kills.
 
-            @add [
-                c.ledButton(noteId 0x08).does g, "filterLowKill"
-                c.ledButton(noteId 0x09).does g, "filterMidKill"
-                c.ledButton(noteId 0x0A).does g, "filterHighKill"
-                c.ledButton(noteId 0x0B).does g, "pregain_toggle"
-            ]
+            c.ledButton(noteId 0x08).does g, "filterLowKill"
+            c.ledButton(noteId 0x09).does g, "filterMidKill"
+            c.ledButton(noteId 0x0A).does g, "filterHighKill"
+            c.ledButton(noteId 0x0B).does g, "pregain_toggle"
 
 * **22.** Mixer EQ and gain.
 
-            @add [
-                c.knob(ccId 0x08).does g, "filterLow"
-                c.knob(ccId 0x09).does g, "filterMid"
-                c.knob(ccId 0x0A).does g, "filterHigh"
-                c.knob(ccId 0x0B).does b.soft g, "pregain"
-            ]
+            c.knob(ccId 0x08).does g, "filterLow"
+            c.knob(ccId 0x09).does g, "filterMid"
+            c.knob(ccId 0x0A).does g, "filterHigh"
+            c.knob(ccId 0x0B).does b.soft g, "pregain"
 
 * **23.** Per deck volume meters.
 
-            @add c.meter(c.ccIds 0x12+i, 3)
+            c.meter(c.ccIds 0x12+i, 3)
                 .does b.mapOut(g, "VuMeter").meter()
 
 * **34.** Sync button. Adjust pitch and aligns grids to beatmatch both
   tracks. When *shift* is pressed, it only adjusts pitch, not phase.
 
-            @add ledButtonFixed(noteId 0x02)
+            ledButtonFixed(noteId 0x02)
                 .when(shift, g, "beatsync_tempo")
                 .else g, "beatsync"
 
 * **33.** Deck volume.
 
-            @add c.slider(ccId 0x07).does b.soft g, "volume"
+            c.slider(ccId 0x07).does b.soft g, "volume"
 
 * **38.** Punch-in/transform. While pressed, lets this track be heard
   overriding the corssfader.
 
-            @add ledButtonFixed(noteId 0x07).does b.punchIn (0.5-i)
+            ledButtonFixed(noteId 0x07).does b.punchIn (0.5-i)
 
 ### The transport section
 
 * **29.** Song progress indication. When it approches the end of the
   playing song it starts blinking.
 
-            @add c.meter(c.ccIds 0x14+i, 3).does b.playhead g
+            c.meter(c.ccIds 0x14+i, 3).does b.playhead g
 
 * **30.** Back and forward.
 
-            @add [ c.ledButton(noteId 0x21).does g, "back"
-                   c.ledButton(noteId 0x22).does g, "fwd" ]
+            c.ledButton(noteId 0x21).does g, "back"
+            c.ledButton(noteId 0x22).does g, "fwd"
 
 * **31.** Includes several buttons...
 
@@ -188,7 +180,7 @@ channel.
   held, deletes the hotcue point.
 
             for idx in [0..4]
-                @add ledButtonFixed(noteId(0x17 + idx))
+                ledButtonFixed(noteId(0x17 + idx))
                     .when(shift,
                           g, "hotcue_#{idx+1}_clear",
                           g, "hotcue_#{idx+1}_enabled")
@@ -199,40 +191,37 @@ channel.
   one beat. When *shift* is pressed, they select the previous or
   next item of the browser sidebar.
 
-            @add [
-                ledButtonFixed(noteId 0x1C)
-                    .when(shift, "[Playlist]", "SelectPrevPlaylist")
-                    .else b.beatJump g, -1
-
-                ledButtonFixed(noteId 0x1D)
-                    .when(shift, "[Playlist]", "SelectNextPlaylist")
-                    .else b.beatJump g, 1
-            ]
+            ledButtonFixed(noteId 0x1C)
+                .when(shift, "[Playlist]", "SelectPrevPlaylist")
+                .else b.beatJump g, -1
+            ledButtonFixed(noteId 0x1D)
+                .when(shift, "[Playlist]", "SelectNextPlaylist")
+                .else b.beatJump g, 1
 
 - The *lock* button does *key lock* -- i.e. makes tempo changes
   independent of pitch. When *shift* is pressed, it expands/collapses
   the selected browser item.
 
-            @add ledButtonFixed(noteId 0x1E)
+            ledButtonFixed(noteId 0x1E)
                 .when(shift, "[Playlist]", "ToggleSelectedSidebarItem")
                 .else g, "keylock"
 
 - The *plus* (+) button moves the beat grid to align with the current
   play position.
 
-            @add c.ledButton(noteId 0x1F).does g, "beats_translate_curpos"
+            c.ledButton(noteId 0x1F).does g, "beats_translate_curpos"
 
 - The *minus* (-) button plays the track in reverese.
 
-            @add c.ledButton(noteId 0x20).does g, "reverse"
+            c.ledButton(noteId 0x20).does g, "reverse"
 
 * **35.** Cue button.
 
-            @add c.ledButton(noteId 0x23).does g, "cue_default"
+            c.ledButton(noteId 0x23).does g, "cue_default"
 
 * **37.** Play/pause button.
 
-            @add c.ledButton(noteOnId 0x24).does g, "play"
+            c.ledButton(noteOnId 0x24).does g, "play"
 
 
 ### The looping section
@@ -243,81 +232,73 @@ channel.
   current playing position.  When *shift* is pressed, they halve and
   double the current loop size respectively.
 
-            @add [
-                ledButtonFixed(noteId 0x29)
-                    .when(shift, g, "loop_halve")
-                    .else g, "loop_in"
-                ledButtonFixed(noteId 0x2B)
-                    .when(shift, g, "loop_double")
-                    .else g, "loop_out"
-            ]
+            ledButtonFixed(noteId 0x29)
+                .when(shift, g, "loop_halve")
+                .else g, "loop_in"
+            ledButtonFixed(noteId 0x2B)
+                .when(shift, g, "loop_double")
+                .else g, "loop_out"
 
 - The *loop* toggles the current loop on/off whenever there is a loop
   selected.
 
-            @add c.ledButton(noteId 0x2A).does \
+            c.ledButton(noteId 0x2A).does \
                 g, "reloop_exit", g, "loop_enabled"
 
 - The numbers set and trigger a loop of 4, 8, 16 and 32 beats
   respectively. When *shift*, they set loops of 1/8, 1/2, 1 or 2
   long.
 
-            @add [
-                ledButtonFixed(noteId 0x25)
-                    .when(shift, g, "beatloop_0.125_activate",
-                          g, "beatloop_0.125_enabled")
-                    .else g, "beatloop_4_activate",
-                          g, "beatloop_4_enabled"
-                ledButtonFixed(noteId 0x26)
-                    .when(shift, g, "beatloop_0.5_activate",
-                          g, "beatloop_0.5_enabled")
-                    .else g, "beatloop_8_activate",
-                          g, "beatloop_8_enabled"
-                ledButtonFixed(noteId 0x27)
-                    .when(shift, g, "beatloop_1_activate",
-                          g, "beatloop_1_enabled")
-                    .else g, "beatloop_16_activate",
-                          g, "beatloop_16_enabled"
-                ledButtonFixed(noteId 0x28)
-                    .when(shift, g, "beatloop_2_activate",
-                          g, "beatloop_2_enabled")
-                    .else g, "beatloop_32_activate",
-                          g, "beatloop_32_enabled"
-            ]
+            ledButtonFixed(noteId 0x25)
+                .when(shift, g, "beatloop_0.125_activate",
+                      g, "beatloop_0.125_enabled")
+                .else g, "beatloop_4_activate",
+                      g, "beatloop_4_enabled"
+            ledButtonFixed(noteId 0x26)
+                .when(shift, g, "beatloop_0.5_activate",
+                      g, "beatloop_0.5_enabled")
+                .else g, "beatloop_8_activate",
+                      g, "beatloop_8_enabled"
+            ledButtonFixed(noteId 0x27)
+                .when(shift, g, "beatloop_1_activate",
+                      g, "beatloop_1_enabled")
+                .else g, "beatloop_16_activate",
+                      g, "beatloop_16_enabled"
+            ledButtonFixed(noteId 0x28)
+                .when(shift, g, "beatloop_2_activate",
+                      g, "beatloop_2_enabled")
+                .else g, "beatloop_32_activate",
+                      g, "beatloop_32_enabled"
 
 ### Effects
 
 * In the **24** group, the *first button* enables the *flanger effect* for
   each deck.
 
-            @add c.ledButton(noteOnId 0x0c).does g, "flanger"
+            c.ledButton(noteOnId 0x0c).does g, "flanger"
 
 * The *third knob and button* in **24** and **25** enable a *beat loop*
   effect, similar to those of the looping section but with resolution
   controllable with a knob for more drastic effects.
 
             beatloop = b.beatEffect g
-            @add [
-                c.knob(ccId 0x0e).does beatloop.selector()
-                c.ledButton(noteOnId 0x0e).does beatloop
-            ]
+            c.knob(ccId 0x0e).does beatloop.selector()
+            c.ledButton(noteOnId 0x0e).does beatloop
 
 * The *fourth knob and button* in **24** and **25** enable a *beat
   roll* effect. It works like the beat loop, but the playing position
   is restored when turned off.
 
             beatroll = b.beatEffect g, 'roll'
-            @add [
-                c.knob(ccId 0x0f).does beatroll.selector()
-                c.ledButton(noteOnId 0x0f).does beatroll
-            ]
+            c.knob(ccId 0x0f).does beatroll.selector()
+            c.ledButton(noteOnId 0x0f).does beatroll
 
 ### The wheel and pitch section
 
 * **10.** Toggles *scratch* mode.
 
             scratchMode = b.switch()
-            @add c.ledButton(noteOnId 0x15).does scratchMode
+            c.ledButton(noteOnId 0x15).does scratchMode
 
 * **11.** The wheel does different functions...
 
@@ -340,33 +321,29 @@ channel.
                     if toggle < 0 then toggle = 3
                     if toggle == 0 then val.sign() else null
 
-            @add [
-                ledButtonFixed(noteId 0x16)
-                    .when v.and(v.not(shift), scratchMode), b.scratchEnable i+1
+            ledButtonFixed(noteId 0x16)
+                .when v.and(v.not(shift), scratchMode), b.scratchEnable i+1
 
-                c.knob(ccId 0x16)
-                    .when(shift, b.map("[Playlist]", "SelectTrackKnob")
-                        .transform selectTrackKnobTransform)
-                    .else.when(scratchMode,
-                        b.scratchTick(i+1).options.spread64)
-                    .else b.map(g, "jog").transform (v) -> (v-64)/8.0
-            ]
+            c.knob(ccId 0x16)
+                .when(shift, b.map("[Playlist]", "SelectTrackKnob")
+                    .transform selectTrackKnobTransform)
+                .else.when(scratchMode,
+                    b.scratchTick(i+1).options.spread64)
+                .else b.map(g, "jog").transform (v) -> (v - 64) / 8
 
 * **26.** Temporarily nudges the pitch down or up. When **shift**,
 they do it in a smaller ammount.
 
-            @add [
-                ledButtonFixed(noteId 0x10)
-                    .when(shift, g, "rate_temp_down_small")
-                    .else g, "rate_temp_down"
-                ledButtonFixed(noteId 0x11)
-                    .when(shift, g, "rate_temp_up_small")
-                    .else g, "rate_temp_up"
-            ]
+            ledButtonFixed(noteId 0x10)
+                .when(shift, g, "rate_temp_down_small")
+                .else g, "rate_temp_down"
+            ledButtonFixed(noteId 0x11)
+                .when(shift, g, "rate_temp_up_small")
+                .else g, "rate_temp_up"
 
 * **32.** Pitch slider, adjusts playing speed.
 
-            @add c.slider(c.pbIds i).does b.soft g, "rate"
+            c.slider(c.pbIds i).does b.soft g, "rate"
 
 * **21.** Custom effects that include...
 
@@ -374,7 +351,7 @@ they do it in a smaller ammount.
   turntable was turned off suddenly. On *shift*, it ejects the track
   from the deck.
 
-            @add ledButtonFixed(noteId 0x12)
+            ledButtonFixed(noteId 0x12)
                 .when(shift, g, "eject")
                 .else b.brake i+1
 
@@ -382,7 +359,7 @@ they do it in a smaller ammount.
   vinyl was launched backwards. On *shift*, it loads the selected
   track in the browser into the deck.
 
-            @add ledButtonFixed(noteId 0x13)
+            ledButtonFixed(noteId 0x13)
                 .when(shift, g, "LoadSelectedTrack")
                 .else b.spinback i+1
 

@@ -4,8 +4,9 @@ mixco.script
 This module contains the main interface for defining custom Mixxx
 scripts.
 
-    {flatten} = require 'underscore'
+    {flatten, bind} = require 'underscore'
     {issubclass, mro} = require './multi'
+    {Control} = require './control'
     {indent, xmlEscape, catching, assert} = require './util'
     require './console'
 
@@ -33,24 +34,32 @@ object definining overrides for `name`, `constructor` and optionally
         assert scriptDefinition.constructor?,
             "Script definition must have a constructor"
 
-        {name, constructor, preinit, init, shutdown, postshutdown} =
+        {name, constructor, init, shutdown} =
             scriptDefinition
 
         class NewScript extends exports.Script
+
             @property 'name', ->
                 name
+
             constructor: ->
                 super
-                constructor.apply @, arguments
+                try
+                    Control::setRegistry bind @add, @
+                    constructor.apply @, arguments
+                finally
+                    Control::setRegistry null
                 this
+
             init: ->
-                preinit?.apply @, arguments
+                @preinit?.apply @, arguments
                 super
                 init?.apply @, arguments
+
             shutdown: ->
                 shutdown?.apply @, arguments
                 super
-                postshutdown?.apply @, arguments
+                @postshutdown?.apply @, arguments
 
         special = ['name', 'constructor', 'init', 'shutdown']
         for k, v of scriptDefinition
@@ -210,7 +219,6 @@ XML file and display some help.
             (control.configOutputs depth, this for control in @controls)
                 .filter((x) -> x)
                 .join('\n')
-
 
 The **registerHandler** method is called during initialization by the
 controls to register a handler callback in the script.  If `id` is not

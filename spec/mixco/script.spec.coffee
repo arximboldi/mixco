@@ -5,6 +5,7 @@ describe 'mixco.script', ->
 
     {isinstance} = require '../../mixco/multi'
     {Script, register} = require '../../mixco/script'
+    control = require '../../mixco/control'
 
     class TestScript extends Script
 
@@ -34,7 +35,7 @@ describe 'mixco.script', ->
 
         it 'can generate a script type from a definition', ->
             spy = createSpyObj 'scriptSpy', [
-                'constructor', 'preinit', 'init', 'shutdown' ]
+                'constructor', 'preinit', 'init', 'shutdown', 'postshutdown' ]
             testModule = exports: {}
 
             register testModule,
@@ -44,6 +45,9 @@ describe 'mixco.script', ->
                     spy.preinit()
                     expect(@_isInit).not.toBeDefined()
                 init: -> spy.init()
+                postshutdown: ->
+                    spy.postshutdown()
+                    expect(@_isInit).not.toBeDefined()
                 shutdown: -> spy.shutdown()
                 info: author: 'Jimmy Jazz'
 
@@ -58,6 +62,22 @@ describe 'mixco.script', ->
 
             script.shutdown()
             expect(spy.shutdown).toHaveBeenCalled()
+            expect(spy.postshutdown).toHaveBeenCalled()
+
+        it 'controls created during construction are registered autoamtically', ->
+            testModule = exports: {}
+            expectedControls = []
+
+            register testModule,
+                name: 'some_script'
+                constructor: ->
+                    expectedControls.push control.knob()
+                    expectedControls.push control.ledButton()
+
+            expect(expectedControls.length)
+                .toBe 2
+            expect(testModule.exports.some_script.controls)
+                .toEqual expectedControls
 
 # License
 # -------
