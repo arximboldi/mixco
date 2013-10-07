@@ -20,6 +20,7 @@ SCRIPTS    = \
 
 FRAMEWORK  = \
 	tmp/mixco/behaviour.js \
+	tmp/mixco/console.js \
 	tmp/mixco/control.js \
 	tmp/mixco/multi.js \
 	tmp/mixco/script.js \
@@ -31,6 +32,7 @@ DOCS       = \
 	doc/index.html \
 	doc/mixco/behaviour.html \
 	doc/mixco/control.html \
+	doc/mixco/console.html \
 	doc/mixco/multi.html \
 	doc/mixco/script.html \
 	doc/mixco/transform.html \

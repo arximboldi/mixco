@@ -40,18 +40,6 @@ Creates a copy of an object into another.
             b[k] = v
         b
 
-### Printer
-
-This be used to print both into Mixxx console or the
-standard output, for code paths that run both as Mixxx script or
-standalone.
-
-    exports.printer = (args...) ->
-        try
-            print args.toString()
-        catch _
-            console.error args.toString()
-
 ### Error management
 
 This can be used to guard against any possible exception, printing an
@@ -62,7 +50,7 @@ context of Mixxx.
         try
             f.apply @, arguments
         catch err
-            exports.printer "ERROR: #{err}"
+            console.log "ERROR: #{err}"
 
 Throws an error if *value* is false.  The *error* can be a custom string.
 

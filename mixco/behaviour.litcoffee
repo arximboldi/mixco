@@ -7,7 +7,7 @@ This module contains all the functionallity that lets you add
     events    = require 'events'
     transform = require './transform'
     value     = require './value'
-    {indent, assert, factory, copy, printer} = require './util'
+    {indent, assert, factory, copy} = require './util'
     {multi, isinstance} = require './multi'
     _ = {extend, bind} = require 'underscore'
 

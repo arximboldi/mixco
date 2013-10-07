@@ -7,6 +7,7 @@ scripts.
     {flatten} = require 'underscore'
     {issubclass, mro} = require './multi'
     {indent, xmlEscape, catching, assert} = require './util'
+    require './console'
 
 Script
 ------
