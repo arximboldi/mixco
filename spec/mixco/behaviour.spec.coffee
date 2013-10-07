@@ -589,7 +589,7 @@ describe 'mixco.behaviour', ->
         script    = null
 
         beforeEach ->
-            condition = value.value false
+            condition = value.value initial: false
             wrapped   = mockBehaviour()
             actor     = mockActor()
             script    = mock.testScript()
@@ -632,6 +632,42 @@ describe 'mixco.behaviour', ->
             condition.value = false
             expect(wrapped2.enable).
                 toHaveBeenCalledWith script, actor
+
+        it "else-when chains enable one branch exclusively", ->
+            condition2 = value.value false
+            wrapped2 = mockBehaviour()
+            elseWhen_ = when_.else.when condition2, wrapped2
+
+            wrapped3 = mockBehaviour()
+            else_ = when_.else wrapped3
+
+            when_.enable script, actor
+            elseWhen_.enable script, actor
+            else_.enable script, actor
+
+            expect(wrapped.actor).not.toBeDefined()
+            expect(wrapped2.actor).not.toBeDefined()
+            expect(wrapped3.actor).toBeDefined()
+
+            condition.value = true
+            expect(wrapped.actor).toBeDefined()
+            expect(wrapped2.actor).not.toBeDefined()
+            expect(wrapped3.actor).not.toBeDefined()
+
+            condition2.value = true
+            expect(wrapped.actor).toBeDefined()
+            expect(wrapped2.actor).not.toBeDefined()
+            expect(wrapped3.actor).not.toBeDefined()
+
+            condition.value = false
+            expect(wrapped.actor).not.toBeDefined()
+            expect(wrapped2.actor).toBeDefined()
+            expect(wrapped3.actor).not.toBeDefined()
+
+            condition2.value = false
+            expect(wrapped.actor).not.toBeDefined()
+            expect(wrapped2.actor).not.toBeDefined()
+            expect(wrapped3.actor).toBeDefined()
 
         it "exposes wether it meets the condition on its 'value'", ->
             when_.enable script, actor

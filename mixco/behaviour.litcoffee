@@ -575,11 +575,15 @@ methods of the `control.Control` class.
         constructor: (@_condition, wrapped...) ->
             @else      = => @_else arguments...
             @else.when = => @_elseWhen arguments...
+            @when      = @else.when
             @else_     = @else
+
             super()
             @_wrapped = exports.toBehaviour wrapped...
             @_condition.on 'value', => @_update()
-            @_nextCondition = @_condition
+            if @_lastCondition  != 'no-more-negations'
+                @_lastCondition = @_condition
+                @_lastCondition.negation ?= value.not @_condition
 
         option: ->
             super
@@ -587,14 +591,19 @@ methods of the `control.Control` class.
             this
 
         _elseWhen: (condition, args...) ->
-            assert @_nextCondition?, "Can not define more conditions after 'else'"
-            @_nextCondition = value.and value.not(@_nextCondition), condition
-            new exports.When @_nextCondition, args...
+            assert @_lastCondition?, "Can not define more conditions after 'else'"
+            nextCondition =
+                value.and condition, value.not @_lastCondition
+            nextCondition.negation =
+                value.and @_lastCondition.negation, value.not condition
+            @_lastCondition = nextCondition
+            new exports.When nextCondition, args...
 
         _else: (args...) ->
-            assert @_nextCondition?, "Can not define more conditions after 'else'"
-            nextCondition = value.not @_nextCondition
-            @_nextCondition = undefined
+            assert @_lastCondition?, "Can not define more conditions after 'else'"
+            nextCondition = @_lastCondition.negation
+            nextCondition.negation = 'no-more-negations'
+            delete @_lastCondition
             new exports.When nextCondition, args...
 
         enable: (args...) ->
