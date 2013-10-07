@@ -15,6 +15,12 @@ functionallity of the controls.
     b = require '../mixco/behaviour'
     v = require '../mixco/value'
 
+    ledButtonFixed = ->
+        c.ledButton(arguments...).option
+            process: (ev) ->
+                if ev.message() == c.MIDI_NOTE_OFF
+                    ev.value = 0
+
     script.register module,
 
         name: 'maudio_xponent'
@@ -115,7 +121,7 @@ channel.
   controls of that deck.
 
             shift = b.modifier()
-            @add c.ledButton(noteId 0x2C).does shift
+            @add ledButtonFixed(noteId 0x2C).does shift
 
 * **12.** Pre-Fade Listen. Select which deck goes to the pre-hear.
 
@@ -150,7 +156,7 @@ channel.
 * **34.** Sync button. Adjust pitch and aligns grids to beatmatch both
   tracks. When *shift* is pressed, it only adjusts pitch, not phase.
 
-            @add c.ledButton(noteId 0x02)
+            @add ledButtonFixed(noteId 0x02)
                 .when(shift, g, "beatsync_tempo")
                 .else g, "beatsync"
 
@@ -161,7 +167,7 @@ channel.
 * **38.** Punch-in/transform. While pressed, lets this track be heard
   overriding the corssfader.
 
-            @add c.ledButton(noteId 0x07).does b.punchIn (0.5-i)
+            @add ledButtonFixed(noteId 0x07).does b.punchIn (0.5-i)
 
 ### The transport section
 
@@ -182,7 +188,7 @@ channel.
   held, deletes the hotcue point.
 
             for idx in [0..4]
-                @add c.ledButton(noteId(0x17 + idx))
+                @add ledButtonFixed(noteId(0x17 + idx))
                     .when(shift,
                           g, "hotcue_#{idx+1}_clear",
                           g, "hotcue_#{idx+1}_enabled")
@@ -194,10 +200,11 @@ channel.
   next item of the browser sidebar.
 
             @add [
-                c.ledButton(noteId 0x1C)
+                ledButtonFixed(noteId 0x1C)
                     .when(shift, "[Playlist]", "SelectPrevPlaylist")
                     .else b.beatJump g, -1
-                c.ledButton(noteId 0x1D)
+
+                ledButtonFixed(noteId 0x1D)
                     .when(shift, "[Playlist]", "SelectNextPlaylist")
                     .else b.beatJump g, 1
             ]
@@ -206,7 +213,7 @@ channel.
   independent of pitch. When *shift* is pressed, it expands/collapses
   the selected browser item.
 
-            @add c.ledButton(noteOnId 0x1E)
+            @add ledButtonFixed(noteId 0x1E)
                 .when(shift, "[Playlist]", "ToggleSelectedSidebarItem")
                 .else g, "keylock"
 
@@ -237,10 +244,10 @@ channel.
   double the current loop size respectively.
 
             @add [
-                c.ledButton(noteId 0x29)
+                ledButtonFixed(noteId 0x29)
                     .when(shift, g, "loop_halve")
                     .else g, "loop_in"
-                c.ledButton(noteId 0x2B)
+                ledButtonFixed(noteId 0x2B)
                     .when(shift, g, "loop_double")
                     .else g, "loop_out"
             ]
@@ -256,28 +263,27 @@ channel.
   long.
 
             @add [
-                c.ledButton(noteId 0x25)
+                ledButtonFixed(noteId 0x25)
                     .when(shift, g, "beatloop_0.125_activate",
                           g, "beatloop_0.125_enabled")
                     .else g, "beatloop_4_activate",
                           g, "beatloop_4_enabled"
-                c.ledButton(noteId 0x26)
+                ledButtonFixed(noteId 0x26)
                     .when(shift, g, "beatloop_0.5_activate",
                           g, "beatloop_0.5_enabled")
                     .else g, "beatloop_8_activate",
                           g, "beatloop_8_enabled"
-                c.ledButton(noteId 0x27)
+                ledButtonFixed(noteId 0x27)
                     .when(shift, g, "beatloop_1_activate",
                           g, "beatloop_1_enabled")
                     .else g, "beatloop_16_activate",
                           g, "beatloop_16_enabled"
-                c.ledButton(noteId 0x28)
+                ledButtonFixed(noteId 0x28)
                     .when(shift, g, "beatloop_2_activate",
                           g, "beatloop_2_enabled")
                     .else g, "beatloop_32_activate",
                           g, "beatloop_32_enabled"
             ]
-
 
 ### Effects
 
@@ -327,14 +333,15 @@ channel.
   of tracks in the browser.
 
             selectTrackKnobTransform = do ->
-                toggle = false
+                toggle = 1
                 (val) ->
                     val = val - 64
-                    toggle = not toggle or Math.abs(val) > 16
-                    if toggle then val.sign() else null
+                    toggle -= 1
+                    if toggle < 0 then toggle = 3
+                    if toggle == 0 then val.sign() else null
 
             @add [
-                c.ledButton(noteId 0x16)
+                ledButtonFixed(noteId 0x16)
                     .when v.and(v.not(shift), scratchMode), b.scratchEnable i+1
 
                 c.knob(ccId 0x16)
@@ -349,10 +356,10 @@ channel.
 they do it in a smaller ammount.
 
             @add [
-                c.ledButton(noteId 0x10)
+                ledButtonFixed(noteId 0x10)
                     .when(shift, g, "rate_temp_down_small")
                     .else g, "rate_temp_down"
-                c.ledButton(noteId 0x11)
+                ledButtonFixed(noteId 0x11)
                     .when(shift, g, "rate_temp_up_small")
                     .else g, "rate_temp_up"
             ]
@@ -367,7 +374,7 @@ they do it in a smaller ammount.
   turntable was turned off suddenly. On *shift*, it ejects the track
   from the deck.
 
-            @add c.ledButton(noteId 0x12)
+            @add ledButtonFixed(noteId 0x12)
                 .when(shift, g, "eject")
                 .else b.brake i+1
 
@@ -375,7 +382,7 @@ they do it in a smaller ammount.
   vinyl was launched backwards. On *shift*, it loads the selected
   track in the browser into the deck.
 
-            @add c.ledButton(noteId 0x13)
+            @add ledButtonFixed(noteId 0x13)
                 .when(shift, g, "LoadSelectedTrack")
                 .else b.spinback i+1
 

@@ -416,9 +416,9 @@ script.register(module, {
 
 function scaledDiff (factor) {
     return {
-	transform: function(v, b) {
+	transform: function(v, v0) {
 	    var diff = factor * (v > 64 ? v - 128 : v)
-	    return (b.midiValue + diff).clamp(0, 128)
+	    return (v0 + diff).clamp(0, 128)
 	}
     }
 }

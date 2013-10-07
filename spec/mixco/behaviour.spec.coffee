@@ -34,8 +34,8 @@ describe 'mixco.behaviour', ->
             expect(option.spread64.transform 32).toBe -32
 
         it 'has some non-linear transforms', ->
-            expect(option.diff.transform 32, midiValue: 8).toBe 40
-            expect(option.hercjog.transform 32, midiValue: 8).toBe 40
+            expect(option.diff.transform 32, 8).toBe 40
+            expect(option.hercjog.transform 32, 8).toBe 40
 
         it 'enables soft takeover on input mappings', ->
             beh = behaviour.mapIn "[Test]", "test"
@@ -68,9 +68,8 @@ describe 'mixco.behaviour', ->
             expect(behav.value).toBe behav.midiValue
             expect(behav.value).toBe 64
 
-        it 'processes MIDI input events with given options', ->
+        it 'transforms MIDI input events with given options', ->
             behav.option transform: (x) -> x * 2
-
             actor = new behaviour.Actor
             behav.enable {}, actor
 
@@ -82,7 +81,19 @@ describe 'mixco.behaviour', ->
             actor.emit 'event', value: 3
             expect(behav.onMidiEvent).toHaveBeenCalledWith value: 5
 
-        it 'transforms can use the current behaviour', ->
+        it 'processes MIDI input events with given options', ->
+            behav.option process: (ev, b) -> ev.value = ev.value * 2
+            actor = new behaviour.Actor
+            behav.enable {}, actor
+
+            actor.emit 'event', value: 3
+            expect(behav.onMidiEvent).toHaveBeenCalledWith value: 6
+
+            behav.option process: (ev, b) -> ev.value = ev.value - b.midiValue
+            actor.emit 'event', value: 3
+            expect(behav.onMidiEvent).toHaveBeenCalledWith value: -26
+
+        it 'transforms can use the previous value', ->
             opt = createSpyObj 'option', ['transform']
             behav.option opt
 
@@ -90,7 +101,7 @@ describe 'mixco.behaviour', ->
             behav.enable {}, actor
 
             actor.emit 'event', value: 3
-            expect(opt.transform).toHaveBeenCalledWith 3, behav
+            expect(opt.transform).toHaveBeenCalledWith 3, 32
 
         it 'options are enabled and disabled', ->
             opt = createSpyObj 'option', ['enable', 'disable']

@@ -9,7 +9,7 @@ This module contains all the functionallity that lets you add
     value     = require './value'
     {indent, assert, factory, copy} = require './util'
     {multi, isinstance} = require './multi'
-    _ = {extend, bind} = require 'underscore'
+    _ = {extend, bind, map} = require 'underscore'
 
 Actor
 -----
@@ -36,10 +36,12 @@ These can be used either at *control* or *behaviour* level.  An option
 has the following interface:
 
 - A `name` with the name of the option in the XML file.
-- Optionally, a `transform` function that maps the received MIDI to a
-  transformed one.
+- Optionally, a `transform` function that maps the value and
+  the previous received value to a transformed one.
 - Optionally, a `enable` and `disable` functions that take a behaviour
   that they may affect.
+- Optionally, a `process` function that takes a MIDI event and a
+  behaviour and can manipulate the MIDI event.
 
 This `option` object contains all the available options in Mixxx, with
 names converted to idiomatic JavaScript -- e.g. *soft-takeover* becomes
@@ -50,19 +52,23 @@ These impementations are simplifications of what there is in
 to time.  Also the way we implement non-linear transforms is
 inconsistent with how Mixxx does it, but it should be though.
 
+    toOption = (option) ->
+        result = option
+        if isinstance option, Function
+            result = transform: option
+        if result.transform? and not result.process?
+            result.process =
+                if result.transform.length == 1
+                    (ev, b) -> ev.value = @transform ev.value
+                else
+                    (ev, b) -> ev.value = @transform ev.value, b.midiValue
+        result
+
     option = exports.option = do ->
         result = {}
         add    = (names..., option) ->
             [mixxxName, name] = names
-            desc =
-                if isinstance option, Function
-                    transform:
-                        if option.length == 1
-                            option
-                        else
-                            (v1, b) -> v0 = option v1, b.midiValue
-                else
-                    option
+            desc = toOption option
             desc.name = mixxxName
             result[name ? mixxxName] = desc
             result
@@ -129,9 +135,8 @@ given actor.
             @_eventListener = (ev) =>
                 if @_options?
                     ev = copy ev
-                    ev.value = _.reduce @_options,
-                        ((x, o) => o.transform?(x, @) ? x),
-                        ev.value
+                    for opt in @_options
+                        opt.process?(ev, @)
                 @onMidiEvent ev
             actor.on 'event', @_eventListener
 
@@ -155,7 +160,7 @@ syntax is also available.
         option: (options...) ->
             for opt in options
                 assert opt
-            (@_options ?= []).push options...
+            (@_options ?= []).push map(options, toOption)...
             this
 
         @property 'options', -> makeOptionsChooser @

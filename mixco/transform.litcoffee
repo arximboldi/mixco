@@ -125,10 +125,10 @@ needed. Please make sure to keep it in sync with the official
         pregain:                        centeredT 0.0, 1.0, 4.0
         pregain_toggle:                 binaryT
         rate:                           linearT -1.0, 1.0
-        rate_temp_down:                 binaryT
-        rate_temp_down_small:           binaryT
-        rate_temp_up:                   binaryT
-        rate_temp_up_small:             binaryT
+        rate_temp_down:                 momentaryT
+        rate_temp_down_small:           momentaryT
+        rate_temp_up:                   momentaryT
+        rate_temp_up_small:             momentaryT
         reverse:                        binaryT
         scratch2:                       linearT -3.0, 3.0
         scratch2_enable:                binaryT
