@@ -24,6 +24,7 @@ interface.
     class exports.Value extends events.EventEmitter
 
         constructor: ({initial}={}) ->
+            super
             @setMaxListeners 0
             if initial?
                 @value = initial
@@ -77,6 +78,7 @@ operation on them.  It updates whenever one of them changes.
     class exports.Reduce extends exports.Value
 
         constructor: (@reducer, @reduced...) ->
+            super()
             for v in @reduced
                 v.on 'value', => @update()
             @update()
@@ -97,6 +99,7 @@ unary function.
     class exports.Transform extends exports.Value
 
         constructor: (@transformer, @transformed) ->
+            super()
             @transformed.on 'value', => @update()
             @update()
 

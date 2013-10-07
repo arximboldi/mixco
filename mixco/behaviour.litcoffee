@@ -183,6 +183,7 @@ something.
     class exports.Call extends exports.Behaviour
 
         constructor: (@onMidiEvent) ->
+            super()
 
     exports.call = factory exports.Call
 
