@@ -46,43 +46,43 @@ needed. Please make sure to keep it in sync with the official
   [mixxxcontrols]: http://www.mixxx.org/wiki/doku.php/mixxxcontrols
 
     exports.mappings =
-        "beatloop_0.0625_activate":     binaryT
-        "beatloop_0.0625_toggle":       binaryT
-        "beatloop_0.125_activate":      binaryT
-        "beatloop_0.125_toggle":        binaryT
-        "beatloop_0.5_activate":        binaryT
-        "beatloop_0.5_toggle":          binaryT
+        "beatloop_0.0625_activate":     momentaryT
+        "beatloop_0.0625_toggle":       momentaryT
+        "beatloop_0.125_activate":      momentaryT
+        "beatloop_0.125_toggle":        momentaryT
+        "beatloop_0.5_activate":        momentaryT
+        "beatloop_0.5_toggle":          momentaryT
         "beatlooproll_0.0625_activate": momentaryT
         "beatlooproll_0.125_activate":  momentaryT
         "beatlooproll_0.5_activate":    momentaryT
         back:                           momentaryT
         balance:                        linearT -1.0, 1.0
-        beatloop_16_activate:           binaryT
-        beatloop_16_toggle:             binaryT
-        beatloop_1_activate:            binaryT
-        beatloop_1_toggle:              binaryT
-        beatloop_2_activate:            binaryT
-        beatloop_2_toggle:              binaryT
-        beatloop_32_activate:           binaryT
-        beatloop_32_toggle:             binaryT
-        beatloop_4_activate:            binaryT
-        beatloop_4_toggle:              binaryT
-        beatloop_8_activate:            binaryT
-        beatloop_8_toggle:              binaryT
-        beatlooproll_16_activate:       binaryT
-        beatlooproll_1_activate:        binaryT
-        beatlooproll_2_activate:        binaryT
-        beatlooproll_32_activate:       binaryT
-        beatlooproll_4_activate:        binaryT
-        beatlooproll_8_activate:        binaryT
-        beatloop_double:                binaryT
-        beatloop_halve:                 binaryT
-        beats_translate_curpos:         binaryT
-        beatsync:                       binaryT
-        beatsync_tempo:                 binaryT
+        beatloop_16_activate:           momentaryT
+        beatloop_16_toggle:             momentaryT
+        beatloop_1_activate:            momentaryT
+        beatloop_1_toggle:              momentaryT
+        beatloop_2_activate:            momentaryT
+        beatloop_2_toggle:              momentaryT
+        beatloop_32_activate:           momentaryT
+        beatloop_32_toggle:             momentaryT
+        beatloop_4_activate:            momentaryT
+        beatloop_4_toggle:              momentaryT
+        beatloop_8_activate:            momentaryT
+        beatloop_8_toggle:              momentaryT
+        beatlooproll_16_activate:       momentaryT
+        beatlooproll_1_activate:        momentaryT
+        beatlooproll_2_activate:        momentaryT
+        beatlooproll_32_activate:       momentaryT
+        beatlooproll_4_activate:        momentaryT
+        beatlooproll_8_activate:        momentaryT
+        beatloop_double:                momentaryT
+        beatloop_halve:                 momentaryT
+        beats_translate_curpos:         momentaryT
+        beatsync:                       momentaryT
+        beatsync_tempo:                 momentaryT
         crossfader:                     linearT -1.0, 1.0
-        cue_default:                    binaryT
-        eject:                          binaryT
+        cue_default:                    momentaryT
+        eject:                          momentaryT
         filterHigh:                     centeredT 0.0, 1.0, 4.0
         filterHighKill:                 binaryT
         filterLow:                      centeredT 0.0, 1.0, 4.0
@@ -92,32 +92,32 @@ needed. Please make sure to keep it in sync with the official
         fwd:                            momentaryT
         headMix:                        centeredT -1.0, 1.0
         headVolume:                     centeredT 0.0, 1.0, 5.0
-        hotcue_1_activate:              binaryT
-        hotcue_1_clear:                 binaryT
-        hotcue_2_activate:              binaryT
-        hotcue_2_clear:                 binaryT
-        hotcue_3_activate:              binaryT
-        hotcue_3_clear:                 binaryT
-        hotcue_4_activate:              binaryT
-        hotcue_4_clear:                 binaryT
-        hotcue_5_activate:              binaryT
-        hotcue_5_clear:                 binaryT
-        hotcue_6_activate:              binaryT
-        hotcue_6_clear:                 binaryT
-        hotcue_7_activate:              binaryT
-        hotcue_7_clear:                 binaryT
+        hotcue_1_activate:              momentaryT
+        hotcue_1_clear:                 momentaryT
+        hotcue_2_activate:              momentaryT
+        hotcue_2_clear:                 momentaryT
+        hotcue_3_activate:              momentaryT
+        hotcue_3_clear:                 momentaryT
+        hotcue_4_activate:              momentaryT
+        hotcue_4_clear:                 momentaryT
+        hotcue_5_activate:              momentaryT
+        hotcue_5_clear:                 momentaryT
+        hotcue_6_activate:              momentaryT
+        hotcue_6_clear:                 momentaryT
+        hotcue_7_activate:              momentaryT
+        hotcue_7_clear:                 momentaryT
         jog:                            identityT
         keylock:                        binaryT
         lfoDelay:                       linearT 50.0, 10000.0
         lfoDepth:                       defaultT
         lfoPeriod:                      linearT 50000.0, 2000000.0
-        LoadSelectedTrack:              binaryT
-        loop_double:                    binaryT
+        LoadSelectedTrack:              momentaryT
+        loop_double:                    momentaryT
         loop_enabled:                   binaryT
         loop_end_position:              linearT
-        loop_halve:                     binaryT
-        loop_in:                        binaryT
-        loop_out:                       binaryT
+        loop_halve:                     momentaryT
+        loop_in:                        momentaryT
+        loop_out:                       momentaryT
         loop_start_position:            linearT
         play:                           binaryT
         playposition:                   linearT 0.0, 1.0
@@ -132,14 +132,14 @@ needed. Please make sure to keep it in sync with the official
         reverse:                        binaryT
         scratch2:                       linearT -3.0, 3.0
         scratch2_enable:                binaryT
-        SelectNextPlaylist:             binaryT
-        SelectNextTrack:                binaryT
-        SelectPrevPlaylist:             binaryT
-        SelectPrevTrack:                binaryT
+        SelectNextPlaylist:             momentaryT
+        SelectNextTrack:                momentaryT
+        SelectPrevPlaylist:             momentaryT
+        SelectPrevTrack:                momentaryT
         SelectTrackKnob:                identityT
         slip_enabled:                   binaryT
         talkover:                       binaryT
-        ToggleSelectedSidebarItem:      binaryT
+        ToggleSelectedSidebarItem:      momentaryT
         volume:                         defaultT
         VuMeter:                        defaultT
         VuMeterL:                       defaultT
