@@ -49,7 +49,7 @@ Controls that do not have a per-deck functionality.
 
 * **39.** Crossfader.
 
-            c.slider(ccId 0x07).does b.soft g, "crossfader"
+            c.slider(ccId 0x07).does g, "crossfader"
 
 ### Effects
 

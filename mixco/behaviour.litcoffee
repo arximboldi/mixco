@@ -668,15 +668,21 @@ script-only button actions with a press and a release event.
 setting the crossfader to the center.  The threshold must be either
 positive or negative for the left channel and indicates how far the
 crossfader has to be from the center for punch-in to have effect.
+Note that this does not work properly when soft takeover is enabled on
+the crossfader.
 
-    exports.punchIn = (threshold) ->
-        oldxfader = undefined
+    exports.punchIn = (threshold, threshold2=undefined) ->
+        oldxfader   = undefined
+        inThreshold = (newxfader, threshold) ->
+            (threshold < 0 and newxfader < threshold) or
+            (threshold > 0 and newxfader > threshold)
+
         exports.action
             press: ->
                 engine    = @script.mixxx.engine
                 newxfader = engine.getValue "[Master]", "crossfader"
-                if (threshold < 0 and newxfader < threshold) or
-                        (threshold > 0 and newxfader > threshold)
+                if inThreshold(newxfader, threshold) or
+                        (threshold2? and inThreshold(newxfader, threshold2))
                     oldxfader = newxfader
                     engine.setValue "[Master]", "crossfader", 0
 

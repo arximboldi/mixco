@@ -77,7 +77,7 @@ script.register(module, {
 	//
 	// * *Crossfader* slider.
 
-	c.slider(0x08, 0x07).does(b.soft("[Master]", "crossfader"))
+	c.slider(0x08, 0x07).does("[Master]", "crossfader")
 
 	// #### Mic/aux and effects
 	//
@@ -109,6 +109,12 @@ script.register(module, {
 	c.encoder(3, ccIdFxBanks(0x2)).does("[Flanger]", "lfoPeriod")
 	    .option(scaledDiff(3))
 
+        // * The *on/off* button of the FX section does a bilateral
+        //   *punch-in* -- i.e. temporarily moves the crossfader to
+        //   the center while held, if it was far from the center.
+
+        c.ledButton(c.noteIds(0x22, 0xB)).does(b.punchIn(-0.5, 0.5))
+
 	// #### Browse
 	//
 	// * The *back* and *fwd* can be used to scroll the sidebar.
@@ -137,6 +143,11 @@ script.register(module, {
 	c.ledButton(c.noteIds(0x50, 0x7)).does(
 	    "[Playlist]", "ToggleSelectedSidebarItem")
 
+        // * The *view* button in the *browser* section lets you tap
+        //   the tempo for the track that is currently on pre-hear.
+
+        this.viewButton = c.ledButton(c.noteIds(0x51, 0x7))
+
 	// ### Per deck controls
 	//
 	// We use a `behaviou.chooser` for the PFL selection.  This
@@ -148,6 +159,7 @@ script.register(module, {
 	this.decks = b.chooser()
 	this.addDeck(0)
 	this.addDeck(1)
+
     },
 
     addDeck: function (i) {
@@ -167,6 +179,9 @@ script.register(module, {
 
 	c.ledButton(noteIdAll(0x0A)).does(this.decks.add(g, "pfl"))
 
+        this.viewButton.when(this.decks.activator(i),
+                             g, "bpm_tap", g, "beat_active")
+
 	// * *Volume* fader and *low*, *mid*, *high* and *trim* knobs.
 
 	c.slider(ccIdAll(0x07)).does(g, "volume")
@@ -174,6 +189,10 @@ script.register(module, {
 	c.knob(ccIdAll(0x47)).does(g, "filterMid")
 	c.knob(ccIdAll(0x48)).does(g, "filterHigh")
 	c.knob(ccIdAll(0x09)).does(g, "pregain")
+
+        // * *Volume* meters for each channel.
+
+        c.meter(noteIdAll(0x5f)).does(b.mapOut(g, "VuMeter").meter())
 
 	// * The **fader FX** we use as a knob-controlled *beat
 	//   looproll effect*. Effect can be turned on by pressing the
