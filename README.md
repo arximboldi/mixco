@@ -11,6 +11,8 @@ webpage][mixco]. And remember, this is [Free Software][gnu].
   [lcs]: http://coffeescript.org/#literate
   [mixco]: http://sinusoid.es/mixco
 
+[![build status](https://secure.travis-ci.org/arximboldi/mixco.svg)]
+(http://travis-ci.org/arximboldi/mixco)
 
 Features
 --------
@@ -76,6 +78,11 @@ Optional dependencies:
   - [Docco](http://jashkenas.github.io/docco/) >= 0.6
   - [jasmine-node](https://github.com/mhevery/jasmine-node) >= 1.3.1
 
+To install the dependencies, once you install
+[Node.js](http://nodejs.org/), you may execute this in the project
+folder::
+
+    $ npm install
 
 Installation
 ------------
