@@ -144,9 +144,9 @@ environment --the global variables like *engine* or *midi*-- should
 access it via this property instead.  This improves testability.
 
         mixxx:
-            engine: engine if engine?
-            midi:   midi   if midi?
-            script: script if script?
+            engine: (engine if engine?)
+            midi:   (midi   if midi?)
+            script: (script if script?)
 
 ### Standalone execution
 

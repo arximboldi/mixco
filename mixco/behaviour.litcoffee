@@ -651,8 +651,8 @@ script-only button actions with a press and a release event.
 
         constructor: (@action = undefined) ->
             super()
-            @onPress   ?= action.press
-            @onRelease ?= action.release
+            @onPress   ?= @action.press
+            @onRelease ?= @action.release
 
         onMidiEvent: (ev) ->
             val = @value = @output.value = ev.value > 0
