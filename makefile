@@ -7,11 +7,13 @@
 #  smart CoffeeScript file.
 #
 
+NODE_BIN   = node_modules/.bin
+
 NODEJS     = node
-COFFEE     = coffee
-BROWSERIFY = browserify
-DOCCO      = docco
-JASMINE    = jasmine-node
+COFFEE     = $(NODE_BIN)/coffee
+BROWSERIFY = $(NODE_BIN)/browserify
+DOCCO      = $(NODE_BIN)/docco
+JASMINE    = $(NODE_BIN)/jasmine-node
 
 SCRIPTS    = \
 	out/korg_nanokontrol2.js out/korg_nanokontrol2.midi.xml \
