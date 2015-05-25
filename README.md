@@ -56,11 +56,11 @@ Download
 --------
 
 **Mixco** is still on development, but you can try it out grabbing the
-source code from [Gitorious][git]. Note that the project is still
+source code from [Github][git]. Note that the project is still
 ***very experimental*** and thus the provided API will change every
 single minute.
 
-  [git]: https://gitorious.org/mixco
+  [git]: https://github.com/arximboldi/mixco/
 
 Depedencies
 -----------
@@ -87,9 +87,8 @@ folder::
 Installation
 ------------
 
-To install the *Mixco*, first, [grab the sources][git]. If you just
-want to use the provided scripts, you can grab the [precompiled
-scripts from here][precomp]. Else, from the project folder, execute:
+To install the *Mixco*, first, [grab the sources][git].  From the
+project folder, execute:
 
 > make
 
@@ -114,7 +113,6 @@ with:
 > make test
 
   [git]: https://gitorious.org/mixco
-  [precomp]: https://gitorious.org/mixco/compiled
   [mixxxmidi]: http://www.mixxx.org/wiki/doku.php/midi_controller_mapping_file_format
 
 
