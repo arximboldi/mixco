@@ -11,8 +11,7 @@ webpage][mixco]. And remember, this is [Free Software][gnu].
   [lcs]: http://coffeescript.org/#literate
   [mixco]: http://sinusoid.es/mixco
 
-[![build status](https://secure.travis-ci.org/arximboldi/mixco.svg)]
-(http://travis-ci.org/arximboldi/mixco)
+[![build status](https://secure.travis-ci.org/arximboldi/mixco.svg)](https://travis-ci.org/arximboldi/mixco)
 
 Features
 --------
@@ -80,9 +79,9 @@ Optional dependencies:
 
 To install the dependencies, once you install
 [Node.js](http://nodejs.org/), you may execute this in the project
-folder::
+folder:
 
-    $ npm install
+> npm install
 
 Installation
 ------------
