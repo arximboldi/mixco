@@ -14,6 +14,7 @@ COFFEE     = $(NODE_BIN)/coffee
 BROWSERIFY = $(NODE_BIN)/browserify
 DOCCO      = $(NODE_BIN)/docco
 JASMINE    = $(NODE_BIN)/jasmine-node
+ISTANBUL   = $(NODE_BIN)/istanbul
 
 SCRIPTS    = \
 	out/korg_nanokontrol2.js out/korg_nanokontrol2.midi.xml \
@@ -123,7 +124,10 @@ clean:
 	find . -name "*~" -exec rm -f {} \;
 
 test:
-	NODE_PATH="$(NODE_PATH):.." $(JASMINE) --verbose --coffee spec
+	NODE_PATH="$(NODE_PATH):.." $(JASMINE) spec --verbose --coffee
+
+test-coverage:
+	NODE_PATH="$(NODE_PATH):.." $(ISTANBUL) cover --root ./lib $(JASMINE) spec -- --verbose --coffee
 
 upload-doc: doc
 	ncftpput -R -m -u u48595320 sinusoid.es /mixco doc/*

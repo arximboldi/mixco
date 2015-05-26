@@ -29,10 +29,13 @@
     },
     "devDependencies": {
         "jasmine-node": ">=1.0.26",
-        "docco": ">=0.6"
+        "docco": ">=0.6",
+        "istanbul": "0.3.5",
+        "coveralls": "2.10.0"
     },
     "scripts": {
         "test": "make test",
+        "test-coverage": "make test-coverage",
         "install": "make"
     },
     "files": [
