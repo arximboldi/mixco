@@ -21,13 +21,13 @@ SCRIPTS    = \
 	out/novation_twitch.js   out/novation_twitch.midi.xml
 
 FRAMEWORK  = \
-	tmp/mixco/behaviour.js \
-	tmp/mixco/console.js \
-	tmp/mixco/control.js \
-	tmp/mixco/script.js \
-	tmp/mixco/transform.js \
-	tmp/mixco/util.js \
-	tmp/mixco/value.js
+	lib/mixco/behaviour.js \
+	lib/mixco/console.js \
+	lib/mixco/control.js \
+	lib/mixco/script.js \
+	lib/mixco/transform.js \
+	lib/mixco/util.js \
+	lib/mixco/value.js
 
 DOCS       = \
 	doc/index.html \
@@ -57,19 +57,19 @@ doc: $(DOCS)
 
 .SECONDARY:
 
-tmp/%.js: %.litcoffee
+lib/%.js: %.litcoffee
 	@mkdir -p $(@D)
 	$(COFFEE) -c -p $< > $@
 
-tmp/%.js: %.coffee
+lib/%.js: %.coffee
 	@mkdir -p $(@D)
 	$(COFFEE) -c -p $< > $@
 
-tmp/%.js: %.js
+lib/%.js: %.js
 	@mkdir -p $(@D)
 	cp -f $< $@
 
-out/%.js: tmp/script/%.js $(FRAMEWORK)
+out/%.js: lib/script/%.js $(FRAMEWORK)
 	@echo
 	@echo \*\*\* Building $* JS script file
 	@echo
@@ -91,7 +91,7 @@ out/%.midi.xml: script/%.coffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	$(COFFEE) $< -g > $@
 
-out/%.midi.xml: tmp/script/%.js $(FRAMEWORK)
+out/%.midi.xml: lib/script/%.js $(FRAMEWORK)
 	@echo
 	@echo \*\*\* Building $* XML mapping file
 	@echo
@@ -123,6 +123,7 @@ clean:
 	rm -rf ./doc
 	rm -rf ./out
 	rm -rf ./tmp
+	rm -rf ./lib
 	find . -name "*~" -exec rm -f {} \;
 
 test:
