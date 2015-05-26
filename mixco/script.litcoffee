@@ -5,7 +5,7 @@ This module contains the main interface for defining custom Mixxx
 scripts.
 
     {flatten, bind} = require 'underscore'
-    {issubclass, mro} = require './multi'
+    {issubclass, mro} = require 'heterarchy'
     {Control} = require './control'
     {indent, xmlEscape, catching, assert} = require './util'
     require './console'

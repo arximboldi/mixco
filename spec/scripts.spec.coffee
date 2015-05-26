@@ -33,6 +33,7 @@ describe 'scripts', ->
                     fn path.basename(file, ext), dir
 
     do monkeypatchCatching = ->
+        unrequire 'heterarchy'
         forEveryModuleInDir '../mixco', '../script', (name, dir) ->
             unrequire path.join(dir, name), true
         require '../mixco/util'

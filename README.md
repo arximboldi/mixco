@@ -70,6 +70,7 @@ Required dependencies to compile the Mixxx scripts:
   - [Node.js](http://nodejs.org/) >= 0.8
   - [Underscore](http://underscorejs.org/) >= 1.5
   - [Browserify](http://browserify.org/) >= 2.0
+  - [Heterarchy](http://github.com/arximboldi/heterarchy) >= 1.0
   - [GNU make](http://www.gnu.org/software/make/)
 
 Optional dependencies:
@@ -111,7 +112,7 @@ with:
 
 > make test
 
-  [git]: https://gitorious.org/mixco
+  [git]: https://github.com/arximboldi/mixco
   [mixxxmidi]: http://www.mixxx.org/wiki/doku.php/midi_controller_mapping_file_format
 
 
@@ -128,7 +129,6 @@ Documentation
 
   * [mixco.behaviour][mixco.behaviour]
   * [mixco.control][mixco.control]
-  * [mixco.multi][mixco.multi]
   * [mixco.script][mixco.script]
   * [mixco.transform][mixco.transform]
   * [mixco.util][mixco.util]
@@ -138,7 +138,6 @@ Documentation
 
   * [spec.mixco.behaviour][spec.mixco.behaviour]
   * [spec.mixco.control][spec.mixco.control]
-  * [spec.mixco.multi][spec.mixco.multi]
   * [spec.mixco.script][spec.mixco.script]
   * [spec.mixco.value][spec.mixco.value]
   * [spec.mock][spec.mock]
@@ -150,7 +149,6 @@ Documentation
 
   [mixco.behaviour]: mixco/behaviour.html
   [mixco.control]: mixco/control.html
-  [mixco.multi]: mixco/multi.html
   [mixco.script]: mixco/script.html
   [mixco.transform]: mixco/transform.html
   [mixco.util]: mixco/util.html
@@ -158,7 +156,6 @@ Documentation
 
   [spec.mixco.behaviour]: spec/mixco/behaviour.spec.html
   [spec.mixco.control]: spec/mixco/control.spec.html
-  [spec.mixco.multi]: spec/mixco/multi.spec.html
   [spec.mixco.script]: spec/mixco/script.spec.html
   [spec.mixco.value]: spec/mixco/value.spec.html
   [spec.mock]: spec/mock.html

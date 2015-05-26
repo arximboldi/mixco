@@ -23,6 +23,7 @@
     },
     "dependencies": {
         "underscore": ">=1.3.0",
+        "heterarchy": ">=1.0.3",
         "coffee-script": "latest",
         "browserify": ">=10.1.3"
     },

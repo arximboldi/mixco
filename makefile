@@ -24,7 +24,6 @@ FRAMEWORK  = \
 	tmp/mixco/behaviour.js \
 	tmp/mixco/console.js \
 	tmp/mixco/control.js \
-	tmp/mixco/multi.js \
 	tmp/mixco/script.js \
 	tmp/mixco/transform.js \
 	tmp/mixco/util.js \
@@ -35,7 +34,6 @@ DOCS       = \
 	doc/mixco/behaviour.html \
 	doc/mixco/control.html \
 	doc/mixco/console.html \
-	doc/mixco/multi.html \
 	doc/mixco/script.html \
 	doc/mixco/transform.html \
 	doc/mixco/util.html \
@@ -45,7 +43,6 @@ DOCS       = \
 	doc/script/novation_twitch.html \
 	doc/spec/mixco/behaviour.spec.html \
 	doc/spec/mixco/control.spec.html \
-	doc/spec/mixco/multi.spec.html \
 	doc/spec/mixco/script.spec.html \
 	doc/spec/mixco/value.spec.html \
 	doc/spec/mock.html \

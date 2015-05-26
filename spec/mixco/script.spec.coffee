@@ -3,7 +3,7 @@
 
 describe 'mixco.script', ->
 
-    {isinstance} = require '../../mixco/multi'
+    {isinstance} = require 'heterarchy'
     {Script, register} = require '../../mixco/script'
     control = require '../../mixco/control'
 

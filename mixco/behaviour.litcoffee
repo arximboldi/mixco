@@ -8,7 +8,7 @@ This module contains all the functionallity that lets you add
     transform = require './transform'
     value     = require './value'
     {indent, assert, factory, copy} = require './util'
-    {multi, isinstance} = require './multi'
+    {multi, isinstance} = require 'heterarchy'
     _ = {extend, bind, map} = require 'underscore'
 
 Actor

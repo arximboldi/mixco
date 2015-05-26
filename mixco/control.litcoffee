@@ -3,7 +3,7 @@ mixco.control
 
 Defines different hardware controls.
 
-    {multi} = require './multi'
+    {multi} = require 'heterarchy'
     {indent, hexStr, assert, factory, xmlTag, joinLn} = require './util'
     behaviour = require './behaviour'
     {some, extend} = require 'underscore'
