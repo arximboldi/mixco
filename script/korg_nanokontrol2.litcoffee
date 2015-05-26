@@ -19,11 +19,11 @@ using the [NodeJS,
 **require**](http://nodejs.org/api/modules.html#modules_module_require_id)
 function.
 
-    {assert}  = require '../mixco/util'
-    script    = require '../mixco/script'
-    control   = require '../mixco/control'
-    behaviour = require '../mixco/behaviour'
-    value     = require '../mixco/value'
+    {assert}  = require 'mixco/lib/util'
+    script    = require 'mixco/lib/script'
+    control   = require 'mixco/lib/control'
+    behaviour = require 'mixco/lib/behaviour'
+    value     = require 'mixco/lib/value'
 
 Also, lets define these couple of shortcuts to save typing.
 

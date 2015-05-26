@@ -3,10 +3,10 @@
 
 describe 'mixco.behaviour', ->
 
-    util      = require '../../mixco/util'
-    value     = require '../../mixco/value'
-    behaviour = require '../../mixco/behaviour'
-    transform = require '../../mixco/transform'
+    util      = require '../../src/util'
+    value     = require '../../src/value'
+    behaviour = require '../../src/behaviour'
+    transform = require '../../src/transform'
 
     mock = require '../mock'
 

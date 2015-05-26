@@ -30,10 +30,10 @@
 // framework.
 
 var _      = require('underscore')
-var script = require('../mixco/script')
-var c      = require('../mixco/control')
-var b      = require('../mixco/behaviour')
-var v      = require('../mixco/value')
+var script = require('mixco/lib/script')
+var c      = require('mixco/lib/control')
+var b      = require('mixco/lib/behaviour')
+var v      = require('mixco/lib/value')
 
 // The script
 // ----------

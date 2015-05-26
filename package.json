@@ -36,9 +36,14 @@
         "install": "make"
     },
     "files": [
-        "mixco"
+        "lib"
     ],
     "preferGlobal": true,
-    "bin": {},
+    "main": "lib/index.js",
+    "files": ["lib", "bin", "src", "spec", "makefile" ],
+    "bin": {
+        "mixco": "./bin/mixco.js"
+    },
+    "directories":{"doc":"./doc","man":"./man","lib":"./lib","bin":"./bin"},
     "license": "GPL"
 }

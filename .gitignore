@@ -4,3 +4,4 @@ out/
 tmp/
 npm-debug.log
 lib/
+coverage/
