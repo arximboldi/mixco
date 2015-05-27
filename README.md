@@ -166,7 +166,7 @@ Documentation
 License
 -------
 
->  Copyright (C) 2013 Juan Pedro Bolívar Puente
+>  Copyright (C) 2013, 2015 Juan Pedro Bolívar Puente
 >
 >  This program is free software: you can redistribute it and/or
 >  modify it under the terms of the GNU General Public License as
