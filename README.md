@@ -12,6 +12,7 @@ webpage][mixco]. And remember, this is [Free Software][gnu].
   [mixco]: http://sinusoid.es/mixco
 
 [![build status](https://secure.travis-ci.org/arximboldi/mixco.svg)](https://travis-ci.org/arximboldi/mixco)
+[![coverage Status](https://coveralls.io/repos/arximboldi/mixco/badge.svg)](https://coveralls.io/r/arximboldi/mixco)
 
 Features
 --------
