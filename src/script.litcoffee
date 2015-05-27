@@ -81,7 +81,9 @@ name but in lowercase, and it must be registered using the
 `mygreatcontroller.litcoffee`, and this file should contain a line
 like:
 
->    script.register module, MyGreatController
+> ```coffee
+> script.register module, MyGreatController
+> ```
 
 The `module` variable is [defined automatically by *node.js*](
 http://nodejs.org/api/modules.html#modules_the_module_object), you do

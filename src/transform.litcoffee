@@ -43,7 +43,7 @@ value to the value ranges that Mixxx controls expect.  Extend as
 needed. Please make sure to keep it in sync with the official
 [Mixxx controls documentation][mixxxcontrols].
 
-  [mixxxcontrols]: http://www.mixxx.org/wiki/doku.php/mixxxcontrols
+[mixxxcontrols]: http://www.mixxx.org/wiki/doku.php/mixxxcontrols
 
     exports.mappings =
         "beatloop_0.0625_activate":     momentaryT
