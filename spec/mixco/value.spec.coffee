@@ -3,7 +3,7 @@
 
 describe 'mixco.value', ->
 
-    {Value, Reduce, Const, transform} = require '../../src/value'
+    {Value, Reduce, Const, transform} = require '../../lib/value'
 
     describe 'Value', ->
 
