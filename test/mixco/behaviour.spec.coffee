@@ -1,57 +1,60 @@
 # spec.mixco.behaviour
 # ====================
 
+chai = {expect} = require 'chai'
+{spy, stub, match} = require 'sinon'
+chai.use require 'sinon-chai'
+
 describe 'mixco.behaviour', ->
 
-    util      = require '../../lib/util'
-    value     = require '../../lib/value'
-    behaviour = require '../../lib/behaviour'
-    transform = require '../../lib/transform'
+    util      = require '../../src/util'
+    value     = require '../../src/value'
+    behaviour = require '../../src/behaviour'
+    transform = require '../../src/transform'
 
-    mock = require '../mock'
+    mocks = require '../mock'
 
-    mockActor = -> createSpyObj 'actor', [
-        'doSend',
-        'send',
-        'on',
-        'addListener',
-        'removeListener' ]
+    mockActor = -> stub
+        doSend: ->
+        send: ->
+        on: ->
+        addListener: ->
+        removeListener: ->
 
     mockBehaviour = ->
         mocked = new behaviour.Behaviour arguments...
-        spyOn(mocked, 'enable').andCallThrough()
-        spyOn(mocked, 'disable').andCallThrough()
-        spyOn(mocked, 'onMidiEvent').andCallThrough()
+        spy mocked, 'enable'
+        spy mocked, 'disable'
+        spy mocked, 'onMidiEvent'
         mocked
-
 
     describe 'option', ->
 
         option = behaviour.option
 
         it 'has some linear transforms', ->
-            expect(option.invert.transform 32).toBe 95
-            expect(option.spread64.transform 32).toBe -32
+            expect(option.invert.transform 32).to.eq 95
+            expect(option.spread64.transform 32).to.eq -32
 
         it 'has some non-linear transforms', ->
-            expect(option.diff.transform 32, 8).toBe 40
-            expect(option.hercjog.transform 32, 8).toBe 40
+            expect(option.diff.transform 32, 8).to.eq 40
+            expect(option.hercjog.transform 32, 8).to.eq 40
 
         it 'enables soft takeover on input mappings', ->
             beh = behaviour.mapIn "[Test]", "test"
-            beh.script = mock.testScript()
+            beh.script = mocks.testScript()
 
             option.softTakeover.enable beh
             expect(beh.script.mixxx.engine.softTakeover)
-                .toHaveBeenCalledWith "[Test]", "test", true
+                .to.have.been.calledWith "[Test]", "test", true
 
             option.softTakeover.disable beh
             expect(beh.script.mixxx.engine.softTakeover)
-                .toHaveBeenCalledWith "[Test]", "test", false
+                .to.have.been.calledWith "[Test]", "test", false
 
         it 'replaces dashes from option names', ->
-            expect(option.invert.name).toBe 'invert'
-            expect(option.softTakeover.name).toBe 'soft-takeover'
+            expect(option.invert.name).to.eq 'invert'
+            expect(option.softTakeover.name).to.eq 'soft-takeover'
 
 
     describe 'Behaviour', ->
@@ -61,12 +64,12 @@ describe 'mixco.behaviour', ->
             behav = mockBehaviour initial: 32
 
         it 'returns the same MIDI value as normal value', ->
-            expect(behav.value).toBe behav.midiValue
-            expect(behav.value).toBe 32
+            expect(behav.value).to.eq behav.midiValue
+            expect(behav.value).to.eq 32
 
             behav.value = 64
-            expect(behav.value).toBe behav.midiValue
-            expect(behav.value).toBe 64
+            expect(behav.value).to.eq behav.midiValue
+            expect(behav.value).to.eq 64
 
         it 'transforms MIDI input events with given options', ->
             behav.option transform: (x) -> x * 2
@@ -74,12 +77,12 @@ describe 'mixco.behaviour', ->
             behav.enable {}, actor
 
             actor.emit 'event', value: 3
-            expect(behav.onMidiEvent).toHaveBeenCalledWith value: 6
+            expect(behav.onMidiEvent).to.have.been.calledWith value: 6
 
             behav.option transform: (x) -> x - 1
 
             actor.emit 'event', value: 3
-            expect(behav.onMidiEvent).toHaveBeenCalledWith value: 5
+            expect(behav.onMidiEvent).to.have.been.calledWith value: 5
 
         it 'processes MIDI input events with given options', ->
             behav.option process: (ev, b) -> ev.value = ev.value * 2
@@ -87,38 +90,40 @@ describe 'mixco.behaviour', ->
             behav.enable {}, actor
 
             actor.emit 'event', value: 3
-            expect(behav.onMidiEvent).toHaveBeenCalledWith value: 6
+            expect(behav.onMidiEvent).to.have.been.calledWith value: 6
 
             behav.option process: (ev, b) -> ev.value = ev.value - b.midiValue
             actor.emit 'event', value: 3
-            expect(behav.onMidiEvent).toHaveBeenCalledWith value: -26
+            expect(behav.onMidiEvent).to.have.been.calledWith value: -26
 
         it 'transforms can use the previous value', ->
-            opt = createSpyObj 'option', ['transform']
+            opt = stub transform: ->
             behav.option opt
 
             actor = new behaviour.Actor
             behav.enable {}, actor
 
             actor.emit 'event', value: 3
-            expect(opt.transform).toHaveBeenCalledWith 3, 32
+            expect(opt.transform).to.have.been.calledWith 3, 32
 
         it 'options are enabled and disabled', ->
-            opt = createSpyObj 'option', ['enable', 'disable']
+            opt = stub
+                enable: ->
+                disable: ->
             behav.option opt
 
             script = {}
             actor = new behaviour.Actor
             behav.enable script, actor
-            expect(opt.enable).toHaveBeenCalledWith behav
+            expect(opt.enable).to.have.been.calledWith behav
 
             behav.disable script, actor
-            expect(opt.disable).toHaveBeenCalledWith behav
+            expect(opt.disable).to.have.been.calledWith behav
 
         it 'can take options with an option chooser syntax', ->
             behav.options.spread64
             behav.options.softTakeover
-            expect(behav._options).toEqual [
+            expect(behav._options).to.eql [
                 behaviour.option.spread64
                 behaviour.option.softTakeover
             ]
@@ -142,44 +147,44 @@ describe 'mixco.behaviour', ->
         it 'initializes the actor depending on pre-enable value', ->
             output.output.value = 1
             output.enable {}, actor
-            expect(actor.doSend).toHaveBeenCalledWith 'on'
+            expect(actor.doSend).to.have.been.calledWith 'on'
 
         it 'initializes the actor even if it denies output', ->
             actor.send = undefined
             output.output.value = 1
             output.enable {}, actor
-            expect(actor.doSend).toHaveBeenCalledWith 'on'
+            expect(actor.doSend).to.have.been.calledWith 'on'
 
         it 'sends "on" value when value is above or equal minimum', ->
             output.enable {}, actor
             output.output.value = 1
-            expect(actor.send).toHaveBeenCalledWith 'on'
+            expect(actor.send).to.have.been.calledWith 'on'
 
         it 'sends "on" value when value is bellow minimum', ->
             output.enable {}, actor
             output.output.value = 1
             output.output.value = 0
-            expect(actor.send).toHaveBeenCalledWith 'off'
+            expect(actor.send).to.have.been.calledWith 'off'
 
 
     describe 'Transform', ->
 
         it 'can take an initial value as second parameter', ->
             t = behaviour.transform (->), 42
-            expect(t.value).toBe 42
+            expect(t.value).to.eq 42
 
         it 'sets its value and output to the transformed MIDI input', ->
             t = behaviour.transform (v) -> v * 2
 
             t.onMidiEvent value: 3
-            expect(t.value).toBe 6
-            expect(t.output.value).toBe 6
-            expect(t.midiValue).toBe 6
+            expect(t.value).to.eq 6
+            expect(t.output.value).to.eq 6
+            expect(t.midiValue).to.eq 6
 
             t.onMidiEvent value: 6
-            expect(t.value).toBe 12
-            expect(t.output.value).toBe 12
-            expect(t.midiValue).toBe 12
+            expect(t.value).to.eq 12
+            expect(t.output.value).to.eq 12
+            expect(t.midiValue).to.eq 12
 
         it 'can inverse the transform to reconstruct the midi values', ->
             f = (v) -> v * 2
@@ -187,29 +192,29 @@ describe 'mixco.behaviour', ->
             t = behaviour.transform f
 
             t.onMidiEvent value: 3
-            expect(t.value).toBe 6
-            expect(t.midiValue).toBe 3
+            expect(t.value).to.eq 6
+            expect(t.midiValue).to.eq 3
 
         it 'does not set its value when the transform gives a nully value', ->
             t = behaviour.transform (v) -> if v != 42 then v * 2
 
             t.onMidiEvent value: 3
-            expect(t.value).toBe 6
+            expect(t.value).to.eq 6
 
             t.onMidiEvent value: 42
-            expect(t.value).toBe 6
+            expect(t.value).to.eq 6
 
             t.onMidiEvent value: 0
-            expect(t.value).toBe 0
+            expect(t.value).to.eq 0
 
         it 'can take non-linear transforms', ->
             t = behaviour.transform transform.binaryT
 
             t.onMidiEvent value: 3
-            expect(t.value).toBe true
+            expect(t.value).to.be.true
 
             t.onMidiEvent value: 3
-            expect(t.value).toBe false
+            expect(t.value).to.be.false
 
 
     describe 'InMap', ->
@@ -223,25 +228,25 @@ describe 'mixco.behaviour', ->
                 key:    "test"
                 initial: 42
             actor  = mockActor()
-            script = mock.testScript()
+            script = mocks.testScript()
 
         it 'returns the value as midi value when not inversible transform', ->
-            expect(map.value).toBe map.midiValue
-            expect(map.midiValue).toBe 42
+            expect(map.value).to.eq map.midiValue
+            expect(map.midiValue).to.eq 42
 
             map.value = 32
-            expect(map.value).toBe map.midiValue
-            expect(map.midiValue).toBe 32
+            expect(map.value).to.eq map.midiValue
+            expect(map.midiValue).to.eq 32
 
         it 'uses the inverse of the transform to produce back the MIDI values', ->
             map.transform inverse: (x) -> x - 10
 
-            expect(map.value).toBe 42
-            expect(map.midiValue).toBe 32
+            expect(map.value).to.eq 42
+            expect(map.midiValue).to.eq 32
 
             map.value = 32
-            expect(map.value).toBe 32
-            expect(map.midiValue).toBe 22
+            expect(map.value).to.eq 32
+            expect(map.midiValue).to.eq 22
 
 
     describe 'Map', ->
@@ -255,41 +260,41 @@ describe 'mixco.behaviour', ->
             map    = behaviour.map "[Test]", "test"
             map2   = behaviour.map "[Test]", "test", "[Test2]", "test2"
             actor  = mockActor()
-            script = mock.testScript()
+            script = mocks.testScript()
 
         it 'does not listen to the Mixxx control unnecesarily', ->
             actor.send = undefined
             map.enable script, actor
             expect(script.mixxx.engine.connectControl)
-                .not.toHaveBeenCalled()
+                .not.to.have.been.called
 
         it 'connects to the Mixxx control when actor has send', ->
             map.enable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Test]", "test", script.handlerKey()
+                .to.have.been.calledWith "[Test]", "test", script.handlerKey()
 
         it 'connects to output control when different from input', ->
             map2.enable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Test2]", "test2", script.handlerKey()
+                .to.have.been.calledWith "[Test2]", "test2", script.handlerKey()
 
         it 'direct maps output to the right parameter', ->
-            expect(map.directOutMapping()).toEqual {
+            expect(map.directOutMapping()).to.eql {
                 group: "[Test]",  key: "test", minimum: 1 }
-            expect(map2.directOutMapping()).toEqual {
+            expect(map2.directOutMapping()).to.eql {
                  group: "[Test2]", key: "test2", minimum: 1 }
 
         it 'direct maps input to the right parameter', ->
-            expect(map.directInMapping()).toEqual {
+            expect(map.directInMapping()).to.eql {
                 group: "[Test]",  key: "test" }
-            expect(map2.directInMapping()).toEqual {
+            expect(map2.directInMapping()).to.eql {
                 group: "[Test]",  key: "test" }
 
         it 'connects to the Mixxx control when someone is obsrving "value"', ->
             map.on "value", ->
             map.enable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Test]", "test", script.handlerKey()
+                .to.have.been.calledWith "[Test]", "test", script.handlerKey()
 
         it 'initializes the value and output with the current engine status', ->
             script.mixxx.engine.getValue = (group, key) ->
@@ -300,8 +305,8 @@ describe 'mixco.behaviour', ->
                 else
                     null
             map2.enable script, actor
-            expect(map2.value).toBe(1)
-            expect(map2.output.value).toBe(2)
+            expect(map2.value).to.eq(1)
+            expect(map2.output.value).to.eq(2)
 
         it 'sets the values in the engine using the default transform', ->
             xfader = behaviour.map "[Master]", "crossfader"
@@ -309,15 +314,15 @@ describe 'mixco.behaviour', ->
 
             xfader.onMidiEvent value: 63.5
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
+                .to.have.been.calledWith "[Master]", "crossfader", 0.0
 
             xfader.onMidiEvent value: 127
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 1
+                .to.have.been.calledWith "[Master]", "crossfader", 1
 
             xfader.onMidiEvent value: 0
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 1
+                .to.have.been.calledWith "[Master]", "crossfader", 1
 
         it 'sets the values in the engine using custom transformation', ->
             xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
@@ -325,23 +330,23 @@ describe 'mixco.behaviour', ->
 
             xfader.onMidiEvent value: 64
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 64
+                .to.have.been.calledWith "[Master]", "crossfader", 64
 
             xfader.onMidiEvent value: 127
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 127
+                .to.have.been.calledWith "[Master]", "crossfader", 127
 
             xfader.onMidiEvent value: 0
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 0
+                .to.have.been.calledWith "[Master]", "crossfader", 0
 
         it 'does not direct map output when a custom transform is set', ->
             xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
-            expect(xfader.directInMapping()).toBe undefined
+            expect(xfader.directInMapping()).to.eq undefined
 
         it 'does not direct map input when a custom transform is set', ->
             xfader = behaviour.map("[Master]", "crossfader").meter (v) -> v
-            expect(xfader.directOutMapping()).toBe undefined
+            expect(xfader.directOutMapping()).to.eq undefined
 
         it 'does nothing when the transform return null', ->
             xfader = behaviour.map("[Master]", "crossfader").transform (v) ->
@@ -350,11 +355,11 @@ describe 'mixco.behaviour', ->
 
             xfader.onMidiEvent value: 32
             expect(script.mixxx.engine.setValue)
-                .not.toHaveBeenCalled()
+                .not.to.have.been.called
 
             xfader.onMidiEvent value: 64
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 64
+                .to.have.been.calledWith "[Master]", "crossfader", 64
 
         it 'does toggle from previous state when binary transform', ->
             lock = behaviour.map "[Channel1]", "keylock"
@@ -362,11 +367,11 @@ describe 'mixco.behaviour', ->
 
             lock.onMidiEvent value: 32
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Channel1]", "keylock", true
+                .to.have.been.calledWith "[Channel1]", "keylock", true
 
             lock.onMidiEvent value: 32
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Channel1]", "keylock", false
+                .to.have.been.calledWith "[Channel1]", "keylock", false
 
 
     describe 'Chooser', ->
@@ -378,7 +383,7 @@ describe 'mixco.behaviour', ->
         beforeEach ->
             chooser = behaviour.chooser()
             actor   = mockActor()
-            script  = mock.testScript()
+            script  = mocks.testScript()
             engine  = script.mixxx.engine
             chooser.add "[Channel1]", "pfl"
             chooser.add "[Channel2]", "pfl"
@@ -389,80 +394,80 @@ describe 'mixco.behaviour', ->
             chooser.enable script, actor
 
             chooser.activate 0
-            expect(engine.getValue "[Channel1]", "pfl").toBe true
-            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.true
+            expect(engine.getValue "[Channel2]", "pfl").to.be.false
 
             chooser.activate 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
         it "activates the right option, when first activator is enabled", ->
             chooser.activator(0).enable script, actor
             chooser.activate 0
-            expect(engine.getValue "[Channel1]", "pfl").toBe true
-            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.true
+            expect(engine.getValue "[Channel2]", "pfl").to.be.false
 
         it "activates the right option, when second activator is enabled", ->
             chooser.activator(1).enable script, actor
             chooser.activate 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
         it "activators activate when they receive non-zero value", ->
             chooser.activator(0).enable script, actor
             chooser.activator(1).enable script, actor
 
             chooser.activator(1).onMidiEvent value: 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
             chooser.activator(0).onMidiEvent value: 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe true
-            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.true
+            expect(engine.getValue "[Channel2]", "pfl").to.be.false
 
             chooser.activator(1).onMidiEvent value: 0
-            expect(engine.getValue "[Channel1]", "pfl").toBe true
-            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.true
+            expect(engine.getValue "[Channel2]", "pfl").to.be.false
 
         it "toggles the selected option on or off", ->
             chooser.enable script, actor
             chooser.activate 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
             chooser._updateValue() # simulate callback
 
             chooser.onMidiEvent value: 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.false
             chooser._updateValue() # simulate callback
 
             chooser.onMidiEvent value: 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
         it "connects and disconnects from controls", ->
             chooser.enable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Channel1]", "pfl", jasmine.any(String)
+                .to.have.been.calledWith "[Channel1]", "pfl", match.string
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Channel2]", "pfl", jasmine.any(String)
+                .to.have.been.calledWith "[Channel2]", "pfl", match.string
 
             chooser.disable script, actor
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Channel1]", "pfl",
-                    jasmine.any(String), true
+                .to.have.been.calledWith "[Channel1]", "pfl",
+                    match.string, true
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Channel2]", "pfl",
-                    jasmine.any(String), true
+                .to.have.been.calledWith "[Channel2]", "pfl",
+                    match.string, true
 
         it "initialzies its value to true", ->
             engine.setValue "[Channel1]", "pfl", true
             chooser.enable script, actor
-            expect(chooser.value).toBe true
+            expect(chooser.value).to.be.true
 
         it "initialzies its value to false", ->
             chooser.enable script, actor
-            expect(chooser.value).toBe false
+            expect(chooser.value).to.be.false
 
         it "can select with a selector knob", ->
             selector = chooser.selector()
@@ -472,22 +477,22 @@ describe 'mixco.behaviour', ->
             chooser._updateValue()
 
             selector.onMidiEvent value: 32
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
-            expect(engine.getValue "[Channel3]", "pfl").toBe false
-            expect(engine.getValue "[Channel4]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
+            expect(engine.getValue "[Channel3]", "pfl").to.be.false
+            expect(engine.getValue "[Channel4]", "pfl").to.be.false
 
             selector.onMidiEvent value: 80
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe false
-            expect(engine.getValue "[Channel3]", "pfl").toBe true
-            expect(engine.getValue "[Channel4]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.false
+            expect(engine.getValue "[Channel3]", "pfl").to.be.true
+            expect(engine.getValue "[Channel4]", "pfl").to.be.false
 
             selector.onMidiEvent value: 120
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe false
-            expect(engine.getValue "[Channel3]", "pfl").toBe false
-            expect(engine.getValue "[Channel4]", "pfl").toBe true
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.false
+            expect(engine.getValue "[Channel3]", "pfl").to.be.false
+            expect(engine.getValue "[Channel4]", "pfl").to.be.true
 
         it "selector value is transformed back to MIDI", ->
             selector = chooser.selector()
@@ -498,19 +503,19 @@ describe 'mixco.behaviour', ->
 
             chooser.select 0
             chooser._updateValue()
-            expect(selector.midiValue).toBe 0
+            expect(selector.midiValue).to.eq 0
 
             chooser.select 1
             chooser._updateValue()
-            expect(selector.midiValue).toBe 32
+            expect(selector.midiValue).to.eq 32
 
             chooser.select 2
             chooser._updateValue()
-            expect(selector.midiValue).toBe 64
+            expect(selector.midiValue).to.eq 64
 
             chooser.select 3
             chooser._updateValue()
-            expect(selector.midiValue).toBe 96
+            expect(selector.midiValue).to.eq 96
 
         it "selector value keeps MIDI offset", ->
             selector = chooser.selector()
@@ -520,26 +525,26 @@ describe 'mixco.behaviour', ->
             chooser._updateValue()
 
             selector.onMidiEvent value: 36
-            expect(selector.midiValue).toBe 36
+            expect(selector.midiValue).to.eq 36
 
             selector._updateValue 1
-            expect(selector.midiValue).toBe 36
+            expect(selector.midiValue).to.eq 36
 
         it "can select before or after being enabled", ->
             chooser.select 2
             chooser.enable script, actor
 
             chooser.onMidiEvent value: 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe false
-            expect(engine.getValue "[Channel3]", "pfl").toBe true
-            expect(engine.getValue "[Channel4]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.false
+            expect(engine.getValue "[Channel3]", "pfl").to.be.true
+            expect(engine.getValue "[Channel4]", "pfl").to.be.false
 
             chooser.select 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe false
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
-            expect(engine.getValue "[Channel3]", "pfl").toBe false
-            expect(engine.getValue "[Channel4]", "pfl").toBe false
+            expect(engine.getValue "[Channel1]", "pfl").to.be.false
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
+            expect(engine.getValue "[Channel3]", "pfl").to.be.false
+            expect(engine.getValue "[Channel4]", "pfl").to.be.false
 
         it "assumes engine keeps exclusivity with auto-exclusive", ->
             chooser = behaviour.chooser autoExclusive: true
@@ -548,47 +553,46 @@ describe 'mixco.behaviour', ->
             chooser.enable script, actor
 
             chooser.activate 1
-            expect(engine.getValue "[Channel1]", "pfl").toBe 0
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel1]", "pfl").to.eq 0
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
             chooser.activate 0
-            expect(engine.getValue "[Channel1]", "pfl").toBe true
-            expect(engine.getValue "[Channel2]", "pfl").toBe true
+            expect(engine.getValue "[Channel1]", "pfl").to.be.true
+            expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
         it "calls onDisable to materialize disabling", ->
-            spy = createSpyObj "disabler", ['onDisable']
-            chooser = behaviour.chooser onDisable: spy.onDisable
+            spier = stub onDisable: ->
+            chooser = behaviour.chooser onDisable: spier.onDisable
             chooser.add "[Channel1]", "pfl"
             chooser.add "[Channel2]", "pfl"
             chooser.enable script, actor
 
             chooser.onMidiEvent value: 1
-            expect(spy.onDisable).not.toHaveBeenCalled()
+            expect(spier.onDisable).not.to.have.been.called
 
             chooser.value = true
             chooser.onMidiEvent value: 1
-            expect(spy.onDisable).toHaveBeenCalled()
+            expect(spier.onDisable).to.have.been.called
 
         it "reads value from optional second key", ->
-            spy = createSpyObj "disabler", ['onDisable']
             chooser = behaviour.chooser()
             chooser.add "[Channel1]", "pfl", "listen"
             chooser.add "[Channel2]", "pfl", "listen"
             chooser.enable script, actor
 
             expect(script.mixxx.engine.connectControl)
-                .not.toHaveBeenCalledWith "[Channel1]", "pfl", jasmine.any(String)
+                .not.to.have.been.calledWith "[Channel1]", "pfl", match.string
             expect(script.mixxx.engine.connectControl)
-                .toHaveBeenCalledWith "[Channel1]", "listen", jasmine.any(String)
+                .to.have.been.calledWith "[Channel1]", "listen", match.string
 
             engine.setValue "[Channel1]", "pfl", true
             chooser._updateValue()
-            expect(chooser.value).toBe false
+            expect(chooser.value).to.be.false
 
             engine.setValue "[Channel1]", "pfl", false
             engine.setValue "[Channel1]", "listen", true
             chooser._updateValue()
-            expect(chooser.value).toBe true
+            expect(chooser.value).to.be.true
 
 
     describe 'When', ->
@@ -603,35 +607,35 @@ describe 'mixco.behaviour', ->
             condition = value.value initial: false
             wrapped   = mockBehaviour()
             actor     = mockActor()
-            script    = mock.testScript()
+            script    = mocks.testScript()
             when_     = behaviour.when condition, wrapped
 
         it "does nothing when enabled and condition not satisifed", ->
             when_.enable script, actor
             expect(wrapped.enable).
-                not.toHaveBeenCalled()
+                not.to.have.been.called
 
         it "enables wrapped when condition is satisfied", ->
             condition.value = true
             when_.enable script, actor
             expect(wrapped.enable).
-                toHaveBeenCalledWith script, actor
+                to.have.been.calledWith script, actor
 
         it "disables wrapped when it is disabled", ->
             condition.value = true
             when_.enable script, actor
             when_.disable script, actor
             expect(wrapped.disable).
-                toHaveBeenCalledWith script, actor
+                to.have.been.calledWith script, actor
 
         it "enables or disables wrapped when condition changes", ->
             when_.enable script, actor
             condition.value = true
             expect(wrapped.enable).
-                toHaveBeenCalledWith script, actor
+                to.have.been.calledWith script, actor
             condition.value = false
             expect(wrapped.disable).
-                toHaveBeenCalledWith script, actor
+                to.have.been.calledWith script, actor
 
         it "generates a new negated version on 'else", ->
             wrapped2 = mockBehaviour()
@@ -639,10 +643,10 @@ describe 'mixco.behaviour', ->
             condition.value = true
             else_.enable script, actor
             expect(wrapped2.enable).
-                not.toHaveBeenCalledWith script, actor
+                not.to.have.been.calledWith script, actor
             condition.value = false
             expect(wrapped2.enable).
-                toHaveBeenCalledWith script, actor
+                to.have.been.calledWith script, actor
 
         it "else-when chains enable one branch exclusively", ->
             condition2 = value.value false
@@ -656,45 +660,45 @@ describe 'mixco.behaviour', ->
             elseWhen_.enable script, actor
             else_.enable script, actor
 
-            expect(wrapped.actor).not.toBeDefined()
-            expect(wrapped2.actor).not.toBeDefined()
-            expect(wrapped3.actor).toBeDefined()
+            expect(wrapped.actor).not.to.exist
+            expect(wrapped2.actor).not.to.exist
+            expect(wrapped3.actor).to.exist
 
             condition.value = true
-            expect(wrapped.actor).toBeDefined()
-            expect(wrapped2.actor).not.toBeDefined()
-            expect(wrapped3.actor).not.toBeDefined()
+            expect(wrapped.actor).to.exist
+            expect(wrapped2.actor).not.to.exist
+            expect(wrapped3.actor).not.to.exist
 
             condition2.value = true
-            expect(wrapped.actor).toBeDefined()
-            expect(wrapped2.actor).not.toBeDefined()
-            expect(wrapped3.actor).not.toBeDefined()
+            expect(wrapped.actor).to.exist
+            expect(wrapped2.actor).not.to.exist
+            expect(wrapped3.actor).not.to.exist
 
             condition.value = false
-            expect(wrapped.actor).not.toBeDefined()
-            expect(wrapped2.actor).toBeDefined()
-            expect(wrapped3.actor).not.toBeDefined()
+            expect(wrapped.actor).not.to.exist
+            expect(wrapped2.actor).to.exist
+            expect(wrapped3.actor).not.to.exist
 
             condition2.value = false
-            expect(wrapped.actor).not.toBeDefined()
-            expect(wrapped2.actor).not.toBeDefined()
-            expect(wrapped3.actor).toBeDefined()
+            expect(wrapped.actor).not.to.exist
+            expect(wrapped2.actor).not.to.exist
+            expect(wrapped3.actor).to.exist
 
         it "exposes wether it meets the condition on its 'value'", ->
             when_.enable script, actor
             condition.value = true
-            expect(when_.value).toBe true
+            expect(when_.value).to.be.true
             condition.value = false
-            expect(when_.value).toBe false
+            expect(when_.value).to.be.false
 
         it "propagates options to the wrapped behaviour", ->
             when_.option behaviour.option.softTakeover
-            expect(wrapped._options).toEqual [
+            expect(wrapped._options).to.eql [
                 behaviour.option.softTakeover
             ]
 
             when_.option behaviour.option.invert
-            expect(wrapped._options).toEqual [
+            expect(wrapped._options).to.eql [
                 behaviour.option.softTakeover
                 behaviour.option.invert
             ]
@@ -712,10 +716,10 @@ describe 'mixco.behaviour', ->
             leftPunchIn  = behaviour.punchIn 0.5
             rightPunchIn = behaviour.punchIn -0.5
             actor        = mockActor()
-            script       = mock.testScript()
+            script       = mocks.testScript()
             script.mixxx.engine.getValue = (group, control) ->
-                expect(group).toBe "[Master]"
-                expect(control).toBe "crossfader"
+                expect(group).to.eq "[Master]"
+                expect(control).to.eq "crossfader"
                 xfader
             leftPunchIn.enable script, actor
             rightPunchIn.enable script, actor
@@ -723,32 +727,32 @@ describe 'mixco.behaviour', ->
         it "does nothing when the crossfader is to the requested side", ->
             xfader = -0.75
             leftPunchIn.onMidiEvent value: 1
-            expect(script.mixxx.engine.setValue).not.toHaveBeenCalled()
+            expect(script.mixxx.engine.setValue).not.to.have.been.called
             leftPunchIn.onMidiEvent value: 0
-            expect(script.mixxx.engine.setValue).not.toHaveBeenCalled()
+            expect(script.mixxx.engine.setValue).not.to.have.been.called
 
             xfader = 0.75
             rightPunchIn.onMidiEvent value: 1
-            expect(script.mixxx.engine.setValue).not.toHaveBeenCalled()
+            expect(script.mixxx.engine.setValue).not.to.have.been.called
             rightPunchIn.onMidiEvent value: 0
-            expect(script.mixxx.engine.setValue).not.toHaveBeenCalled()
+            expect(script.mixxx.engine.setValue).not.to.have.been.called
 
         it "sets the crossfader to the middle and restores otherwise", ->
             xfader = 0.75
             leftPunchIn.onMidiEvent value: 1
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
+                .to.have.been.calledWith "[Master]", "crossfader", 0.0
             leftPunchIn.onMidiEvent value: 0
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 0.75
+                .to.have.been.calledWith "[Master]", "crossfader", 0.75
 
             xfader = -0.75
             rightPunchIn.onMidiEvent value: 1
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", 0.0
+                .to.have.been.calledWith "[Master]", "crossfader", 0.0
             rightPunchIn.onMidiEvent value: 0
             expect(script.mixxx.engine.setValue)
-                .toHaveBeenCalledWith "[Master]", "crossfader", -0.75
+                .to.have.been.calledWith "[Master]", "crossfader", -0.75
 
 
     describe 'scratchEnable', ->
@@ -759,27 +763,27 @@ describe 'mixco.behaviour', ->
 
         beforeEach ->
             actor   = mockActor()
-            script  = mock.testScript()
+            script  = mocks.testScript()
             scratch = behaviour.scratchEnable 1, 32, 33, 1, 0.4, false
             scratch.enable script, actor
 
         it 'enables scratch on button press', ->
             expect(script.mixxx.engine.scratchEnable)
-                .not.toHaveBeenCalled()
+                .not.to.have.been.called
 
             scratch.onMidiEvent value: 1
             expect(script.mixxx.engine.scratchEnable)
-                .toHaveBeenCalledWith 1, 32, 33, 1, 0.4, false
+                .to.have.been.calledWith 1, 32, 33, 1, 0.4, false
 
         it 'disables scratch on button release', ->
             expect(script.mixxx.engine.scratchDisable)
-                .not.toHaveBeenCalled()
+                .not.to.have.been.called
 
             scratch.onMidiEvent value: 0
             expect(script.mixxx.engine.scratchEnable)
-                .not.toHaveBeenCalled()
+                .not.to.have.been.called
             expect(script.mixxx.engine.scratchDisable)
-                .toHaveBeenCalledWith 1, false
+                .to.have.been.calledWith 1, false
 
 
     describe 'scratchTick', ->
@@ -790,21 +794,21 @@ describe 'mixco.behaviour', ->
 
         beforeEach ->
             actor   = mockActor()
-            script  = mock.testScript()
+            script  = mocks.testScript()
             scratch = behaviour.scratchTick 1, (v) -> v / 2
             scratch.enable script, actor
 
         it 'ticks the given deck scratch with the current transform', ->
             expect(script.mixxx.engine.scratchTick)
-                .not.toHaveBeenCalled()
+                .not.to.have.been.called
 
             scratch.onMidiEvent value: 64
             expect(script.mixxx.engine.scratchTick)
-                .toHaveBeenCalledWith 1, 32
+                .to.have.been.calledWith 1, 32
 
             scratch.onMidiEvent value: 32
             expect(script.mixxx.engine.scratchTick)
-                .toHaveBeenCalledWith 1, 16
+                .to.have.been.calledWith 1, 16
 
 # License
 # -------

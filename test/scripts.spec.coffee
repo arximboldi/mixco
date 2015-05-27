@@ -5,12 +5,14 @@
 # every available script in the 'script' folder at the root of the
 # Mixco distribution.
 
+{expect} = require 'chai'
+
 describe 'scripts', ->
 
     fs       = require 'fs'
     path     = require 'path'
     mock     = require './mock'
-    {assert} = require '../lib/util'
+    {assert} = require '../src/util'
 
     # We should let exception get all the way down to the test
     # framework so trivial errors are detected. The **unrequire**
@@ -34,10 +36,10 @@ describe 'scripts', ->
 
     do monkeypatchCatching = ->
         unrequire 'heterarchy'
-        forEveryModuleInDir '../lib', '../script', (name, dir) ->
+        forEveryModuleInDir '../src', '../script', (name, dir) ->
             unrequire path.join(dir, name), true
-        require '../lib/util'
-        module = require.cache[require.resolve '../lib/util']
+        require '../src/util'
+        module = require.cache[require.resolve '../src/util']
         module.exports.catching = (f) -> f
 
     # Tests
@@ -62,13 +64,13 @@ describe 'scripts', ->
 
             it "generates configuration without undefined values", ->
                 expect(script.config())
-                    .not.toMatch "undefined"
+                    .not.to.match /undefined/
                 expect(script.config())
-                    .not.toMatch "NaN"
+                    .not.to.match /NaN/
 
             it "is not empty", ->
                 expect(script.controls.length)
-                    .not.toBe 0
+                    .not.to.equal 0
 
             it "initializes and shutsdown without launching exceptions", ->
                 script.init()
@@ -87,7 +89,7 @@ describe 'scripts', ->
             # buttons when we do not intend to.
 
             it "does not break when receiving MIDI", ->
-                control  = require '../lib/control'
+                control  = require '../src/control'
                 sendValues = (values, order=1) ->
                     for c in script.controls by order
                         if c.needsHandler?()

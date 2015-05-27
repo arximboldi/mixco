@@ -1,12 +1,16 @@
 # spec.mixco.behaviour
 # ====================
 
+chai = {expect} = require 'chai'
+{spy, mock} = require 'sinon'
+chai.use require 'sinon-chai'
+
 describe 'mixco.control', ->
 
     {union} = require 'underscore'
-    mock = require '../mock'
-    c = {MIDI_CC, Control, InControl, OutControl} = require '../../lib/control'
-    {Behaviour} = behaviour = require '../../lib/behaviour'
+    mocks = require '../mock'
+    c = {MIDI_CC, Control, InControl, OutControl} = require '../../src/control'
+    {Behaviour} = behaviour = require '../../src/behaviour'
 
     describe 'Control', ->
 
@@ -16,24 +20,24 @@ describe 'mixco.control', ->
             control = new Control
 
         it "exposes script when initialized", ->
-            script = new mock.TestScript "script"
+            script = new mocks.TestScript "script"
 
             control.init script
-            expect(control.script).toBe(script)
+            expect(control.script).to.eq script
 
             control.shutdown script
-            expect(control.script).not.toBeDefined()
+            expect(control.script).not.to.exist
 
         it "converts number or pair in constructor to CC midi id", ->
             control = new Control 32
-            expect(control.ids.length).toBe(1)
+            expect(control.ids.length).to.eq 1
             {message, midino, channel} = control.ids[0]
-            expect([message, midino, channel]).toEqual [MIDI_CC, 32, 0]
+            expect([message, midino, channel]).to.eql [MIDI_CC, 32, 0]
 
             control = new Control 64, 8
-            expect(control.ids.length).toBe(1)
+            expect(control.ids.length).to.eq 1
             {message, midino, channel} = control.ids[0]
-            expect([message, midino, channel]).toEqual [MIDI_CC, 64, 8]
+            expect([message, midino, channel]).to.eql [MIDI_CC, 64, 8]
 
 
     describe 'InControl', ->
@@ -47,13 +51,13 @@ describe 'mixco.control', ->
             beh1 = new Behaviour
             control.does beh1
             control.option behaviour.option.invert
-            expect(beh1._options).toEqual [behaviour.option.invert]
+            expect(beh1._options).to.eql [behaviour.option.invert]
 
         it "propagates options to its new behaviours", ->
             beh1 = new Behaviour
             control.option behaviour.option.invert
             control.does beh1
-            expect(beh1._options).toEqual [behaviour.option.invert]
+            expect(beh1._options).to.eql [behaviour.option.invert]
 
         it "propagates options to its conditional behaviours", ->
             beh1 = new Behaviour
@@ -62,13 +66,13 @@ describe 'mixco.control', ->
             control.option behaviour.option.invert
 
             control.when new Behaviour, beh1
-            expect(beh1._options).toEqual [behaviour.option.invert]
+            expect(beh1._options).to.eql [behaviour.option.invert]
 
             control.else.when new Behaviour, beh2
-            expect(beh2._options).toEqual [behaviour.option.invert]
+            expect(beh2._options).to.eql [behaviour.option.invert]
 
             control.else beh3
-            expect(beh3._options).toEqual [behaviour.option.invert]
+            expect(beh3._options).to.eql [behaviour.option.invert]
 
         it "configures the options of its behaviour when it can", ->
             beh1 = new Behaviour
@@ -80,7 +84,7 @@ describe 'mixco.control', ->
             control.does beh1
 
             expect(control.configInputs 0)
-                .toMatch ///
+                .to.match ///
                     \s*<options>
                     \s*<invert/>
                     \s*<soft-takeover/>
@@ -93,8 +97,8 @@ describe 'mixco.control', ->
             beh1.option behaviour.option.softTakeover
             control.does beh1
 
-            expect(control.configInputs 0, mock.testScript())
-                .toMatch ///
+            expect(control.configInputs 0, mocks.testScript())
+                .to.match ///
                     \s*<options>
                     \s*<script-binding/>
                     \s*</options>
@@ -113,8 +117,8 @@ describe 'mixco.control', ->
             control.does beh1
             control.does beh2
 
-            expect(control.configInputs 0, mock.testScript())
-                .toMatch ///
+            expect(control.configInputs 0, mocks.testScript())
+                .to.match ///
                     \s*<options>
                     \s*<script-binding/>
                     \s*</options>
@@ -127,8 +131,8 @@ describe 'mixco.control', ->
                 key: "crossfader"
             control.does beh1.option {}
 
-            expect(control.configInputs 0, mock.testScript())
-                .toMatch ///
+            expect(control.configInputs 0, mocks.testScript())
+                .to.match ///
                     \s*<options>
                     \s*<script-binding/>
                     \s*</options>
@@ -141,8 +145,8 @@ describe 'mixco.control', ->
                 key: "crossfader"
             control.does beh1
 
-            expect(control.configInputs 0, mock.testScript())
-                .toMatch ///
+            expect(control.configInputs 0, mocks.testScript())
+                .to.match ///
                     \s*<options>
                     \s*<normal/>
                     \s*</options>
@@ -160,13 +164,13 @@ describe 'mixco.control', ->
                 minimum: 1
                 maximum: 2
             config = control.configOutputs 0
-            expect(config).toContain("<minimum>1</minimum>")
-            expect(config).toContain("<maximum>2</maximum>")
+            expect(config).to.contain("<minimum>1</minimum>")
+            expect(config).to.contain("<maximum>2</maximum>")
 
             behave.directOutMapping = -> {}
             config = control.configOutputs 0
-            expect(config).not.toContain("<minimum>")
-            expect(config).not.toContain("<maximum>")
+            expect(config).not.to.contain("<minimum>")
+            expect(config).not.to.contain("<maximum>")
 
          it "configures an output for every midi id that is not a note off", ->
              control = new OutControl union c.ccIds(0x42), c.noteIds(0x33)
@@ -175,47 +179,47 @@ describe 'mixco.control', ->
 
              behave.directOutMapping = -> {}
              config = control.configOutputs 0
-             expect(config).toMatch ///
+             expect(config).to.match ///
                      \s*<status>0xb0</status>
                      \s*<midino>0x42</midino>
                  ///
-             expect(config).toMatch ///
+             expect(config).to.match ///
                      \s*<status>0x90</status>
                      \s*<midino>0x33</midino>
                  ///
-             expect(config).not.toMatch ///
+             expect(config).not.to.match ///
                      \s*<status>0x80</status>
                      \s*<midino>0x33</midino>
                  ///
 
         it "turns off completely the controls on shut down", ->
-            script = new mock.TestScript "script"
+            script = new mocks.TestScript "script"
             control = new OutControl
-            spyOn(control, 'doSend')
+            spy(control, 'doSend')
 
             control.init script
-            expect(control.doSend).not.toHaveBeenCalledWith 'disable'
+            expect(control.doSend).not.to.have.been.calledWith 'disable'
             control.shutdown script
-            expect(control.doSend).toHaveBeenCalledWith 'disable'
+            expect(control.doSend).to.have.been.calledWith 'disable'
 
         it "sends midi to all outputs that are not a note off", ->
-            script = new mock.TestScript "script"
+            script = new mocks.TestScript "script"
             control = new OutControl union c.ccIds(0x42), c.noteIds(0x33)
 
             control.init script
             control.doSend 'on'
 
             expect(script.mixxx.midi.sendShortMsg)
-                .toHaveBeenCalledWith control.ids[0].status(),
+                .to.have.been.calledWith control.ids[0].status(),
                                       control.ids[0].midino,
                                       0x7f
             expect(script.mixxx.midi.sendShortMsg)
-                .toHaveBeenCalledWith control.ids[1].status(),
+                .to.have.been.calledWith control.ids[1].status(),
                                       control.ids[1].midino,
                                       0x7f
             expect(script.mixxx.midi.sendShortMsg)
                 .not
-                .toHaveBeenCalledWith control.ids[2].status(),
+                .to.have.been.calledWith control.ids[2].status(),
                                       control.ids[2].midino,
                                       0x7f
 

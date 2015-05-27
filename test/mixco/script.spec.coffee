@@ -1,11 +1,15 @@
 # spec.mixco.value
 # ================
 
+chai = {expect} = require 'chai'
+{stub} = require 'sinon'
+chai.use require 'sinon-chai'
+
 describe 'mixco.script', ->
 
     {isinstance} = require 'heterarchy'
-    {Script, register} = require '../../lib/script'
-    control = require '../../lib/control'
+    {Script, register} = require '../../src/script'
+    control = require '../../src/control'
 
     class TestScript extends Script
 
@@ -18,12 +22,12 @@ describe 'mixco.script', ->
 
         it 'configures controller id to be de script name', ->
             expect(script.config())
-                .toMatch "<controller id=\"testscript\">[^$]*</controller>"
+                .to.match /<controller id=\"testscript\">[^$]*<\/controller>/
 
         it 'can generate configuration with partial metadata', ->
             delete script.info.wiki
             expect(script.config())
-                .not.toContain "undefined"
+                .not.to.contain "undefined"
 
     describe 'register', ->
 
@@ -31,38 +35,42 @@ describe 'mixco.script', ->
             testModule = exports: {}
             register testModule, TestScript
             expect(isinstance testModule.exports.testscript, TestScript)
-                .toBe true
+                .to.be.true
 
         it 'can generate a script type from a definition', ->
-            spy = createSpyObj 'scriptSpy', [
-                'constructor', 'preinit', 'init', 'shutdown', 'postshutdown' ]
+            spier = stub
+                constructor: ->
+                preinit: ->
+                init: ->
+                shutdown: ->
+                postshutdown: ->
             testModule = exports: {}
 
             register testModule,
                 name: 'awesome_script'
-                constructor: -> spy.constructor()
+                constructor: -> spier.constructor()
                 preinit: ->
-                    spy.preinit()
-                    expect(@_isInit).not.toBeDefined()
-                init: -> spy.init()
+                    spier.preinit()
+                    expect(@_isInit).not.to.exist
+                init: -> spier.init()
                 postshutdown: ->
-                    spy.postshutdown()
-                    expect(@_isInit).not.toBeDefined()
-                shutdown: -> spy.shutdown()
+                    spier.postshutdown()
+                    expect(@_isInit).not.to.exist
+                shutdown: -> spier.shutdown()
                 info: author: 'Jimmy Jazz'
 
             script = testModule.exports.awesome_script
-            expect(script.name).toBe 'awesome_script'
-            expect(script.info.author).toBe 'Jimmy Jazz'
-            expect(spy.constructor).toHaveBeenCalled()
+            expect(script.name).to.be.eq 'awesome_script'
+            expect(script.info.author).to.be.eq 'Jimmy Jazz'
+            expect(spier.constructor).to.have.been.called
 
             script.init()
-            expect(spy.preinit).toHaveBeenCalled()
-            expect(spy.init).toHaveBeenCalled()
+            expect(spier.preinit).to.have.been.called
+            expect(spier.init).to.have.been.called
 
             script.shutdown()
-            expect(spy.shutdown).toHaveBeenCalled()
-            expect(spy.postshutdown).toHaveBeenCalled()
+            expect(spier.shutdown).to.have.been.called
+            expect(spier.postshutdown).to.have.been.called
 
         it 'controls created during construction are registered autoamtically', ->
             testModule = exports: {}
@@ -75,9 +83,9 @@ describe 'mixco.script', ->
                     expectedControls.push control.ledButton()
 
             expect(expectedControls.length)
-                .toBe 2
+                .to.be.eq 2
             expect(testModule.exports.some_script.controls)
-                .toEqual expectedControls
+                .to.eql expectedControls
 
 # License
 # -------

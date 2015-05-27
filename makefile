@@ -13,7 +13,7 @@ NODEJS     = node
 COFFEE     = $(NODE_BIN)/coffee
 BROWSERIFY = $(NODE_BIN)/browserify
 DOCCO      = $(NODE_BIN)/docco
-JASMINE    = $(NODE_BIN)/jasmine-node
+MOCHA      = $(NODE_BIN)/_mocha
 ISTANBUL   = $(NODE_BIN)/istanbul
 
 SCRIPTS    = \
@@ -61,6 +61,7 @@ doc: $(DOCS)
 	cp -r ./pic ./doc/
 
 .SECONDARY:
+.PHONY: test
 
 lib/%.js: src/%.litcoffee
 	@mkdir -p $(@D)
@@ -124,10 +125,14 @@ clean:
 	find . -name "*~" -exec rm -f {} \;
 
 test:
-	NODE_PATH="$(NODE_PATH):.." $(JASMINE) spec --verbose --coffee
+	$(MOCHA) \
+		--recursive --compilers coffee:coffee-script/register
 
 test-coverage:
-	NODE_PATH="$(NODE_PATH):.." $(ISTANBUL) cover --root ./lib $(JASMINE) spec -- --verbose --coffee
+	$(ISTANBUL) cover $(MOCHA) -- \
+		--recursive --compilers coffee:coffee-script/register \
+		--require coffee-coverage/register-istanbul
+	$(ISTANBUL) report text lcov
 
 upload-doc: doc
 	ncftpput -R -m -u u48595320 sinusoid.es /mixco doc/*
