@@ -10,7 +10,7 @@ describe 'scripts', ->
     fs       = require 'fs'
     path     = require 'path'
     mock     = require './mock'
-    {assert} = require '../mixco/util'
+    {assert} = require '../lib/util'
 
     # We should let exception get all the way down to the test
     # framework so trivial errors are detected. The **unrequire**
@@ -34,10 +34,10 @@ describe 'scripts', ->
 
     do monkeypatchCatching = ->
         unrequire 'heterarchy'
-        forEveryModuleInDir '../mixco', '../script', (name, dir) ->
+        forEveryModuleInDir '../lib', '../script', (name, dir) ->
             unrequire path.join(dir, name), true
-        require '../mixco/util'
-        module = require.cache[require.resolve '../mixco/util']
+        require '../lib/util'
+        module = require.cache[require.resolve '../lib/util']
         module.exports.catching = (f) -> f
 
     # Tests
@@ -87,7 +87,7 @@ describe 'scripts', ->
             # buttons when we do not intend to.
 
             it "does not break when receiving MIDI", ->
-                control  = require '../mixco/control'
+                control  = require '../lib/control'
                 sendValues = (values, order=1) ->
                     for c in script.controls by order
                         if c.needsHandler?()

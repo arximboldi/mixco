@@ -5,8 +5,8 @@ describe 'mixco.control', ->
 
     {union} = require 'underscore'
     mock = require '../mock'
-    c = {MIDI_CC, Control, InControl, OutControl} = require '../../mixco/control'
-    {Behaviour} = behaviour = require '../../mixco/behaviour'
+    c = {MIDI_CC, Control, InControl, OutControl} = require '../../lib/control'
+    {Behaviour} = behaviour = require '../../lib/behaviour'
 
     describe 'Control', ->
 

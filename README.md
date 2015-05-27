@@ -12,6 +12,7 @@ webpage][mixco]. And remember, this is [Free Software][gnu].
   [mixco]: http://sinusoid.es/mixco
 
 [![build status](https://secure.travis-ci.org/arximboldi/mixco.svg)](https://travis-ci.org/arximboldi/mixco)
+[![coverage Status](https://coveralls.io/repos/arximboldi/mixco/badge.svg)](https://coveralls.io/r/arximboldi/mixco)
 
 Features
 --------
@@ -147,12 +148,12 @@ Documentation
   [script.maudio_xponent]: script/maudio_xponent.html
   [script.novation_twitch]: script/novation_twitch.html
 
-  [mixco.behaviour]: mixco/behaviour.html
-  [mixco.control]: mixco/control.html
-  [mixco.script]: mixco/script.html
-  [mixco.transform]: mixco/transform.html
-  [mixco.util]: mixco/util.html
-  [mixco.value]: mixco/value.html
+  [mixco.behaviour]: src/behaviour.html
+  [mixco.control]: src/control.html
+  [mixco.script]: src/script.html
+  [mixco.transform]: src/transform.html
+  [mixco.util]: src/util.html
+  [mixco.value]: src/value.html
 
   [spec.mixco.behaviour]: spec/mixco/behaviour.spec.html
   [spec.mixco.control]: spec/mixco/control.spec.html

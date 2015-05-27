@@ -3,7 +3,7 @@
 
 describe 'mixco.value', ->
 
-    {Value, Reduce, Const, transform} = require '../../mixco/value'
+    {Value, Reduce, Const, transform} = require '../../lib/value'
 
     describe 'Value', ->
 
@@ -59,7 +59,7 @@ describe 'mixco.value', ->
 # License
 # -------
 #
-# >  Copyright (C) 2013 Juan Pedro Bolívar Puente
+# >  Copyright (C) 2013, 2015 Juan Pedro Bolívar Puente
 # >
 # >  This program is free software: you can redistribute it and/or
 # >  modify it under the terms of the GNU General Public License as

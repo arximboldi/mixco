@@ -29,16 +29,24 @@
     },
     "devDependencies": {
         "jasmine-node": ">=1.0.26",
-        "docco": ">=0.6"
+        "docco": ">=0.6",
+        "istanbul": "0.3.5",
+        "coveralls": "2.10.0"
     },
     "scripts": {
         "test": "make test",
+        "test-coverage": "make test-coverage",
         "install": "make"
     },
     "files": [
-        "mixco"
+        "lib"
     ],
     "preferGlobal": true,
-    "bin": {},
+    "main": "lib/index.js",
+    "files": ["lib", "bin", "src", "spec", "makefile" ],
+    "bin": {
+        "mixco": "./bin/mixco.js"
+    },
+    "directories":{"doc":"./doc","man":"./man","lib":"./lib","bin":"./bin"},
     "license": "GPL"
 }

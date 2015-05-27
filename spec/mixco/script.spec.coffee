@@ -4,8 +4,8 @@
 describe 'mixco.script', ->
 
     {isinstance} = require 'heterarchy'
-    {Script, register} = require '../../mixco/script'
-    control = require '../../mixco/control'
+    {Script, register} = require '../../lib/script'
+    control = require '../../lib/control'
 
     class TestScript extends Script
 

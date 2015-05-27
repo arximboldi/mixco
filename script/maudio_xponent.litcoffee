@@ -8,12 +8,12 @@ functionallity of the controls.
 
   ![Xponent Layout](../pic/maudio_xponent.png)
 
-    {assert}  = require '../mixco/util'
-    script    = require '../mixco/script'
+    {assert}  = require 'mixco/lib/util'
+    script    = require 'mixco/lib/script'
 
-    c = require '../mixco/control'
-    b = require '../mixco/behaviour'
-    v = require '../mixco/value'
+    c = require 'mixco/lib/control'
+    b = require 'mixco/lib/behaviour'
+    v = require 'mixco/lib/value'
 
     ledButtonFixed = ->
         c.ledButton(arguments...).option
