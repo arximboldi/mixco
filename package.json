@@ -1,7 +1,7 @@
 {
-  "author": "Juan Pedro Bolivar Puente",
   "name": "mixco",
-  "description": "Mixco is a framework for creating hardware controller scripts for the amazing Mixxx DJ software using Literate CoffeeScript",
+  "description": "Mixco is a framework for making DJ controller scripts for Mixxx",
+  "author": "Juan Pedro Bolivar Puente <raskolnikov@gnu.org>",
   "contributors": [
     {
       "name": "Juan Pedro Bolivar Puente",
@@ -22,6 +22,7 @@
     "node": ">=0.10"
   },
   "dependencies": {
+    "argp": "^1.0.4",
     "browserify": ">=10.1.3",
     "coffee-script": "latest",
     "heterarchy": ">=1.0.3",
