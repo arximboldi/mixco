@@ -82,18 +82,38 @@ tmp/%.js: script/%.js
 	@mkdir -p $(@D)
 	cp -f $< $@
 
-out/%.js: tmp/%.js $(FRAMEWORK)
+out/%.js: script/%.js
 	@mkdir -p $(@D)
-	$(BROWSERIFY) -r ./$< $< > $@
-	echo ";$*=require('./$<').$*" >> $@
+	@mkdir -p tmp
+	echo "require('../$<')" >> tmp/$*.entry.js
+	$(BROWSERIFY) \
+		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
+		-r "./$<:$*" tmp/$*.entry.js -o $@
+	echo ";$*=require('$*').$*" >> $@
+out/%.js: script/%.litcoffee
+	@mkdir -p $(@D)
+	@mkdir -p tmp
+	echo "require('../$<')" >> tmp/$*.entry.js
+	$(BROWSERIFY) \
+		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
+		-r "./$<:$*" tmp/$*.entry.js -o $@
+	echo ";$*=require('$*').$*" >> $@
+out/%.js: script/%.coffee
+	@mkdir -p $(@D)
+	@mkdir -p tmp
+	echo "require('../$<')" >> tmp/$*.entry.js
+	$(BROWSERIFY) \
+		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
+		-r "./$<:$*" tmp/$*.entry.js -o $@
+	echo ";$*=require('$*').$*" >> $@
 
-out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
+out/%.midi.xml: script/%.litcoffee
 	@mkdir -p $(@D)
 	$(COFFEE) $< -g > $@
-out/%.midi.xml: script/%.coffee $(FRAMEWORK)
+out/%.midi.xml: script/%.coffee
 	@mkdir -p $(@D)
 	$(COFFEE) $< -g > $@
-out/%.midi.xml: script/%.js $(FRAMEWORK)
+out/%.midi.xml: script/%.js
 	@mkdir -p $(@D)
 	$(NODEJS) $< -g > $@
 

@@ -29,6 +29,7 @@
 // modules are usable too when writing your script with the *Mixco*
 // framework.
 
+require("coffee-script/register")
 var _      = require('underscore')
 var script = require('../src/script')
 var c      = require('../src/control')
