@@ -143,6 +143,9 @@ clean:
 	rm -rf ./lib
 	find . -name "*~" -exec rm -f {} \;
 
+install:
+	npm install
+
 test:
 	$(MOCHA) \
 		--recursive --compilers coffee:coffee-script/register
