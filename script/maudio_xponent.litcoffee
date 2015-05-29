@@ -8,12 +8,11 @@ functionallity of the controls.
 
   ![Xponent Layout](../pic/maudio_xponent.png)
 
-    {assert}  = require '../src/util'
-    script    = require '../src/script'
-
-    c = require '../src/control'
-    b = require '../src/behaviour'
-    v = require '../src/value'
+    mixco = require 'mixco'
+    {assert} = mixco.util
+    c = mixco.control
+    b = mixco.behaviour
+    v = mixco.value
 
     ledButtonFixed = ->
         c.ledButton(arguments...).option
@@ -21,7 +20,7 @@ functionallity of the controls.
                 if ev.message() == c.MIDI_NOTE_OFF
                     ev.value = 0
 
-    script.register module,
+    mixco.script.register module,
 
         name: 'maudio_xponent'
         info:

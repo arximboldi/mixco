@@ -29,12 +29,11 @@
 // modules are usable too when writing your script with the *Mixco*
 // framework.
 
-require("coffee-script/register")
 var _      = require('underscore')
-var script = require('../src/script')
-var c      = require('../src/control')
-var b      = require('../src/behaviour')
-var v      = require('../src/value')
+var mixco  = require('mixco')
+var c      = mixco.control
+var b      = mixco.behaviour
+var v      = mixco.value
 
 // The script
 // ----------
@@ -45,7 +44,7 @@ var v      = require('../src/value')
 // *NodeJS*, the second parameter is the JavaScript object with all
 // the functions and information about our script.
 
-script.register(module, {
+mixco.script.register(module, {
 
     // ### Metadata
     //

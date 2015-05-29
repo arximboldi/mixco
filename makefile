@@ -8,12 +8,14 @@
 
 NODE_BIN   = node_modules/.bin
 
-NODEJS     = node
-COFFEE     = $(NODE_BIN)/coffee
-BROWSERIFY = $(NODE_BIN)/browserify
-DOCCO      = $(NODE_BIN)/docco
-MOCHA      = $(NODE_BIN)/_mocha
-ISTANBUL   = $(NODE_BIN)/istanbul
+WITH_PATH  = NODE_PATH="$(NODE_PATH):.."
+NODEJS     = $(WITH_PATH) node
+COFFEE     = $(WITH_PATH) $(NODE_BIN)/coffee
+BROWSERIFY = $(WITH_PATH) $(NODE_BIN)/browserify
+DOCCO      = $(WITH_PATH) $(NODE_BIN)/docco
+MOCHA      = $(WITH_PATH) $(NODE_BIN)/mocha
+ISTANBUL   = $(WITH_PATH) $(NODE_BIN)/istanbul
+_MOCHA     = $(NODE_BIN)/_mocha
 
 SCRIPTS    = \
 	out/korg_nanokontrol2.js out/korg_nanokontrol2.midi.xml \
@@ -25,7 +27,6 @@ FRAMEWORK  = \
 	lib/cli.js \
 	lib/console.js \
 	lib/control.js \
-	lib/index.js \
 	lib/script.js \
 	lib/transform.js \
 	lib/util.js \
@@ -37,7 +38,6 @@ DOCS       = \
 	doc/src/cli.html \
 	doc/src/control.html \
 	doc/src/console.html \
-	doc/src/index.html \
 	doc/src/script.html \
 	doc/src/transform.html \
 	doc/src/util.html \
@@ -82,38 +82,41 @@ tmp/%.js: script/%.js
 	@mkdir -p $(@D)
 	cp -f $< $@
 
-out/%.js: script/%.js
+out/%.js: script/%.js $(FRAMEWORK)
 	@mkdir -p $(@D)
 	@mkdir -p tmp
 	echo "require('../$<')" >> tmp/$*.entry.js
-	$(BROWSERIFY) \
+	$(BROWSERIFY) -u "src/*" -u "coffee-script/register" \
 		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
 		-r "./$<:$*" tmp/$*.entry.js -o $@
 	echo ";$*=require('$*').$*" >> $@
-out/%.js: script/%.litcoffee
+	v8 $@
+out/%.js: script/%.litcoffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	@mkdir -p tmp
 	echo "require('../$<')" >> tmp/$*.entry.js
-	$(BROWSERIFY) \
+	$(BROWSERIFY) -u "src/*" -u "coffee-script/register" \
 		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
 		-r "./$<:$*" tmp/$*.entry.js -o $@
 	echo ";$*=require('$*').$*" >> $@
-out/%.js: script/%.coffee
+	v8 $@
+out/%.js: script/%.coffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	@mkdir -p tmp
 	echo "require('../$<')" >> tmp/$*.entry.js
-	$(BROWSERIFY) \
+	$(BROWSERIFY) -u "src/*" -u "coffee-script/register" \
 		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
 		-r "./$<:$*" tmp/$*.entry.js -o $@
 	echo ";$*=require('$*').$*" >> $@
+	v8 $@
 
-out/%.midi.xml: script/%.litcoffee
+out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	$(COFFEE) $< -g > $@
-out/%.midi.xml: script/%.coffee
+out/%.midi.xml: script/%.coffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	$(COFFEE) $< -g > $@
-out/%.midi.xml: script/%.js
+out/%.midi.xml: script/%.js $(FRAMEWORK)
 	@mkdir -p $(@D)
 	$(NODEJS) $< -g > $@
 
@@ -147,11 +150,12 @@ install:
 	npm install
 
 test:
-	$(MOCHA) \
-		--recursive --compilers coffee:coffee-script/register
+	MIXCO_USE_SOURCE=1 \
+	$(MOCHA) --recursive --compilers coffee:coffee-script/register
 
 test-coverage:
-	$(ISTANBUL) cover $(MOCHA) -- \
+	MIXCO_USE_SOURCE=1 \
+	$(ISTANBUL) cover $(_MOCHA) -- \
 		--recursive --compilers coffee:coffee-script/register \
 		--require coffee-coverage/register-istanbul
 	$(ISTANBUL) report text lcov

@@ -53,7 +53,7 @@
     "makefile"
   ],
   "preferGlobal": true,
-  "main": "lib/index.js",
+  "main": "index.js",
   "bin": {
     "mixco": "./bin/mixco.js"
   },
