@@ -82,33 +82,25 @@ tmp/%.js: script/%.js
 	@mkdir -p $(@D)
 	cp -f $< $@
 
+# $1: input mixco script
+# $2: output folder
+# $3: script name
+define GENERATE_SCRIPT
+	@mkdir -p $2
+	@mkdir -p tmp
+	echo "require('../$1')" >> tmp/$3.entry.js
+	$(BROWSERIFY) -u "src/*" -u "coffee-script/register" \
+		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
+		-r "./$1:$3" tmp/$3.entry.js -o $2/$3.js
+	echo ";$3=require('$3').$3" >> $2/$3.js
+endef
+
 out/%.js: script/%.js $(FRAMEWORK)
-	@mkdir -p $(@D)
-	@mkdir -p tmp
-	echo "require('../$<')" >> tmp/$*.entry.js
-	$(BROWSERIFY) -u "src/*" -u "coffee-script/register" \
-		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
-		-r "./$<:$*" tmp/$*.entry.js -o $@
-	echo ";$*=require('$*').$*" >> $@
-	v8 $@
+	$(call GENERATE_SCRIPT,$<,$(@D),$*)
 out/%.js: script/%.litcoffee $(FRAMEWORK)
-	@mkdir -p $(@D)
-	@mkdir -p tmp
-	echo "require('../$<')" >> tmp/$*.entry.js
-	$(BROWSERIFY) -u "src/*" -u "coffee-script/register" \
-		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
-		-r "./$<:$*" tmp/$*.entry.js -o $@
-	echo ";$*=require('$*').$*" >> $@
-	v8 $@
+	$(call GENERATE_SCRIPT,$<,$(@D),$*)
 out/%.js: script/%.coffee $(FRAMEWORK)
-	@mkdir -p $(@D)
-	@mkdir -p tmp
-	echo "require('../$<')" >> tmp/$*.entry.js
-	$(BROWSERIFY) -u "src/*" -u "coffee-script/register" \
-		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
-		-r "./$<:$*" tmp/$*.entry.js -o $@
-	echo ";$*=require('$*').$*" >> $@
-	v8 $@
+	$(call GENERATE_SCRIPT,$<,$(@D),$*)
 
 out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
 	@mkdir -p $(@D)
@@ -126,18 +118,20 @@ doc/index.html: README.md
 	mv $(@D)/README.html $@
 	cp -rf docco/public $(@D)
 
+# $1: input file
+# $2: target directory
+define GENERATE_DOC
+	@mkdir -p $2
+	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $2 $1
+	cp -rf docco/public $2
+endef
+
 doc/%.html: %.litcoffee
-	@mkdir -p $(@D)
-	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
-	cp -rf docco/public $(@D)
+	$(call GENERATE_DOC,$<,$(@D))
 doc/%.html: %.coffee
-	@mkdir -p $(@D)
-	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
-	cp -rf docco/public $(@D)
+	$(call GENERATE_DOC,$<,$(@D))
 doc/%.html: %.js
-	@mkdir -p $(@D)
-	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
-	cp -rf docco/public $(@D)
+	$(call GENERATE_DOC,$<,$(@D))
 
 clean:
 	rm -rf ./doc
