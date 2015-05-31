@@ -56,10 +56,11 @@ describe 'scripts', ->
             script = null
 
             beforeEach ->
-                moduleName = path.join '../script', scriptName
+                moduleName = path.join '../script', "#{scriptName}"
                 unrequire moduleName
                 module = require moduleName
-                script = module[scriptName]
+                {nameFromFilename} = require '../src/script'
+                script = module[nameFromFilename scriptName]
                 script.mixxx = mock.mixxx()
 
             it "generates configuration without undefined values", ->

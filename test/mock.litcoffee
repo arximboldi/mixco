@@ -73,6 +73,8 @@ This test script class provides Mixxx object mocks.
             get: ->
                 @_fakeMixxx or= exports.mixxx()
 
+        __registeredName: 'testscript'
+
     exports.testScript = -> new exports.TestScript arguments...
 
 

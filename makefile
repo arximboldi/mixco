@@ -42,9 +42,9 @@ DOCS       = \
 	doc/src/transform.html \
 	doc/src/util.html \
 	doc/src/value.html \
-	doc/script/korg_nanokontrol2.html \
-	doc/script/maudio_xponent.html \
-	doc/script/novation_twitch.html \
+	doc/script/korg_nanokontrol2.mixco.html \
+	doc/script/maudio_xponent.mixco.html \
+	doc/script/novation_twitch.mixco.html \
 	doc/test/mixco/behaviour.spec.html \
 	doc/test/mixco/control.spec.html \
 	doc/test/mixco/script.spec.html \
@@ -72,16 +72,6 @@ lib/%.js: src/%.js
 	@mkdir -p $(@D)
 	cp -f $< $@
 
-tmp/%.js: script/%.litcoffee
-	@mkdir -p $(@D)
-	$(COFFEE) -c -p $< > $@
-tmp/%.js: script/%.coffee
-	@mkdir -p $(@D)
-	$(COFFEE) -c -p $< > $@
-tmp/%.js: script/%.js
-	@mkdir -p $(@D)
-	cp -f $< $@
-
 # $1: input mixco script
 # $2: output folder
 # $3: script name
@@ -89,26 +79,29 @@ define GENERATE_SCRIPT
 	@mkdir -p $2
 	@mkdir -p tmp
 	echo "require('../$1')" >> tmp/$3.entry.js
-	$(BROWSERIFY) -u "src/*" -u "coffee-script/register" \
-		-t coffeeify --extension=".js" --extension=".coffee" --extension=".litcoffee" \
-		-r "./$1:$3" tmp/$3.entry.js -o $2/$3.js
-	echo ";$3=require('$3').$3" >> $2/$3.js
+	$(BROWSERIFY) \
+		-u "src/*" -u "coffee-script/register" \
+		-t coffeeify \
+		--extension=".js" --extension=".coffee" --extension=".litcoffee" \
+		-r "./$1:$3" tmp/$3.entry.js -o tmp/$3.js
+	echo ";$3 = require('$3').$3" >> tmp/$3.js
+	echo "MIXCO_SCRIPT_FILENAME = '$1';" | cat - tmp/$3.js > $2/$3.js
 endef
 
-out/%.js: script/%.js $(FRAMEWORK)
+out/%.js: script/%.mixco.js $(FRAMEWORK)
 	$(call GENERATE_SCRIPT,$<,$(@D),$*)
-out/%.js: script/%.litcoffee $(FRAMEWORK)
+out/%.js: script/%.mixco.litcoffee $(FRAMEWORK)
 	$(call GENERATE_SCRIPT,$<,$(@D),$*)
-out/%.js: script/%.coffee $(FRAMEWORK)
+out/%.js: script/%.mixco.coffee $(FRAMEWORK)
 	$(call GENERATE_SCRIPT,$<,$(@D),$*)
 
-out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
+out/%.midi.xml: script/%.mixco.litcoffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	$(COFFEE) $< -g > $@
-out/%.midi.xml: script/%.coffee $(FRAMEWORK)
+out/%.midi.xml: script/%.mixco.coffee $(FRAMEWORK)
 	@mkdir -p $(@D)
 	$(COFFEE) $< -g > $@
-out/%.midi.xml: script/%.js $(FRAMEWORK)
+out/%.midi.xml: script/%.mixco.js $(FRAMEWORK)
 	@mkdir -p $(@D)
 	$(NODEJS) $< -g > $@
 

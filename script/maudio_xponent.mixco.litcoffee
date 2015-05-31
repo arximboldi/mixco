@@ -22,7 +22,6 @@ functionallity of the controls.
 
     mixco.script.register module,
 
-        name: 'maudio_xponent'
         info:
             name: '[mixco] M-Audio Xponent'
             author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'

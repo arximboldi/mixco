@@ -34,13 +34,8 @@ We define the script with the **script.register** function, which will
 create the script instance.  As first parameter we pass the current
 module, that is contained in the special *NodeJS* variable
 `module`. The second parameter is an object with the actual script.
-The `name` attribute is compulsory and must match file name *without
-extension*.  It should be a valid JavaScript identifier -- i.e. start
-with a letter and contain only alfanumerical characters or underscore.
 
     mixco.script.register module,
-
-        name: 'korg_nanokontrol2'
 
 ### Metadata
 

@@ -12,6 +12,7 @@ describe 'mixco.script', ->
     control = require '../../src/control'
 
     class TestScript extends Script
+        __registeredName: 'testscript'
 
     describe 'Script', ->
 
@@ -31,8 +32,13 @@ describe 'mixco.script', ->
 
     describe 'register', ->
 
+        testModule = null
+        beforeEach ->
+            testModule =
+                exports: {}
+                filename: 'testscript.mixco.js'
+
         it 'registers a class in the given NodeJs module', ->
-            testModule = exports: {}
             register testModule, TestScript
             expect(isinstance testModule.exports.testscript, TestScript)
                 .to.be.true
@@ -44,10 +50,7 @@ describe 'mixco.script', ->
                 init: ->
                 shutdown: ->
                 postshutdown: ->
-            testModule = exports: {}
-
             register testModule,
-                name: 'awesome_script'
                 constructor: -> spier.constructor()
                 preinit: ->
                     spier.preinit()
@@ -59,8 +62,8 @@ describe 'mixco.script', ->
                 shutdown: -> spier.shutdown()
                 info: author: 'Jimmy Jazz'
 
-            script = testModule.exports.awesome_script
-            expect(script.name).to.be.eq 'awesome_script'
+            script = testModule.exports.testscript
+            expect(script.name).to.be.eq 'testscript'
             expect(script.info.author).to.be.eq 'Jimmy Jazz'
             expect(spier.constructor).to.have.been.called
 
@@ -73,18 +76,15 @@ describe 'mixco.script', ->
             expect(spier.postshutdown).to.have.been.called
 
         it 'controls created during construction are registered autoamtically', ->
-            testModule = exports: {}
             expectedControls = []
-
             register testModule,
-                name: 'some_script'
                 constructor: ->
                     expectedControls.push control.knob()
                     expectedControls.push control.ledButton()
 
             expect(expectedControls.length)
                 .to.be.eq 2
-            expect(testModule.exports.some_script.controls)
+            expect(testModule.exports.testscript.controls)
                 .to.eql expectedControls
 
 # License

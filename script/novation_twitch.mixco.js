@@ -48,12 +48,8 @@ mixco.script.register(module, {
 
     // ### Metadata
     //
-    // The `name` attribute is very important, and it has to be
-    // exactly the name of this file *without extension*.  Then the
-    // `info` object contains the meta-data that is displayed to the
-    // user in the MIDI mapping chooser of Mixxx.
-
-    name: "novation_twitch",
+    // Then the `info` object contains the meta-data that is displayed
+    // to the user in the MIDI mapping chooser of Mixxx.
 
     info: {
 	name: "[mixco] Novation Twitch",
