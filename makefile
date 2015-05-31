@@ -45,12 +45,12 @@ DOCS       = \
 	doc/script/korg_nanokontrol2.html \
 	doc/script/maudio_xponent.html \
 	doc/script/novation_twitch.html \
-	doc/spec/mixco/behaviour.spec.html \
-	doc/spec/mixco/control.spec.html \
-	doc/spec/mixco/script.spec.html \
-	doc/spec/mixco/value.spec.html \
-	doc/spec/mock.html \
-	doc/spec/scripts.spec.html
+	doc/test/mixco/behaviour.spec.html \
+	doc/test/mixco/control.spec.html \
+	doc/test/mixco/script.spec.html \
+	doc/test/mixco/value.spec.html \
+	doc/test/mock.html \
+	doc/test/scripts.spec.html
 
 framework: $(FRAMEWORK)
 
