@@ -8,6 +8,7 @@ scripts and compiles them such that they can be used inside Mixxx.
     path = require 'path'
     fs = require 'fs'
     logger = require 'winston'
+    stream = require 'stream'
     {inspect} = require 'util'
 
 First, we find out what is the name of the script that we are running.
@@ -98,10 +99,74 @@ itself.
 
     tasks = (sources, output) ->
         gulp = require 'gulp'
-        gulp.task 'build', ->
+        rename = require 'gulp-rename'
+
+        gulp.task 'scripts', ->
             gulp.src sources
+                .pipe browserified()
+                .pipe rename extname: ".output.js"
                 .pipe gulp.dest output
+
+        gulp.task 'build', [ 'scripts' ]
         gulp
+
+The **browserified()** function returns a gulpy plugin that compiles a
+Mixco script (which is a NodeJS script) into a standalone bundle that
+can be loaded inside Mixxx.  It also transforms it from Coffee-Script
+to JavaScript if necessary, and packages dependencies transparently
+(e.g underscore).  This means that a Mixco script can be split across
+multiple files.  It is recommended to only use the `.mixco.*`
+extension for the main script, where `mixco.script.register` is called.
+
+    browserified = ->
+        browserify = require 'browserify'
+        through = require 'through2'
+        globby = require 'globby'
+        thisdir = path.dirname module.filename
+        exclude = globby.sync [ path.join thisdir, "*.litcoffee" ]
+
+        through.obj (file, enc, next) ->
+            modName =
+                path.join (path.dirname file.path),
+                    path.basename file.path, path.extname file.path
+            scriptName =
+                path.basename modName, ".mixco"
+
+            logger.info "compiling:", colors.data file.path
+            logger.debug "   module:", colors.data modName
+            logger.debug "   script:", colors.data scriptName
+
+            prepend = """
+                /*
+                 * Script generated with Mixco framework.
+                 * http://sinusoid.es/mixco
+                 */
+                ;MIXCO_SCRIPT_FILENAME = '#{file.path}';
+                """
+
+            append  = """
+                ;#{scriptName} = require('#{modName}');
+                """
+
+            finish = (err, res) ->
+                if err
+                    logger.error 'browserify:', err
+                else
+                    file.contents = Buffer.concat [
+                        new Buffer prepend
+                        res
+                        new Buffer append
+                    ]
+                    next err, file
+
+            entry = new StringStream "require('#{file.path}');"
+
+            exclude.reduce ((b, fname) -> b.exclude fname),
+                    browserify entry,
+                        extensions: [ ".js", ".coffee", ".litcoffee"]
+                .exclude 'coffee-script/register'
+                .require modName
+                .bundle finish
 
 The **main** function finally implements the meat of the command line
 script.  It parses the arguments, sets up the logger and starts the
@@ -120,3 +185,12 @@ appropiate task.
 
         gulp = tasks srcs, argv.output
         gulp.start 'build'
+
+
+    class StringStream extends stream.Readable
+        constructor: (@str) ->
+            super()
+
+        _read: (size) ->
+            @push @str
+            @push null
