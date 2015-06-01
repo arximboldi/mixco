@@ -5,3 +5,4 @@ tmp/
 npm-debug.log
 lib/
 coverage/
+mixco-output/
