@@ -1,7 +1,8 @@
 {
   "name": "mixco",
-  "description": "Mixco is a framework for making DJ controller scripts for Mixxx",
+  "description": "Mixco is a framework for making DJ controller scripts for Mixxx.",
   "author": "Juan Pedro Bolivar Puente <raskolnikov@gnu.org>",
+  "homepage": "http://sinusoid.es/mixco",
   "contributors": [
     {
       "name": "Juan Pedro Bolivar Puente",
@@ -73,5 +74,5 @@
     "lib": "./lib",
     "bin": "./bin"
   },
-  "license": "GPL"
+  "license": "GPL-3.0+"
 }

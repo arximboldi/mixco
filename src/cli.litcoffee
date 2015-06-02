@@ -15,6 +15,15 @@ First, we find out what is the name of the script that we are running.
 
     MIXCO = path.basename process.argv[1]
 
+We use the `package.json` data to get the script metadata.
+
+    packageJsonPath =  path.join __dirname, "..", "package.json"
+    package_ = JSON.parse fs.readFileSync packageJsonPath
+    MIXCO_VERSION = package_.version
+    MIXCO_AUTHOR = package_.author
+    MIXCO_DESCRIPTION = package_.description
+    MIXCO_HOMEPAGE = package_.homepage
+
 And then we define some defaults.
 
     MIXCO_DEFAULT_OUTPUT_DIR = path.join ".", "mixco-output"
@@ -40,40 +49,41 @@ output and exit when passed `--help`, `--version`, etc...
     args = ->
         _.defaults (require "argp"
             .createParser once: true
-            .readPackage path.join __dirname, "..", "package.json"
             .allowUndefinedArguments()
-            .usages [ "#{MIXCO} [options] [<input>...]" ]
+            .usages [ "", "#{MIXCO} [options] [<input>...]" ]
             .on "argument", (argv, argument) ->
                 argv.inputs ?= []
                 argv.inputs.push argument
             .body()
-            .text "
+            .text MIXCO_DESCRIPTION
+            .text "\n
                 This program can compile all the <input> Mixco scripts
                 into .js and .xml files that can be used inside Mixxx.
                 Mixco scripts have one of the following extensions:
-                #{MIXCO_EXT_GLOBS.join ', '}
-                \n
-                \nWhen no <input> is passed, it will compile all scripts
-                in the current directory. When an <input> is a directory,
-                all scripts found in it will be compiled."
+                #{MIXCO_EXT_GLOBS.join ', '}. When no <input> is
+                passed, it will compile all scripts in the current
+                directory. When an <input> is a directory, all scripts
+                found in it will be compiled."
             .text()
-            .text " Options:"
+            .text "Options:"
             .option
                 short: "o"
                 long: "output"
-                description: "Directory where to put the generated files.
+                description: "Directory where to put the generated files
                     Default: #{MIXCO_DEFAULT_OUTPUT_DIR}"
                 metavar: "PATH"
                 default: MIXCO_DEFAULT_OUTPUT_DIR
             .option
                 short: "r"
                 long: "recursive"
-                descripton: "Recursively look for scripts in input directories"
+                description: "Recursively look for scripts in input directories"
+            .help()
             .option
                 short: "V"
                 long: "verbose"
                 description: "Print more output"
-            .help()
+            .version(MIXCO_VERSION)
+            .text "\nMore info and bug reports at: <#{MIXCO_HOMEPAGE}>"
             .argv()),
             inputs: MIXCO_DEFAULT_INPUTS
 
@@ -110,6 +120,16 @@ itself.
         gulp.task 'build', [ 'scripts' ]
         gulp
 
+We define a couple of helpers to extract parts of a path pointing to a
+Mixco script file.
+
+    moduleName = (scriptPath) ->
+        path.join (path.dirname scriptPath),
+            path.basename scriptPath, path.extname scriptPath
+
+    scriptName = (scriptPath) ->
+        path.basename (moduleName scriptPath), ".mixco"
+
 The **browserified()** function returns a gulpy plugin that compiles a
 Mixco script (which is a NodeJS script) into a standalone bundle that
 can be loaded inside Mixxx.  It also transforms it from Coffee-Script
@@ -126,46 +146,36 @@ extension for the main script, where `mixco.script.register` is called.
         exclude = globby.sync [ path.join thisdir, "*.litcoffee" ]
 
         through.obj (file, enc, next) ->
-            modName =
-                path.join (path.dirname file.path),
-                    path.basename file.path, path.extname file.path
-            scriptName =
-                path.basename modName, ".mixco"
-
+            moduleName_ = moduleName file.path
+            scriptName_ = scriptName file.path
             logger.info "compiling:", colors.data file.path
-            logger.debug "   module:", colors.data modName
-            logger.debug "   script:", colors.data scriptName
+            logger.debug "   module:", colors.data moduleName_
+            logger.debug "   script:", colors.data scriptName_
 
-            prepend = """
+            prepend = new Buffer """
                 /*
-                 * Script generated with Mixco framework.
-                 * http://sinusoid.es/mixco
+                 * File generated with Mixco framework version: #{MIXCO_VERSION}
+                 * More info at: <#{MIXCO_HOMEPAGE}>
                  */
-                ;MIXCO_SCRIPT_FILENAME = '#{file.path}';
+                \nMIXCO_SCRIPT_FILENAME = '#{file.path}';\n\n
                 """
-
-            append  = """
-                ;#{scriptName} = require('#{modName}');
+            append  = new Buffer """
+                \n#{scriptName_} = require('#{moduleName_}');
+                /* End of Mixco generated script */
                 """
-
             finish = (err, res) ->
                 if err
                     logger.error 'browserify:', err
                 else
                     file.contents = Buffer.concat [
-                        new Buffer prepend
-                        res
-                        new Buffer append
-                    ]
+                        prepend, res, append ]
                     next err, file
 
-            entry = new StringStream "require('#{file.path}');"
-
-            exclude.reduce ((b, fname) -> b.exclude fname),
-                    browserify entry,
-                        extensions: [ ".js", ".coffee", ".litcoffee"]
+            bundler = browserify (toStream "require('#{file.path}');"),
+                extensions: [ ".js", ".coffee", ".litcoffee"]
+            exclude.reduce ((b, fname) -> b.exclude fname), bundler
                 .exclude 'coffee-script/register'
-                .require modName
+                .require moduleName_
                 .bundle finish
 
 The **main** function finally implements the meat of the command line
@@ -186,11 +196,13 @@ appropiate task.
         gulp = tasks srcs, argv.output
         gulp.start 'build'
 
+Oh, and there is this utility to create a stream from a plain string.
 
     class StringStream extends stream.Readable
         constructor: (@str) ->
-            super()
-
+            super
         _read: (size) ->
             @push @str
             @push null
+
+    toStream = (str) -> new StringStream str
