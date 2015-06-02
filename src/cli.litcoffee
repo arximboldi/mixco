@@ -220,7 +220,7 @@ appropiate task.
         argv = args()
         logger.cli()
         logger.level = if argv.verbose then 'debug' else 'info'
-        logger.debug "console arguments:", colors.data inspect argv
+        logger.debug "console arguments:\n", colors.data inspect argv
         logger.info "inputs:", colors.data argv.inputs
         logger.info "output directory:", colors.data argv.output
 
