@@ -112,16 +112,20 @@ itself.
         rename = require 'gulp-rename'
 
         gulp.task 'scripts', ->
+            ext = ".output.js"
             gulp.src sources
+                .pipe changed output, ext
                 .pipe browserified()
-                .pipe rename extname: ".output.js"
+                .pipe rename extname: ext
                 .pipe gulp.dest output
                 .pipe logging "generated"
 
         gulp.task 'mappings', ->
+            ext = ".output.midi.xml"
             gulp.src sources
+                .pipe changed output, ext
                 .pipe xmlMapped()
-                .pipe rename extname: ".output.midi.xml"
+                .pipe rename extname: ext
                 .pipe gulp.dest output
                 .pipe logging "generated"
 
@@ -143,6 +147,18 @@ Mixco script file.
         through.obj (file, enc, next) ->
             logger.info "#{str}:", colors.data file.path
             next null, file
+
+    changed = (dest, ext) ->
+        changed_ = require 'gulp-changed'
+        changed_ dest,
+            extension: ext
+            hasChanged: (stream, next, file, path) ->
+                fs.stat path, (err, stat) ->
+                    if err or file.stat.mtime > stat.mtime
+                        stream.push file
+                    else
+                        logger.info "up to date:", colors.data path
+                    do next
 
 The **xmlMapped** gulpy plugin generates the `.midi.xml` Mixxx
 controller mapping files.

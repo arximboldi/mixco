@@ -33,6 +33,7 @@
     "colors": "^1.1.0",
     "globby": "^2.0.0",
     "gulp": "^3.9.0",
+    "gulp-changed": "^1.2.1",
     "gulp-rename": "^1.2.2",
     "heterarchy": "^1.0.3",
     "require.async": "^0.1.1",
