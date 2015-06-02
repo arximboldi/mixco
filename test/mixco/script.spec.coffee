@@ -8,8 +8,9 @@ chai.use require 'sinon-chai'
 describe 'mixco.script', ->
 
     {isinstance} = require 'heterarchy'
-    {Script, register} = require '../../src/script'
-    control = require '../../src/control'
+    mixco = require 'mixco'
+    {Script, register} = mixco.script
+    control = mixco.control
 
     class TestScript extends Script
         __registeredName: 'testscript'

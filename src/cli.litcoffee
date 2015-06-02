@@ -82,6 +82,10 @@ output and exit when passed `--help`, `--version`, etc...
                 short: "w"
                 long: "watch"
                 description: "watch scripts for changes and recompile them"
+            .option
+                short: "T"
+                long: "self-test"
+                description: "test the installed Mixco version before compilation"
             .help()
             .option
                 short: "V"
@@ -112,12 +116,22 @@ The **tasks** function will, given the gulp sources and an output
 directory, define all the `gulp` tasks.  It returns the *gulp* module
 itself.
 
-    tasks = (sources, output) ->
+    tasks = (sources, output, opts) ->
         gulp = require 'gulp'
         cached = require 'gulp-cached'
         rename = require 'gulp-rename'
 
-        gulp.task 'scripts', ->
+        gulp.task 'self-test', ->
+            if opts.self_test
+                mocha = require 'gulp-mocha'
+                specs = path.join __dirname, '..', 'test', '**', '*.spec.coffee'
+                logger.info "testing specs:", colors.data specs
+                gulp.src specs, read: false
+                    .pipe mocha()
+
+        gulp.task 'test', ['self-test'], ->
+
+        gulp.task 'scripts', ['test'], ->
             ext = ".output.js"
             gulp.src sources
                 .pipe cached 'scripts'
@@ -127,7 +141,7 @@ itself.
                 .pipe gulp.dest output
                 .pipe logging "generated"
 
-        gulp.task 'mappings', ->
+        gulp.task 'mappings', ['test'], ->
             ext = ".output.midi.xml"
             gulp.src sources
                 .pipe cached 'sources'
@@ -270,7 +284,8 @@ appropiate task.
         srcs = sources argv.inputs, argv.recursive
         logger.debug "gulp sources:", colors.data srcs
 
-        gulp = tasks srcs, argv.output
+        gulp = tasks srcs, argv.output,
+            self_test: argv['self-test']
         task = if argv.watch then 'watch' else 'build'
         gulp.start task
 

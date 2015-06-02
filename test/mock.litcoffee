@@ -5,8 +5,9 @@ spec.mock
 when needed*, reflecting [the official Mixxx documentation](
 http://mixxx.org/wiki/doku.php/midi_scripting).
 
-    script = require '../src/script'
-    {assert} = require '../src/util'
+    mixco = require 'mixco'
+    script = mixco.script
+    {assert} = mixco.util
     {spy} = require 'sinon'
 
 Engine

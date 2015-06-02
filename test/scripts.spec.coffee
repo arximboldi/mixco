@@ -36,11 +36,14 @@ describe 'scripts', ->
 
     do monkeypatchCatching = ->
         unrequire 'heterarchy'
-        forEveryModuleInDir '../src', '../script', (name, dir) ->
+        unrequire 'mixco'
+        forEveryModuleInDir '../lib', '../src', '../script', (name, dir) ->
             unrequire path.join(dir, name), true
-        require '../src/util'
+        require 'mixco'
         module = require.cache[require.resolve '../src/util']
-        module.exports.catching = (f) -> f
+        module?.exports.catching = (f) -> f
+        module = require.cache[require.resolve '../lib/util']
+        module?.exports.catching = (f) -> f
 
     # Tests
     # -----
@@ -59,7 +62,7 @@ describe 'scripts', ->
                 moduleName = path.join '../script', "#{scriptName}"
                 unrequire moduleName
                 module = require moduleName
-                {nameFromFilename} = require '../src/script'
+                {nameFromFilename} = require('mixco').script
                 script = module[nameFromFilename scriptName]
                 script.mixxx = mock.mixxx()
 
