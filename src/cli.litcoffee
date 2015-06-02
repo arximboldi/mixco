@@ -115,15 +115,15 @@ itself.
             gulp.src sources
                 .pipe browserified()
                 .pipe rename extname: ".output.js"
-                .pipe logging "generated"
                 .pipe gulp.dest output
+                .pipe logging "generated"
 
         gulp.task 'mappings', ->
             gulp.src sources
                 .pipe xmlMapped()
                 .pipe rename extname: ".output.midi.xml"
-                .pipe logging "generated"
                 .pipe gulp.dest output
+                .pipe logging "generated"
 
         gulp.task 'build', [ 'scripts', 'mappings' ]
         gulp
