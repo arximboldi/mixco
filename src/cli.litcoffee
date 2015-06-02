@@ -4,6 +4,7 @@ mixco.cli
 This module implements the meat of the `mixco` script that takes Mixco
 scripts and compiles them such that they can be used inside Mixxx.
 
+    require 'coffee-script/register'
     _ = require 'underscore'
     path = require 'path'
     fs = require 'fs'
