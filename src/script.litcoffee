@@ -227,7 +227,7 @@ XML file and display some help.
             #{indent 1}<controller id=\"#{@name}\">
             #{indent 2}<scriptfiles>
             #{indent 3}<file functionprefix=\"#{@name}\"
-            #{indent 3}      filename=\"#{@name}.js\"/>
+            #{indent 3}      filename=\"#{@name}.mixco.output.js\"/>
             #{indent 2}</scriptfiles>
             #{indent 2}<controls>
             #{@configInputs 3}
