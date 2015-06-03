@@ -11,8 +11,12 @@ webpage][mixco]. And remember, this is [Free Software][gnu].
   [lcs]: http://coffeescript.org/#literate
   [mixco]: http://sinusoid.es/mixco
 
-[![build status](https://secure.travis-ci.org/arximboldi/mixco.svg)](https://travis-ci.org/arximboldi/mixco)
-[![coverage Status](https://coveralls.io/repos/arximboldi/mixco/badge.svg)](https://coveralls.io/r/arximboldi/mixco)
+[![npm version](https://badge.fury.io/js/mixco.svg)]
+(http://badge.fury.io/js/mixco)
+[![build status](https://secure.travis-ci.org/arximboldi/mixco.svg)]
+(https://travis-ci.org/arximboldi/mixco)
+[![coverage Status](https://coveralls.io/repos/arximboldi/mixco/badge.svg)]
+(https://coveralls.io/r/arximboldi/mixco)
 
 Features
 --------
