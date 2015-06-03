@@ -81,15 +81,15 @@ output and exit when passed `--help`, `--version`, etc...
             .option
                 short: "w"
                 long: "watch"
-                description: "watch scripts for changes and recompile them"
+                description: "Watch scripts for changes and recompile them"
             .option
                 short: "T"
                 long: "self-test"
-                description: "test the framework before compilation"
+                description: "Test the framework before compilation"
             .option
                 short: "t"
                 long: "test"
-                description: "test the input scripts before compilation"
+                description: "Test the input scripts before compilation"
             .help()
             .option
                 short: "V"
@@ -289,10 +289,10 @@ appropiate task.
         logger.cli()
         logger.level = if argv.verbose then 'debug' else 'info'
         logger.debug "console arguments:\n", colors.data inspect argv
-        logger.info "inputs:", colors.data argv.inputs
-        logger.info "output directory:", colors.data argv.output
+        logger.info "inputs:", colors.data argv['inputs']
+        logger.info "output directory:", colors.data argv['output']
 
-        srcs = sources argv.inputs, argv.recursive
+        srcs = sources argv['inputs'], argv['recursive']
         logger.debug "gulp sources:", colors.data srcs
 
         gulp = tasks srcs, argv.output,
