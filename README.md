@@ -270,12 +270,12 @@ Documentation
   [mixco.util]: http://sinusoid.es/mixco/src/util.html
   [mixco.value]: http://sinusoid.es/mixco/src/value.html
 
-  [spec.mixco.behaviour]: http://sinusoid.es/spec/mixco/behaviour.spec.html
-  [spec.mixco.control]: http://sinusoid.es/spec/mixco/control.spec.html
-  [spec.mixco.script]: http://sinusoid.es/spec/mixco/script.spec.html
-  [spec.mixco.value]: http://sinusoid.es/spec/mixco/value.spec.html
-  [spec.mock]: http://sinusoid.es/spec/mock.html
-  [spec.scripts]: http://sinusoid.es/spec/scripts.spec.html
+  [spec.mixco.behaviour]: http://sinusoid.es/mixco/spec/mixco/behaviour.spec.html
+  [spec.mixco.control]: http://sinusoid.es/mixco/spec/mixco/control.spec.html
+  [spec.mixco.script]: http://sinusoid.es/mixco/spec/mixco/script.spec.html
+  [spec.mixco.value]: http://sinusoid.es/mixco/spec/mixco/value.spec.html
+  [spec.mock]: http://sinusoid.es/mixco/spec/mock.html
+  [spec.scripts]: http://sinusoid.es/mixco/spec/scripts.spec.html
 
 Contributing
 ------------
