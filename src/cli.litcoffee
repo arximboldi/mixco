@@ -91,6 +91,9 @@ output and exit when passed `--help`, `--version`, etc...
                 short: "t"
                 long: "test"
                 description: "Test the input scripts before compilation"
+            .option
+                long: "factory"
+                description: "Compile the scripts that come with Mixco"
             .help()
             .option
                 short: "V"
@@ -303,6 +306,8 @@ appropiate task.
         logger.info "inputs:", colors.data argv['inputs']
         logger.info "output directory:", colors.data argv['output']
 
+        if argv['factory']
+            argv['inputs'].push path.join __dirname, '..', 'script'
         srcs = sources argv['inputs'], argv['recursive']
         logger.debug "gulp sources:", colors.data srcs
 

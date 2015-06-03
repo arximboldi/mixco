@@ -61,10 +61,10 @@
     "prepublish": "make"
   },
   "files": [
-    "lib",
-    "lib",
     "bin",
+    "lib",
     "src",
+    "script",
     "test",
     "index.js",
     "makefile"
