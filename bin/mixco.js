@@ -11,9 +11,9 @@ if (process.env.MIXCO_COVERAGE) {
 
 if (process.env.MIXCO_USE_SOURCE) {
     require('coffee-script/register')
-    require('mixco/src/cli').main()
+    require('../src/cli').main()
 } else {
-    require('mixco/lib/cli').main()
+    require('../lib/cli').main()
 }
 
 // >  Copyright (C) 2015 Juan Pedro Bolívar Puente
