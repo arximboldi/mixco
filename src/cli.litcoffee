@@ -278,7 +278,7 @@ extension for the main script, where `mixco.script.register` is called.
                 \nMIXCO_SCRIPT_FILENAME = '#{file.path}';\n\n
                 """
             append  = new Buffer """
-                \n#{scriptName_} = require('#{moduleName_}');
+                \n#{scriptName_} = require('#{moduleName_}').#{scriptName_};
                 /* End of Mixco generated script */
                 """
             finish = (err, res) ->
