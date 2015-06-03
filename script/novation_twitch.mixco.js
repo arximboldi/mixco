@@ -1,9 +1,11 @@
 // script.twitch
 // =============
 //
-// Mixx script file for the **Novation Twitch** controller.  The
-// script is based on the [**Mixco** framework](../index.html)
-// framework.
+// > This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+// > - **View me [on a static web](http://sinusoid.es/mixco/script/novation_twitch.mixco.html)**
+// > - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/script/novation_twitch.mixco.litcoffee)**
+//
+// Mixx script file for the **Novation Twitch** controller.
 //
 // This script serves as **tutorial** for creating scripts using the
 // *Mixco* framework, but programming directly in JavaScript.  Still,
@@ -19,7 +21,7 @@
 // The Linux Kernel version 3.10 is required to get Novation Twitch
 // detected as soundcard or MIDI device.
 //
-//   ![Novation Twitch Layout](../pic/novation_twitch.png)
+//   ![Novation Twitch Layout](http://sinusoid.es/mixco/pic/novation_twitch.png)
 //
 // Dependencies
 // ------------

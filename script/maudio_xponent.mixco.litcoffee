@@ -1,12 +1,15 @@
 script.xponent
 ==============
 
-Mixxx script file for the **M-Audio Xponent** controller.  The script
-is based on the [**Mixco** framework](../index.html).  The numbers in
-the following picture will be used in the script to describe the
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/script/maudio_xponent.mixco.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/script/maudio_xponent.mixco.litcoffee)**
+
+Mixxx script file for the **M-Audio Xponent** controller. The numbers
+in the following picture will be used in the script to describe the
 functionallity of the controls.
 
-  ![Xponent Layout](../pic/maudio_xponent.png)
+  ![Xponent Layout](http://sinusoid.es/mixco/pic/maudio_xponent.png)
 
     mixco = require 'mixco'
     {assert} = mixco.util

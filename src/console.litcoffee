@@ -1,10 +1,16 @@
 mixco.console
 =============
 
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/src/console.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/src/console.litcoffee)**
+
 This module is a lightweight version of
 [*console-browserify*](https://npmjs.org/package/console-browserify).
 It provides a console object in contexts where there is none, like for
 example Mixxx.
+
+
 
     {assert} = require './util'
 

@@ -1,6 +1,10 @@
 mixco.script
 ============
 
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/src/script.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/src/script.litcoffee)**
+
 This module contains the main interface for defining custom Mixxx
 scripts.
 

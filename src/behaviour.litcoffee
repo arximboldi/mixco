@@ -1,6 +1,10 @@
 mixco.behaviour
 ===============
 
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/src/behaviour.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/src/behaviour.litcoffee)**
+
 This module contains all the functionallity that lets you add
 *behaviour* to the hardware *controls* -- i.e. determine what they do.
 

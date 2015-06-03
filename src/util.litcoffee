@@ -1,6 +1,10 @@
 mixco.util
 ==========
 
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/src/util.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/src/util.litcoffee)**
+
 This module contains a series of utility functions.
 
 Monkey patches

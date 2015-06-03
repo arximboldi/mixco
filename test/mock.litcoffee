@@ -1,6 +1,10 @@
 spec.mock
 =========
 
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/test/mock.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/test/mock.litcoffee)**
+
 *Mocks* for objects provided by the Mixxx context. Please *update them
 when needed*, reflecting [the official Mixxx documentation](
 http://mixxx.org/wiki/doku.php/midi_scripting).

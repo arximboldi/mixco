@@ -1,6 +1,10 @@
 # spec.scripts
 # ============
 #
+# > This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+# > - **View me [on a static web](http://sinusoid.es/mixco/test/scripts.spec.html)**
+# > - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/test/scripts.spec.coffee)**
+#
 # General tests for some of the Mixco based scripts.  This will test
 # every available script in the 'script' folder at the root of the
 # Mixco distribution.

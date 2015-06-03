@@ -1,6 +1,10 @@
 mixco.cli
 =========
 
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/src/cli.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/src/cli.litcoffee)**
+
 This module implements the meat of the `mixco` script that takes Mixco
 scripts and compiles them such that they can be used inside Mixxx.
 

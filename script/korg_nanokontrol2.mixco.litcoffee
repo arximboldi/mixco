@@ -1,15 +1,18 @@
 script.nanokontrol2
 ===================
 
-Mixxx script file for the **Korg NanoKontrol2** controller.  The
-script is based on the [**Mixco** framework](../index.html).
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/script/korg_nanokontrol2.mixco.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/script/korg_nanokontrol2.mixco.litcoffee)**
+
+Mixxx script file for the **Korg NanoKontrol2** controller.
 
 This script description is a bit more verbose than others, at it tries
 to serve as **tutorial** on how to write your own controller scripts.
 People just interested in the functionallity of the mapping can find
 this in indented bullet points.
 
-  ![NanoKontrol2 Layout](../pic/korg_nanokontrol2.jpg)
+  ![NanoKontrol2 Layout](http://sinusoid.es/mixco/pic/korg_nanokontrol2.jpg)
 
 Dependencies
 ------------

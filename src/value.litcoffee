@@ -1,6 +1,10 @@
 mixco.value
 ===========
 
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/src/value.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/src/value.litcoffee)**
+
 Module that provides a series of expressions that re-evaluate
 automatically whenever one of the leaf nodes of the expression tree
 changes.

@@ -1,6 +1,10 @@
 mixco.control
 =============
 
+> This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+> - **View me [on a static web](http://sinusoid.es/mixco/src/control.html)**
+> - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/src/control.litcoffee)**
+
 Defines different hardware controls.
 
     {multi} = require 'heterarchy'

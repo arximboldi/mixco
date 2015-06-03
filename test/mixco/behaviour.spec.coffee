@@ -1,6 +1,10 @@
 # spec.mixco.behaviour
 # ====================
 
+# > This file is part of the [Mixco framework](http://sinusoid.es/mixco).
+# > - **View me [on a static web](http://sinusoid.es/mixco/test/mixco/behaviour.spec.html)**
+# > - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/test/mixco/behaviour.spec.coffee)**
+
 chai = {expect} = require 'chai'
 {spy, stub, match} = require 'sinon'
 chai.use require 'sinon-chai'
