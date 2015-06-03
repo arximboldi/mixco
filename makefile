@@ -52,7 +52,7 @@ DOCS       = \
 framework: $(FRAMEWORK)
 
 script: $(FRAMEWORK)
-	$(MIXCO) script
+	$(MIXCO) --factory
 
 doc: $(DOCS)
 	cp -r ./pic ./doc/
@@ -61,11 +61,11 @@ install:
 	npm install
 
 test: $(FRAMEWORK)
-	MIXCO_USE_SOURCE=1 $(MIXCO) -tT script
+	MIXCO_USE_SOURCE=1 $(MIXCO) -tT --factory
 
 test-coverage: $(FRAMEWORK)
 	MIXCO_COVERAGE=1 MIXCO_USE_SOURCE=1 \
-		$(ISTANBUL) cover $(_MIXCO) -- -tT script
+		$(ISTANBUL) cover $(_MIXCO) -- -tT --factory
 	$(ISTANBUL) report text lcov
 
 upload-doc: doc
