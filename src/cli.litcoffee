@@ -10,6 +10,7 @@ scripts and compiles them such that they can be used inside Mixxx.
     fs = require 'fs'
     logger = require 'winston'
     stream = require 'stream'
+    promise = require 'node-promise'
     {inspect} = require 'util'
 
 First, we find out what is the name of the script that we are running.
@@ -120,7 +121,7 @@ The **tasks** function will, given the gulp sources and an output
 directory, define all the `gulp` tasks.  It returns the *gulp* module
 itself.
 
-    tasks = (sources, output, opts) ->
+    tasks = (sources, output, opts={}) ->
         gulp = require 'gulp'
         cached = require 'gulp-cached'
         rename = require 'gulp-rename'
@@ -197,40 +198,48 @@ Mixco script file.
 The **xmlMapped** gulpy plugin generates the `.midi.xml` Mixxx
 controller mapping files.
 
-    consume = (stream, next) ->
-        buffer = new Buffer ""
+    consume = (stream) ->
+        result = new promise.Promise
+        chunks = []
         stream.on 'data', (chunk) ->
-            buffer = Buffer.concat [buffer, chunk]
+            chunks.push chunk
         stream.on 'end', ->
-            next null, buffer
+            result.resolve Buffer.concat chunks
         stream.on 'error', (err) ->
+            result.reject error
+        result
+
+    fork_ = (what, args) ->
+        childp = require 'child_process'
+        proc = childp.fork what, args, silent: true
+        stdoutResult = consume proc.stdout
+        exitResult = new promise.Promise
+        proc.on 'error', (err) ->
             logger.error err
             next err, null
+        proc.on 'exit', (code) ->
+            if code == 0
+                exitResult.resolve code
+            else
+                exitResult.reject new Error "Exit code: #{code}"
+        promise.allOrNone stdoutResult, exitResult
 
     xmlMapped = ->
         through = require 'through2'
-        childp = require 'child_process'
         through.obj (file, enc, next) ->
             moduleName_ = moduleName file.path
             scriptName_ = scriptName file.path
             logger.debug "compiling mapping for:", colors.data moduleName_
             logger.debug "    module:", colors.data moduleName_
             logger.debug "    script:", colors.data scriptName_
-            proc = childp.fork file.path, [ "-g" ], silent: true
-            data = null
-            consume proc.stdout, (err, result) ->
-                data = result
-            proc.on 'error', (err) ->
-                logger.error err
-                next err, null
-            proc.on 'exit', (code) ->
-                if code == 0
-                    file.contents = data
-                    next null, file
-                else
-                    logger.error "Error while generating mapping from:",
-                        colors.data file.path
-                    next null, null
+            fork_ file.path, [ "-g" ]
+                .then ([data, _]) ->
+                        file.contents = data
+                        next null, file
+                    , (err) ->
+                        logger.error "Error while generating mapping from:",
+                            colors.data file.path
+                        logger.error err
 
 The **browserified()** function returns a gulpy plugin that compiles a
 Mixco script (which is a NodeJS script) into a standalone bundle that
@@ -267,7 +276,9 @@ extension for the main script, where `mixco.script.register` is called.
                 """
             finish = (err, res) ->
                 if err
-                    logger.error 'browserify:', err
+                    logger.error 'Error while generating script for:',
+                        colors.data file.path
+                    logger.error err
                 else
                     file.contents = Buffer.concat [
                         prepend, res, append ]
