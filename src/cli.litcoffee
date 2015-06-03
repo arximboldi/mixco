@@ -85,7 +85,11 @@ output and exit when passed `--help`, `--version`, etc...
             .option
                 short: "T"
                 long: "self-test"
-                description: "test the installed Mixco version before compilation"
+                description: "test the framework before compilation"
+            .option
+                short: "t"
+                long: "test"
+                description: "test the input scripts before compilation"
             .help()
             .option
                 short: "V"
@@ -124,12 +128,19 @@ itself.
         gulp.task 'self-test', ->
             if opts.self_test
                 mocha = require 'gulp-mocha'
-                specs = path.join __dirname, '..', 'test', '**', '*.spec.coffee'
-                logger.info "testing specs:", colors.data specs
+                specs = path.join __dirname, '..', 'test', 'mixco', '*.spec.coffee'
+                logger.info "testing framework:", colors.data specs
                 gulp.src specs, read: false
                     .pipe mocha()
 
         gulp.task 'test', ['self-test'], ->
+            if opts.test
+                mocha = require 'gulp-mocha'
+                specs = path.join __dirname, '..', 'test', 'scripts.spec.coffee'
+                logger.info "testing input scripts:", colors.data specs
+                process.env.MIXCO_TEST_INPUTS = sources.join ':'
+                gulp.src specs, read: false
+                    .pipe mocha()
 
         gulp.task 'scripts', ['test'], ->
             ext = ".output.js"
@@ -286,7 +297,9 @@ appropiate task.
 
         gulp = tasks srcs, argv.output,
             self_test: argv['self-test']
-        task = if argv.watch then 'watch' else 'build'
+            test: argv['test']
+
+        task = if argv['watch'] then 'watch' else 'build'
         gulp.start task
 
 Oh, and there is this utility to create a stream from a plain string.
