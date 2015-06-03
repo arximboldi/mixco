@@ -47,9 +47,9 @@ Supported hardware
   - [M-Audio Xponent][script.maudio_xponent]
   - [Novation Twitch][script.novation_twitch]
 
-  [script.korg_nanokontrol2]: script/korg_nanokontrol2.html
-  [script.maudio_xponent]: script/maudio_xponent.html
-  [script.novation_twitch]: script/novation_twitch.html
+  [script.korg_nanokontrol2]: script/korg_nanokontrol2.mixco.html
+  [script.maudio_xponent]: script/maudio_xponent.mixco.html
+  [script.novation_twitch]: script/novation_twitch.mixco.html
 
 
 Download
@@ -129,6 +129,7 @@ Documentation
 ### API
 
   * [mixco.behaviour][mixco.behaviour]
+  * [mixco.cli][mixco.cli]
   * [mixco.control][mixco.control]
   * [mixco.script][mixco.script]
   * [mixco.transform][mixco.transform]
@@ -144,11 +145,12 @@ Documentation
   * [spec.mock][spec.mock]
   * [spec.scripts][spec.scripts]
 
-  [script.korg_nanokontrol2]: script/korg_nanokontrol2.html
-  [script.maudio_xponent]: script/maudio_xponent.html
-  [script.novation_twitch]: script/novation_twitch.html
+  [script.korg_nanokontrol2]: script/korg_nanokontrol2.mixco.html
+  [script.maudio_xponent]: script/maudio_xponent.mixco.html
+  [script.novation_twitch]: script/novation_twitch.mixco.html
 
   [mixco.behaviour]: src/behaviour.html
+  [mixco.cli]: src/cli.html
   [mixco.control]: src/control.html
   [mixco.script]: src/script.html
   [mixco.transform]: src/transform.html

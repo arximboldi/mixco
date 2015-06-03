@@ -5,8 +5,9 @@ spec.mock
 when needed*, reflecting [the official Mixxx documentation](
 http://mixxx.org/wiki/doku.php/midi_scripting).
 
-    script = require '../src/script'
-    {assert} = require '../src/util'
+    mixco = require 'mixco'
+    script = mixco.script
+    {assert} = mixco.util
     {spy} = require 'sinon'
 
 Engine
@@ -72,6 +73,8 @@ This test script class provides Mixxx object mocks.
         @property 'mixxx',
             get: ->
                 @_fakeMixxx or= exports.mixxx()
+
+        __registeredName: 'testscript'
 
     exports.testScript = -> new exports.TestScript arguments...
 

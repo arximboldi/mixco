@@ -17,19 +17,13 @@ Dependencies
 First, we have to import he *Mixco* modules that we are going to use,
 using the [NodeJS,
 **require**](http://nodejs.org/api/modules.html#modules_module_require_id)
-function.
+function. Also, lets define these couple of shortcuts to save typing.
 
-    {assert}  = require '../src/util'
-    script    = require '../src/script'
-    control   = require '../src/control'
-    behaviour = require '../src/behaviour'
-    value     = require '../src/value'
-
-Also, lets define these couple of shortcuts to save typing.
-
-    c = control
-    b = behaviour
-    v = value
+    mixco = require 'mixco'
+    {assert}  = mixco.util
+    c = mixco.control
+    b = mixco.behaviour
+    v = mixco.value
 
 The script
 ----------
@@ -40,13 +34,8 @@ We define the script with the **script.register** function, which will
 create the script instance.  As first parameter we pass the current
 module, that is contained in the special *NodeJS* variable
 `module`. The second parameter is an object with the actual script.
-The `name` attribute is compulsory and must match file name *without
-extension*.  It should be a valid JavaScript identifier -- i.e. start
-with a letter and contain only alfanumerical characters or underscore.
 
-    script.register module,
-
-        name: 'korg_nanokontrol2'
+    mixco.script.register module,
 
 ### Metadata
 

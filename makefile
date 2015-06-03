@@ -1,32 +1,29 @@
 #
 #  File:       makefile
 #  Author:     Juan Pedro Bolívar Puente <raskolnikov@es.gnu.org>
-#  Date:       Mon May 20 15:27:56 2013
 #
 #  Generates proper Mixxx script configuration files from smart
 #  smart CoffeeScript file.
 #
 
+WITH_PATH  = NODE_PATH="$(NODE_PATH):.."
+MIXCO      = $(WITH_PATH) ./bin/mixco.js
+_MIXCO     = ./bin/mixco.js
+
 NODE_BIN   = node_modules/.bin
-
-NODEJS     = node
-COFFEE     = $(NODE_BIN)/coffee
-BROWSERIFY = $(NODE_BIN)/browserify
-DOCCO      = $(NODE_BIN)/docco
-MOCHA      = $(NODE_BIN)/_mocha
-ISTANBUL   = $(NODE_BIN)/istanbul
-
-SCRIPTS    = \
-	out/korg_nanokontrol2.js out/korg_nanokontrol2.midi.xml \
-	out/maudio_xponent.js    out/maudio_xponent.midi.xml \
-	out/novation_twitch.js   out/novation_twitch.midi.xml
+NODEJS     = $(WITH_PATH) node
+COFFEE     = $(WITH_PATH) $(NODE_BIN)/coffee
+BROWSERIFY = $(WITH_PATH) $(NODE_BIN)/browserify
+DOCCO      = $(WITH_PATH) $(NODE_BIN)/docco
+MOCHA      = $(WITH_PATH) $(NODE_BIN)/mocha
+ISTANBUL   = $(WITH_PATH) $(NODE_BIN)/istanbul
+_MOCHA     = $(NODE_BIN)/_mocha
 
 FRAMEWORK  = \
 	lib/behaviour.js \
 	lib/cli.js \
 	lib/console.js \
 	lib/control.js \
-	lib/index.js \
 	lib/script.js \
 	lib/transform.js \
 	lib/util.js \
@@ -38,30 +35,53 @@ DOCS       = \
 	doc/src/cli.html \
 	doc/src/control.html \
 	doc/src/console.html \
-	doc/src/index.html \
 	doc/src/script.html \
 	doc/src/transform.html \
 	doc/src/util.html \
 	doc/src/value.html \
-	doc/script/korg_nanokontrol2.html \
-	doc/script/maudio_xponent.html \
-	doc/script/novation_twitch.html \
-	doc/spec/mixco/behaviour.spec.html \
-	doc/spec/mixco/control.spec.html \
-	doc/spec/mixco/script.spec.html \
-	doc/spec/mixco/value.spec.html \
-	doc/spec/mock.html \
-	doc/spec/scripts.spec.html
+	doc/script/korg_nanokontrol2.mixco.html \
+	doc/script/maudio_xponent.mixco.html \
+	doc/script/novation_twitch.mixco.html \
+	doc/test/mixco/behaviour.spec.html \
+	doc/test/mixco/control.spec.html \
+	doc/test/mixco/script.spec.html \
+	doc/test/mixco/value.spec.html \
+	doc/test/mock.html \
+	doc/test/scripts.spec.html
 
 framework: $(FRAMEWORK)
 
-scripts: $(SCRIPTS)
+script: $(FRAMEWORK)
+	$(MIXCO) script
 
 doc: $(DOCS)
 	cp -r ./pic ./doc/
 
+install:
+	npm install
+
+test: $(FRAMEWORK)
+	MIXCO_USE_SOURCE=1 $(MIXCO) -tT script
+
+test-coverage: $(FRAMEWORK)
+	MIXCO_COVERAGE=1 MIXCO_USE_SOURCE=1 \
+		$(ISTANBUL) cover $(_MIXCO) -- -tT script
+	$(ISTANBUL) report text lcov
+
+upload-doc: doc
+	ncftpput -R -m -u u48595320 sinusoid.es /mixco doc/*
+
+clean:
+	rm -rf ./doc
+	rm -rf ./out
+	rm -rf ./tmp
+	rm -rf ./lib
+	rm -rf ./coverage
+	rm -rf ./mixco-output
+	find . -name "*~" -exec rm -f {} \;
+
 .SECONDARY:
-.PHONY: test
+.PHONY: test script clean
 
 lib/%.js: src/%.litcoffee
 	@mkdir -p $(@D)
@@ -73,66 +93,23 @@ lib/%.js: src/%.js
 	@mkdir -p $(@D)
 	cp -f $< $@
 
-tmp/%.js: script/%.litcoffee
-	@mkdir -p $(@D)
-	$(COFFEE) -c -p $< > $@
-tmp/%.js: script/%.coffee
-	@mkdir -p $(@D)
-	$(COFFEE) -c -p $< > $@
-tmp/%.js: script/%.js
-	@mkdir -p $(@D)
-	cp -f $< $@
-
-out/%.js: tmp/%.js $(FRAMEWORK)
-	@mkdir -p $(@D)
-	$(BROWSERIFY) -r ./$< $< > $@
-	echo ";$*=require('./$<').$*" >> $@
-
-out/%.midi.xml: script/%.litcoffee $(FRAMEWORK)
-	@mkdir -p $(@D)
-	$(COFFEE) $< -g > $@
-out/%.midi.xml: script/%.coffee $(FRAMEWORK)
-	@mkdir -p $(@D)
-	$(COFFEE) $< -g > $@
-out/%.midi.xml: script/%.js $(FRAMEWORK)
-	@mkdir -p $(@D)
-	$(NODEJS) $< -g > $@
-
 doc/index.html: README.md
 	@mkdir -p $(@D)
 	$(DOCCO) -t docco/docco.jst -c docco/docco.css  -o $(@D) $<
 	mv $(@D)/README.html $@
 	cp -rf docco/public $(@D)
 
+# $1: input file
+# $2: target directory
+define GENERATE_DOC
+	@mkdir -p $2
+	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $2 $1
+	cp -rf docco/public $2
+endef
+
 doc/%.html: %.litcoffee
-	@mkdir -p $(@D)
-	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
-	cp -rf docco/public $(@D)
+	$(call GENERATE_DOC,$<,$(@D))
 doc/%.html: %.coffee
-	@mkdir -p $(@D)
-	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
-	cp -rf docco/public $(@D)
+	$(call GENERATE_DOC,$<,$(@D))
 doc/%.html: %.js
-	@mkdir -p $(@D)
-	$(DOCCO) -t docco/docco.jst -c docco/docco.css -o $(@D) $<
-	cp -rf docco/public $(@D)
-
-clean:
-	rm -rf ./doc
-	rm -rf ./out
-	rm -rf ./tmp
-	rm -rf ./lib
-	find . -name "*~" -exec rm -f {} \;
-
-test:
-	$(MOCHA) \
-		--recursive --compilers coffee:coffee-script/register
-
-test-coverage:
-	$(ISTANBUL) cover $(MOCHA) -- \
-		--recursive --compilers coffee:coffee-script/register \
-		--require coffee-coverage/register-istanbul
-	$(ISTANBUL) report text lcov
-
-upload-doc: doc
-	ncftpput -R -m -u u48595320 sinusoid.es /mixco doc/*
+	$(call GENERATE_DOC,$<,$(@D))

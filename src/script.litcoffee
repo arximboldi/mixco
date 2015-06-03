@@ -10,6 +10,10 @@ scripts.
     {indent, xmlEscape, catching, assert} = require './util'
     require './console'
 
+    {basename} = require 'path'
+    S = require 'string'
+    _ = require 'underscore'
+
 Script
 ------
 
@@ -20,27 +24,52 @@ object definining overrides for `name`, `constructor` and optionally
 `init` and `shutdown`. The script instance will be exported as
 `Script.name`, and if the parent module is main, it will be executed.
 
+    exports.nameFromFilename = (fname) ->
+        extensions = [
+            ".mixco.coffee",
+            ".mixco.litcoffee",
+            ".mixco.js",
+            ".mixco" # must be last
+        ]
+        fname = basename fname
+        assert (_.some extensions, (x) -> S(fname).endsWith x),
+            "Script file name: #{fname} must end in one of: #{extensions}"
+        name = extensions.reduce ((fname, ext) -> fname.replace ext, ""), fname
+        assert name.match /^[a-zA-Z_$][0-9a-zA-Z_$].*$/,
+            "Script name must be a valid JavaScript identifier"
+        name
+
     exports.register = (targetModule, scriptTypeOrDefinition) ->
-        if not issubclass scriptTypeOrDefinition, exports.Script
-            scriptTypeOrDefinition = exports.create scriptTypeOrDefinition
-        instance = new scriptTypeOrDefinition
-        targetModule.exports[instance.name] = instance
+        name =
+            if targetModule.filename?
+                # running inside Node
+                exports.nameFromFilename targetModule.filename
+            else if MIXCO_SCRIPT_FILENAME?
+                # running inside Mixxx
+                exports.nameFromFilename MIXCO_SCRIPT_FILENAME
+            else
+                assert false, "Invalid script"
+        scriptType =
+            if issubclass scriptTypeOrDefinition, exports.Script
+                scriptTypeOrDefinition
+            else
+                exports.create scriptTypeOrDefinition
+
+        instance = new scriptType
+        instance.__registeredName = name
+        targetModule.exports[name] = instance
+
         if targetModule == require.main
             instance.main()
 
     exports.create = (scriptDefinition) ->
-        assert scriptDefinition.name?,
-            "Script definition must have a name"
         assert scriptDefinition.constructor?,
             "Script definition must have a constructor"
 
-        {name, constructor, init, shutdown} =
+        {constructor, init, shutdown} =
             scriptDefinition
 
         class NewScript extends exports.Script
-
-            @property 'name', ->
-                name
 
             constructor: ->
                 super
@@ -104,14 +133,14 @@ panel. Overide it with your details.
             wiki: ""
 
 
-The **name** property returns the most derived class name *in
-lowercase*, which is how the script instance is registered in the
-target module, and how the script file should be called.
+The **name** property returns the name of the script, which is the
+name of the script file minus the extensions.  It is set up
+automatically during registration.
 
         @property 'name',
-            configurable: true
             get: ->
-                @constructor.name.toLowerCase()
+                assert @__registeredName, "Script must be registered"
+                @__registeredName
 
 Use **add** to add controls to your script instance.
 
@@ -198,7 +227,7 @@ XML file and display some help.
             #{indent 1}<controller id=\"#{@name}\">
             #{indent 2}<scriptfiles>
             #{indent 3}<file functionprefix=\"#{@name}\"
-            #{indent 3}      filename=\"#{@name}.js\"/>
+            #{indent 3}      filename=\"#{@name}.mixco.output.js\"/>
             #{indent 2}</scriptfiles>
             #{indent 2}<controls>
             #{@configInputs 3}

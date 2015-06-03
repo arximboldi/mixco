@@ -7,7 +7,7 @@ chai.use require 'sinon-chai'
 
 describe 'mixco.value', ->
 
-    {Value, Reduce, Const, transform} = require '../../src/value'
+    {Value, Reduce, Const, transform} = require('mixco').value
 
     describe 'Value', ->
 

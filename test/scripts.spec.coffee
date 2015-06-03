@@ -6,13 +6,30 @@
 # Mixco distribution.
 
 {expect} = require 'chai'
+globby = require 'globby'
 
 describe 'scripts', ->
 
     fs       = require 'fs'
     path     = require 'path'
     mock     = require './mock'
-    {assert} = require '../src/util'
+    mixco    = require 'mixco'
+    {assert} = mixco.util
+
+    MIXCO_EXT_GLOBS = [
+        "*.mixco.js"
+        "*.mixco.coffee"
+        "*.mixco.litcoffee"
+    ]
+
+    # One may use the MIXCO_TEST_INPUTS environment variable to pass
+    # which scripts to test.  This variable should contain a
+    # `:`-separated list of globby globs.
+
+    MIXCO_TEST_INPUTS  = process.env.MIXCO_TEST_INPUTS?.split ':'
+        .map (input) -> path.resolve process.cwd(), input
+    MIXCO_TEST_INPUTS ?= MIXCO_EXT_GLOBS.map (ext) ->
+            path.join __dirname, "..", "script", "**", ext
 
     # We should let exception get all the way down to the test
     # framework so trivial errors are detected. The **unrequire**
@@ -20,27 +37,28 @@ describe 'scripts', ->
     # *catching* decorator after unloading all modules so exceptions
     # reach the test system.
 
-    unrequire = (name, force=false) ->
+    unrequire = (name) ->
         fullName = require.resolve name
         if fullName of require.cache
             delete require.cache[fullName]
 
-    forEveryModuleInDir = (dirs..., fn) ->
-        module_exts = [ '.coffee', '.litcoffee', '.js' ]
-        current_dir = path.basename require.resolve './scripts.spec'
-        for dir in dirs
-            for file in fs.readdirSync path.join current_dir, dir
-                ext = path.extname file
-                if ext in module_exts
-                    fn path.basename(file, ext), dir
+    globEach = (globs, fn) ->
+        # Registering tests asynchronously confuses Mocha
+        globby.sync globs
+            .forEach fn
 
     do monkeypatchCatching = ->
         unrequire 'heterarchy'
-        forEveryModuleInDir '../src', '../script', (name, dir) ->
-            unrequire path.join(dir, name), true
-        require '../src/util'
-        module = require.cache[require.resolve '../src/util']
-        module.exports.catching = (f) -> f
+        unrequire 'mixco'
+        globEach MIXCO_TEST_INPUTS, (fname) ->
+            unrequire fname
+        globEach ['../lib/*.js', '../src/*.litcoffee'], (fname) ->
+            unrequire fname
+
+        require 'mixco'
+        ['../src/util', '../lib/util'].forEach (mname) ->
+            module = require.cache[require.resolve mname]
+            module?.exports.catching = (f) -> f
 
     # Tests
     # -----
@@ -50,15 +68,16 @@ describe 'scripts', ->
     # propagating `undefined` values -- or other potential errors,
     # like exceptions reaching Mixxx, or whatever.
 
-    forEveryModuleInDir '../script', (scriptName) ->
+    globEach MIXCO_TEST_INPUTS, (fname) ->
+        scriptName = path.basename fname, path.extname fname
+        scriptName = path.basename scriptName, ".mixco"
 
         describe "#{scriptName}", ->
             script = null
 
             beforeEach ->
-                moduleName = path.join '../script', scriptName
-                unrequire moduleName
-                module = require moduleName
+                unrequire fname
+                module = require fname
                 script = module[scriptName]
                 script.mixxx = mock.mixxx()
 

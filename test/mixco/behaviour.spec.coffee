@@ -7,11 +7,7 @@ chai.use require 'sinon-chai'
 
 describe 'mixco.behaviour', ->
 
-    util      = require '../../src/util'
-    value     = require '../../src/value'
-    behaviour = require '../../src/behaviour'
-    transform = require '../../src/transform'
-
+    {util, value, behaviour, transform} = mixco = require 'mixco'
     mocks = require '../mock'
 
     mockActor = -> stub
