@@ -77,12 +77,11 @@ var b = mixco.behaviours
 
 // ... in your script constructor ...
     var shift = b.modifier()
-    ledButton(c.noteIds 0x01, 0).does(shift)
-
-    var g = "[Channel1]"
-    b.ledButton(c.noteIds 0x02, 0)
-        .when(shift, g, "beatsync_tempo")
-        .else_(g, "beatsync")
+    c.ledButton(c.noteIds(0x01, 0))
+        .does(shift)
+    c.ledButton(c.noteIds(0x02, 0))
+        .when (shift, "[Channel1]", "beatsync_tempo")
+        .else_(       "[Channel1]", "beatsync")
 ```
 
 #### No editing XML files
