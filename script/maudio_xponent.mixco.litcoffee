@@ -58,24 +58,27 @@ Most of knobs and buttons in **24** and **25** are dedicated to effects.
 Some of them are mapped per-deck --see later-- but the *flanger
 parameters are mapped globally:
 
-* The *first knob* of the *left deck* is the *LFO depth*.
+* The *first and second knobs* of the *left deck* control the *super*
+  and *mix* of the first effect unit.  In the *right deck*, they do
+  likewise for the second effect unit.
 
-            c.slider(0x0c, 0x00).does b.soft "[Flanger]", "lfoDepth"
+            c.slider(0x0c, 0x00).does \
+                b.soft "[EffectRack1_EffectUnit1]", "super1"
+            c.slider(0x0d, 0x00).does \
+                b.soft "[EffectRack1_EffectUnit1]", "mix"
 
-* The *first knob* of the *right deck* is the *LFO delay*.
-
-            c.slider(0x0c, 0x01).does b.soft "[Flanger]", "lfoDelay"
-
-* The *second knob* of the *right deck* is the *LFO period*.
-
-            c.slider(0x0d, 0x01).does b.soft "[Flanger]", "lfoPeriod"
+            c.slider(0x0c, 0x01).does \
+                b.soft "[EffectRack1_EffectUnit2]", "super1"
+            c.slider(0x0d, 0x01).does \
+                b.soft "[EffectRack1_EffectUnit2]", "mix"
 
 * **16.** When in *MIDI mode*, the touch pad can be used to control the
-  *depth* and *delay* for the flanger effect on the Y and X axis
-  *respectively.
+  first two parameters of the first effect.
 
-            c.control(0x09, 0x02).does "[Flanger]", "lfoDepth"
-            c.control(0x08, 0x02).does "[Flanger]", "lfoDelay"
+            c.control(0x09, 0x02)
+                .does "[EffectRack1_EffectUnit1_Effect1]", "parameter1"
+            c.control(0x08, 0x02)
+                .does "[EffectRack1_EffectUnit1_Effect1]", "parameter2"
 
 * **17.** and **18.** When in *MIDI mode*, the touch pad buttons *toggle
    the flanger* effect for the left and right channel respectively.
@@ -273,10 +276,13 @@ channel.
 
 ### Effects
 
-* In the **24** group, the *first button* enables the *flanger effect* for
-  each deck.
+* In the **24** group, the *first* and *second* buttons enable the
+  first or second effect units for this deck.
 
-            c.control(noteOnId 0x0c).does g, "flanger"
+            c.control(noteOnId 0x0c)
+                .does "[EffectRack1_EffectUnit1]", "group_#{g}_enable"
+            c.control(noteOnId 0x0d)
+                .does "[EffectRack1_EffectUnit2]", "group_#{g}_enable"
 
 * The *third knob and button* in **24** and **25** enable a *beat
   roll* effect, similar to those of the looping section but with
@@ -290,9 +296,10 @@ channel.
 * The *fourth knob and button* in **24** and **25** enable the quick
   effect knob -- by default mapped to a filter sweep.
 
-            gf = "[QuickEffectRack1_[Channel#{i+1}]]"
-            c.knob(ccId 0x0f).does gf, 'super1'
-            c.control(noteId 0x0f).does gf, 'enabled', gf, 'enabled'
+            c.knob(ccId 0x0f)
+                .does "[QuickEffectRack1_#{g}]", 'super1'
+            c.control(noteId 0x0f)
+                .does "[QuickEffectRack1_#{g}]", 'enabled'
 
 ### The wheel and pitch section
 
