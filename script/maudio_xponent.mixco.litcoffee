@@ -17,12 +17,6 @@ functionallity of the controls.
     b = mixco.behaviour
     v = mixco.value
 
-    controlFixed = ->
-        c.control(arguments...).option
-            process: (ev) ->
-                if ev.message() == c.MIDI_NOTE_OFF
-                    ev.value = 0
-
     mixco.script.register module,
 
         info:
@@ -121,7 +115,7 @@ channel.
   controls of that deck.
 
             shift = b.modifier()
-            controlFixed(noteId 0x2C).does shift
+            c.control(noteId 0x2C).does shift
 
 * **12.** Pre-Fade Listen. Select which deck goes to the pre-hear.
 
@@ -161,7 +155,7 @@ channel.
 * **38.** Punch-in/transform. While pressed, lets this track be heard
   overriding the corssfader.
 
-            controlFixed(noteId 0x07).does b.punchIn (0.5-i)
+            c.control(noteId 0x07).does b.punchIn (0.5-i)
 
 ### The transport section
 
@@ -182,7 +176,7 @@ channel.
   held, deletes the hotcue point.
 
             for idx in [0..4]
-                controlFixed(noteId(0x17 + idx))
+                c.control(noteId(0x17 + idx))
                     .when(shift,
                           g, "hotcue_#{idx+1}_clear",
                           g, "hotcue_#{idx+1}_enabled")
@@ -193,10 +187,10 @@ channel.
   one beat. When *shift* is pressed, they select the previous or
   next item of the browser sidebar.
 
-            controlFixed(noteId 0x1C)
+            c.control(noteId 0x1C)
                 .when(shift, "[Playlist]", "SelectPrevPlaylist")
                 .else b.beatJump g, -1
-            controlFixed(noteId 0x1D)
+            c.control(noteId 0x1D)
                 .when(shift, "[Playlist]", "SelectNextPlaylist")
                 .else b.beatJump g, 1
 
@@ -204,7 +198,7 @@ channel.
   independent of pitch. When *shift* is pressed, it expands/collapses
   the selected browser item.
 
-            controlFixed(noteId 0x1E)
+            c.control(noteId 0x1E)
                 .when(shift, "[Playlist]", "ToggleSelectedSidebarItem")
                 .else g, "keylock"
 
@@ -234,10 +228,10 @@ channel.
   current playing position.  When *shift* is pressed, they halve and
   double the current loop size respectively.
 
-            controlFixed(noteId 0x29)
+            c.control(noteId 0x29)
                 .when(shift, g, "loop_halve")
                 .else g, "loop_in"
-            controlFixed(noteId 0x2B)
+            c.control(noteId 0x2B)
                 .when(shift, g, "loop_double")
                 .else g, "loop_out"
 
@@ -251,22 +245,22 @@ channel.
   respectively. When *shift*, they set loops of 1/8, 1/2, 1 or 2
   long.
 
-            controlFixed(noteId 0x25)
+            c.control(noteId 0x25)
                 .when(shift, g, "beatloop_0.125_activate",
                       g, "beatloop_0.125_enabled")
                 .else g, "beatloop_4_activate",
                       g, "beatloop_4_enabled"
-            controlFixed(noteId 0x26)
+            c.control(noteId 0x26)
                 .when(shift, g, "beatloop_0.5_activate",
                       g, "beatloop_0.5_enabled")
                 .else g, "beatloop_8_activate",
                       g, "beatloop_8_enabled"
-            controlFixed(noteId 0x27)
+            c.control(noteId 0x27)
                 .when(shift, g, "beatloop_1_activate",
                       g, "beatloop_1_enabled")
                 .else g, "beatloop_16_activate",
                       g, "beatloop_16_enabled"
-            controlFixed(noteId 0x28)
+            c.control(noteId 0x28)
                 .when(shift, g, "beatloop_2_activate",
                       g, "beatloop_2_enabled")
                 .else g, "beatloop_32_activate",
@@ -289,7 +283,7 @@ channel.
 
             beatloop = b.beatEffect g, 'roll'
             c.knob(ccId 0x0e).does beatloop.selector()
-            controlFixed(noteId 0x0e).does beatloop
+            c.control(noteId 0x0e).does beatloop
 
 * The *fourth knob and button* in **24** and **25** enable the quick
   effect knob -- by default mapped to a filter sweep.
@@ -327,7 +321,7 @@ channel.
                     if toggle < 0 then toggle = 3
                     if toggle == 0 then val.sign() else null
 
-            controlFixed(noteId 0x16)
+            c.control(noteId 0x16)
                 .when v.and(v.not(shift), scratchMode), b.scratchEnable i+1
 
             c.knob(ccId 0x16)
@@ -340,10 +334,10 @@ channel.
 * **26.** Temporarily nudges the pitch down or up. When **shift**,
 they do it in a smaller ammount.
 
-            controlFixed(noteId 0x10)
+            c.control(noteId 0x10)
                 .when(shift, g, "rate_temp_down_small")
                 .else g, "rate_temp_down"
-            controlFixed(noteId 0x11)
+            c.control(noteId 0x11)
                 .when(shift, g, "rate_temp_up_small")
                 .else g, "rate_temp_up"
 
@@ -357,7 +351,7 @@ they do it in a smaller ammount.
   turntable was turned off suddenly. On *shift*, it ejects the track
   from the deck.
 
-            controlFixed(noteId 0x12)
+            c.control(noteId 0x12)
                 .when(shift, g, "eject")
                 .else b.brake i+1
 
@@ -365,7 +359,7 @@ they do it in a smaller ammount.
   vinyl was launched backwards. On *shift*, it loads the selected
   track in the browser into the deck.
 
-            controlFixed(noteId 0x13)
+            c.control(noteId 0x13)
                 .when(shift, g, "LoadSelectedTrack")
                 .else b.spinback i+1
 
