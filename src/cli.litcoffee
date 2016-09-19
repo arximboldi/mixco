@@ -140,6 +140,7 @@ itself.
                 logger.info "testing framework:", colors.data specs
                 gulp.src specs, read: false
                     .pipe mocha()
+                    .on 'error', -> logger.error arguments...
 
         gulp.task 'test', ['self-test'], ->
             if opts.test
@@ -149,6 +150,7 @@ itself.
                 process.env.MIXCO_TEST_INPUTS = sources.join ':'
                 gulp.src specs, read: false
                     .pipe mocha()
+                    .on 'error', -> logger.error arguments...
 
         gulp.task 'scripts', ['test'], ->
             ext = ".output.js"
