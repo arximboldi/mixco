@@ -64,6 +64,7 @@ coming from Mixxx.
         status: status
         group: group
         message: -> @status >> 4
+        pressed: status >> 4 != MIDI_NOTE_OFF && value
 
 Controls
 --------

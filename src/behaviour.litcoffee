@@ -243,7 +243,7 @@ the value.  It can take an *initial* value too.
             super initial: initial
 
         onMidiEvent: (ev) ->
-            result = @transformer ev.value, @midiValue
+            result = @transformer ev, @midiValue
             if result?
                 @output.value = @value = result
 
@@ -314,7 +314,7 @@ the script.  In this case, we define `onMidiEvent` to emulate the
 behaviour of a direct mapping.
 
         onMidiEvent: (ev) ->
-            val = @_transform ev.value, @midiValue
+            val = @_transform ev, @midiValue
             if val?
                 @script.mixxx.engine.setValue @group, @key, val
                 if @listeners('value').length == 0
@@ -426,8 +426,8 @@ pressed.  The *toggle* behaviour instead sets it to two different
 value on press or release.
 
     exports.toggle = (offValue, onValue, args...) ->
-        exports.map(args...).transform (val) ->
-            if val then onValue else offValue
+        exports.map(args...).transform (ev) ->
+            if ev.pressed then onValue else offValue
 
     exports.set = (valueToSet, args...) ->
         exports.toggle valueToSet, null, args...
@@ -465,8 +465,8 @@ retreiving the value as opposed to setting it.
         add: (group, key, listen=null) ->
             idx       = @_chooseOptions.length
             activator = exports.map(group, key)
-                .transform (val) =>
-                    if val > 0 then @activate idx
+                .transform (ev) =>
+                    if ev.pressed then @activate idx
                     null
             @_chooseOptions.push [group, key, listen]
             @_chooseActivators.push activator
@@ -499,8 +499,8 @@ knob.  It keeps the fractional part of the computed index in its
 `value`, thus allowing usage with relative encoders.
 
         selector: ->
-            select = (v) =>
-                v = (v / 128.0 * @_chooseOptions.length)
+            select = (ev) =>
+                v = (ev.value / 128.0 * @_chooseOptions.length)
                     .clamp 0, @_chooseOptions.length-1
                 @_update index: Math.floor v
                 v
@@ -538,7 +538,7 @@ is pressed, not otherwise.
             @
 
         onMidiEvent: (event) ->
-            if event.value
+            if event.pressed
                 enable = not @value
                 @_update enable: enable
                 if not enable
@@ -659,7 +659,7 @@ script-only button actions with a press and a release event.
             @onRelease ?= @action.release
 
         onMidiEvent: (ev) ->
-            val = @value = @output.value = ev.value > 0
+            val = @value = @output.value = ev.pressed
             if val
                 @onPress?()
             else

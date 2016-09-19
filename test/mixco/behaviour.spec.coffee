@@ -174,7 +174,7 @@ describe 'mixco.behaviour', ->
             expect(t.value).to.eq 42
 
         it 'sets its value and output to the transformed MIDI input', ->
-            t = behaviour.transform (v) -> v * 2
+            t = behaviour.transform (ev) -> ev.value * 2
 
             t.onMidiEvent value: 3
             expect(t.value).to.eq 6
@@ -187,7 +187,7 @@ describe 'mixco.behaviour', ->
             expect(t.midiValue).to.eq 12
 
         it 'can inverse the transform to reconstruct the midi values', ->
-            f = (v) -> v * 2
+            f = (ev) -> ev.value * 2
             f.inverse = (v) -> v / 2
             t = behaviour.transform f
 
@@ -196,7 +196,7 @@ describe 'mixco.behaviour', ->
             expect(t.midiValue).to.eq 3
 
         it 'does not set its value when the transform gives a nully value', ->
-            t = behaviour.transform (v) -> if v != 42 then v * 2
+            t = behaviour.transform (ev) -> if ev.value != 42 then ev.value * 2
 
             t.onMidiEvent value: 3
             expect(t.value).to.eq 6
@@ -207,13 +207,13 @@ describe 'mixco.behaviour', ->
             t.onMidiEvent value: 0
             expect(t.value).to.eq 0
 
-        it 'can take non-linear transforms', ->
+        it 'can take binary transform that depend on pressed state', ->
             t = behaviour.transform transform.binaryT
 
-            t.onMidiEvent value: 3
+            t.onMidiEvent pressed: true
             expect(t.value).to.be.true
 
-            t.onMidiEvent value: 3
+            t.onMidiEvent pressed: true
             expect(t.value).to.be.false
 
 
@@ -325,7 +325,7 @@ describe 'mixco.behaviour', ->
                 .to.have.been.calledWith "[Master]", "crossfader", 1
 
         it 'sets the values in the engine using custom transformation', ->
-            xfader = behaviour.map("[Master]", "crossfader").transform (v) -> v
+            xfader = behaviour.map("[Master]", "crossfader").transform (ev) -> ev.value
             xfader.enable script, actor
 
             xfader.onMidiEvent value: 64
@@ -350,7 +350,7 @@ describe 'mixco.behaviour', ->
 
         it 'does nothing when the transform return null', ->
             xfader = behaviour.map("[Master]", "crossfader").transform (v) ->
-                if v == 64 then 64 else null
+                if v.value == 64 then 64 else null
             xfader.enable script, actor
 
             xfader.onMidiEvent value: 32
@@ -365,11 +365,11 @@ describe 'mixco.behaviour', ->
             lock = behaviour.map "[Channel1]", "keylock"
             lock.enable script, actor
 
-            lock.onMidiEvent value: 32
+            lock.onMidiEvent pressed: true
             expect(script.mixxx.engine.setValue)
                 .to.have.been.calledWith "[Channel1]", "keylock", true
 
-            lock.onMidiEvent value: 32
+            lock.onMidiEvent pressed: true
             expect(script.mixxx.engine.setValue)
                 .to.have.been.calledWith "[Channel1]", "keylock", false
 
@@ -413,19 +413,19 @@ describe 'mixco.behaviour', ->
             expect(engine.getValue "[Channel1]", "pfl").to.be.false
             expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
-        it "activators activate when they receive non-zero value", ->
+        it "activators activate when control pressed", ->
             chooser.activator(0).enable script, actor
             chooser.activator(1).enable script, actor
 
-            chooser.activator(1).onMidiEvent value: 1
+            chooser.activator(1).onMidiEvent pressed: true
             expect(engine.getValue "[Channel1]", "pfl").to.be.false
             expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
-            chooser.activator(0).onMidiEvent value: 1
+            chooser.activator(0).onMidiEvent pressed: true
             expect(engine.getValue "[Channel1]", "pfl").to.be.true
             expect(engine.getValue "[Channel2]", "pfl").to.be.false
 
-            chooser.activator(1).onMidiEvent value: 0
+            chooser.activator(1).onMidiEvent pressed: false
             expect(engine.getValue "[Channel1]", "pfl").to.be.true
             expect(engine.getValue "[Channel2]", "pfl").to.be.false
 
@@ -436,12 +436,12 @@ describe 'mixco.behaviour', ->
             expect(engine.getValue "[Channel2]", "pfl").to.be.true
             chooser._updateValue() # simulate callback
 
-            chooser.onMidiEvent value: 1
+            chooser.onMidiEvent pressed: true
             expect(engine.getValue "[Channel1]", "pfl").to.be.false
             expect(engine.getValue "[Channel2]", "pfl").to.be.false
             chooser._updateValue() # simulate callback
 
-            chooser.onMidiEvent value: 1
+            chooser.onMidiEvent pressed: true
             expect(engine.getValue "[Channel1]", "pfl").to.be.false
             expect(engine.getValue "[Channel2]", "pfl").to.be.true
 
@@ -534,7 +534,7 @@ describe 'mixco.behaviour', ->
             chooser.select 2
             chooser.enable script, actor
 
-            chooser.onMidiEvent value: 1
+            chooser.onMidiEvent pressed: true
             expect(engine.getValue "[Channel1]", "pfl").to.be.false
             expect(engine.getValue "[Channel2]", "pfl").to.be.false
             expect(engine.getValue "[Channel3]", "pfl").to.be.true
@@ -567,11 +567,11 @@ describe 'mixco.behaviour', ->
             chooser.add "[Channel2]", "pfl"
             chooser.enable script, actor
 
-            chooser.onMidiEvent value: 1
+            chooser.onMidiEvent pressed: true
             expect(spier.onDisable).not.to.have.been.called
 
             chooser.value = true
-            chooser.onMidiEvent value: 1
+            chooser.onMidiEvent pressed: true
             expect(spier.onDisable).to.have.been.called
 
         it "reads value from optional second key", ->
@@ -739,18 +739,18 @@ describe 'mixco.behaviour', ->
 
         it "sets the crossfader to the middle and restores otherwise", ->
             xfader = 0.75
-            leftPunchIn.onMidiEvent value: 1
+            leftPunchIn.onMidiEvent pressed: true
             expect(script.mixxx.engine.setValue)
                 .to.have.been.calledWith "[Master]", "crossfader", 0.0
-            leftPunchIn.onMidiEvent value: 0
+            leftPunchIn.onMidiEvent pressed: false
             expect(script.mixxx.engine.setValue)
                 .to.have.been.calledWith "[Master]", "crossfader", 0.75
 
             xfader = -0.75
-            rightPunchIn.onMidiEvent value: 1
+            rightPunchIn.onMidiEvent pressed: true
             expect(script.mixxx.engine.setValue)
                 .to.have.been.calledWith "[Master]", "crossfader", 0.0
-            rightPunchIn.onMidiEvent value: 0
+            rightPunchIn.onMidiEvent pressed: false
             expect(script.mixxx.engine.setValue)
                 .to.have.been.calledWith "[Master]", "crossfader", -0.75
 
@@ -771,7 +771,7 @@ describe 'mixco.behaviour', ->
             expect(script.mixxx.engine.scratchEnable)
                 .not.to.have.been.called
 
-            scratch.onMidiEvent value: 1
+            scratch.onMidiEvent pressed: true
             expect(script.mixxx.engine.scratchEnable)
                 .to.have.been.calledWith 1, 32, 33, 1, 0.4, false
 
