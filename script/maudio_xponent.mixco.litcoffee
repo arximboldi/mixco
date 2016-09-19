@@ -315,8 +315,8 @@ channel.
 
             selectTrackKnobTransform = do ->
                 toggle = 1
-                (val) ->
-                    val = val - 64
+                (ev) ->
+                    val = ev.value - 64
                     toggle -= 1
                     if toggle < 0 then toggle = 3
                     if toggle == 0 then val.sign() else null
@@ -329,7 +329,7 @@ channel.
                     .transform selectTrackKnobTransform)
                 .else.when(scratchMode,
                     b.scratchTick(i+1).options.spread64)
-                .else b.map(g, "jog").transform (v) -> (v - 64) / 8
+                .else b.map(g, "jog").transform (ev) -> (ev.value - 64) / 8
 
 * **26.** Temporarily nudges the pitch down or up. When **shift**,
 they do it in a smaller ammount.
