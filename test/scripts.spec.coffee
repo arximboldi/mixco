@@ -80,6 +80,7 @@ describe 'scripts', ->
             script = null
 
             beforeEach ->
+                @timeout 1 << 14
                 unrequire fname
                 module = require fname
                 script = module[scriptName]
@@ -112,6 +113,7 @@ describe 'scripts', ->
             # buttons when we do not intend to.
 
             it "does not break when receiving MIDI", ->
+                @timeout 1 << 14
                 control  = require '../src/control'
                 sendValues = (values, order=1) ->
                     for c in script.controls by order
