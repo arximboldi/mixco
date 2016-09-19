@@ -149,12 +149,10 @@ channel.
             c.meter(c.ccIds 0x12+i, 3)
                 .does b.mapOut(g, "VuMeter").meter()
 
-* **34.** Sync button. Adjust pitch and aligns grids to beatmatch both
-  tracks. When *shift* is pressed, it only adjusts pitch, not phase.
+* **34.** Sync button. Like the button in the UI, it can be held
+  pressed to enable the deck in the *master sync* group.
 
-            controlFixed(noteId 0x02)
-                .when(shift, g, "beatsync_tempo")
-                .else g, "beatsync"
+            c.control(noteId 0x02).does g, "sync_enabled"
 
 * **33.** Deck volume.
 
