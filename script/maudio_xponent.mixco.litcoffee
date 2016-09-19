@@ -278,21 +278,21 @@ channel.
 
             c.control(noteOnId 0x0c).does g, "flanger"
 
-* The *third knob and button* in **24** and **25** enable a *beat loop*
-  effect, similar to those of the looping section but with resolution
-  controllable with a knob for more drastic effects.
+* The *third knob and button* in **24** and **25** enable a *beat
+  roll* effect, similar to those of the looping section but with
+  resolution controllable with a knob for more drastic effects, and
+  the play position is restored when turned off.
 
-            beatloop = b.beatEffect g
+            beatloop = b.beatEffect g, 'roll'
             c.knob(ccId 0x0e).does beatloop.selector()
             controlFixed(noteId 0x0e).does beatloop
 
-* The *fourth knob and button* in **24** and **25** enable a *beat
-  roll* effect. It works like the beat loop, but the playing position
-  is restored when turned off.
+* The *fourth knob and button* in **24** and **25** enable the quick
+  effect knob -- by default mapped to a filter sweep.
 
-            beatroll = b.beatEffect g, 'roll'
-            c.knob(ccId 0x0f).does beatroll.selector()
-            controlFixed(noteId 0x0f).does beatroll
+            gf = "[QuickEffectRack1_[Channel#{i+1}]]"
+            c.knob(ccId 0x0f).does gf, 'super1'
+            c.control(noteId 0x0f).does gf, 'enabled', gf, 'enabled'
 
 ### The wheel and pitch section
 
