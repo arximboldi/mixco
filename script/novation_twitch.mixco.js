@@ -140,11 +140,10 @@ mixco.script.register(module, {
 	    .else_(b.map("[Playlist]", "SelectTrackKnob")
 		       .options.selectknob)
 
-	// * The *area* button expand or collapses the selected
-	//   element cathegory in the sidebar.
+	// * The *area* toggles the maximized library.
 
 	c.control(c.noteIds(0x50, 0x7)).does(
-	    "[Playlist]", "ToggleSelectedSidebarItem")
+	    "[Master]", "maximize_library")
 
         // * The *view* button in the *browser* section lets you tap
         //   the tempo for the track that is currently on pre-hear.
@@ -426,7 +425,7 @@ function scaledDiff (factor) {
 }
 
 function scaledSelectKnob (factor) {
-    return function (v, b) {
+    return function (v) {
 	return factor * (v > 64 ? v - 128 : v)
     }
 }
