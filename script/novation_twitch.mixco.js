@@ -54,8 +54,11 @@ mixco.script.register(module, {
     // to the user in the MIDI mapping chooser of Mixxx.
 
     info: {
-	name: "[mixco] Novation Twitch",
-	author: "Juan Pedro Bolivar Puente"
+	name:   "[mixco] Novation Twitch",
+	author: "Juan Pedro Bolivar Puente <raskolnikov@gnu.org>",
+        forums: 'https://github.com/arximboldi/mixco/issues',
+        wiki:   'https://sinusoid.es/mixco/script/korg_nanokontrol2.mixco.html',
+        description: "Controller mapping for Novation Twitch (in basic mode).",
     },
 
     // ### Constructor

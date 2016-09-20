@@ -16,18 +16,18 @@ functionallity of the controls.
     c = mixco.control
     b = mixco.behaviour
     v = mixco.value
-
+ 
     mixco.script.register module,
 
         info:
-            name: '[mixco] M-Audio Xponent'
+            name:   '[mixco] M-Audio Xponent'
             author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
+            wiki:   'https://sinusoid.es/mixco/script/maudio_xponent.mixco.html'
+            forums: 'https://github.com/arximboldi/mixco/issues'
             description:
                 """
                 Controller mapping for the M-Audio Xponent DJ controller.
                 """
-            forums: ''
-            wiki: ''
 
 Global section
 --------------

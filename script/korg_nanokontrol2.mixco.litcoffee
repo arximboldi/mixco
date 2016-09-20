@@ -46,15 +46,17 @@ Then we fill out the metadata. This will be shown to the user in the
 preferences window in Mixxx when he selects the script.
 
         info:
-            name: '[mixco] Korg Nanokontrol 2'
+            name:   '[mixco] Korg Nanokontrol 2'
             author: 'Juan Pedro Bolivar Puente <raskolnikov@gnu.org>'
+            wiki:   'https://sinusoid.es/mixco/script/korg_nanokontrol2.mixco.html'
+            forums: 'https://github.com/arximboldi/mixco/issues'
             description:
                 """
-                Controller mapping for Korg Nanokontrol 2 that is
-                targetted at being used as main interface for Mixxx.
+                Controller mapping for Korg Nanokontrol 2.  Unlike
+                other scripts that are oriented as a secondary
+                controller, this provides basic deck controls, being
+                usable as primary interface.
                 """
-            forums: ''
-            wiki: ''
 
 ### Constructor
 
