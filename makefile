@@ -65,7 +65,7 @@ test: $(FRAMEWORK)
 
 test-coverage: $(FRAMEWORK)
 	MIXCO_COVERAGE=1 MIXCO_USE_SOURCE=1 \
-		$(ISTANBUL) cover $(_MIXCO) -- -tT --factory
+		$(ISTANBUL) cover $(_MIXCO) -- -tT --factory --fatal-tests
 	$(ISTANBUL) report text lcov
 
 upload-doc: doc

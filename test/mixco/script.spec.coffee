@@ -6,7 +6,7 @@
 # > - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/test/mixco/script.spec.coffee)**
 
 chai = {expect} = require 'chai'
-{stub} = require 'sinon'
+{stub, spy} = require 'sinon'
 chai.use require 'sinon-chai'
 
 describe 'mixco.script', ->
@@ -50,7 +50,7 @@ describe 'mixco.script', ->
 
         it 'can generate a script type from a definition', ->
             spier = stub
-                constructor: ->
+                constructor: spy()
                 preinit: ->
                 init: ->
                 shutdown: ->

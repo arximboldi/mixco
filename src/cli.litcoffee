@@ -98,6 +98,9 @@ output and exit when passed `--help`, `--version`, etc...
             .option
                 long: "factory"
                 description: "Compile the scripts that come with Mixco"
+            .option
+                long: "fatal-tests"
+                description: "Make process fail when tests fail"
             .help()
             .option
                 short: "V"
@@ -133,6 +136,11 @@ itself.
         cached = require 'gulp-cached'
         rename = require 'gulp-rename'
 
+        testError = ->
+            logger.error arguments...
+            if opts.fatal_tests
+                process.exit 1
+
         gulp.task 'self-test', ->
             if opts.self_test
                 mocha = require 'gulp-mocha'
@@ -140,7 +148,7 @@ itself.
                 logger.info "testing framework:", colors.data specs
                 gulp.src specs, read: false
                     .pipe mocha()
-                    .on 'error', -> logger.error arguments...
+                    .on 'error', testError
 
         gulp.task 'test', ['self-test'], ->
             if opts.test
@@ -150,7 +158,7 @@ itself.
                 process.env.MIXCO_TEST_INPUTS = sources.join ':'
                 gulp.src specs, read: false
                     .pipe mocha()
-                    .on 'error', -> logger.error arguments...
+                    .on 'error', -> testError
 
         gulp.task 'scripts', ['test'], ->
             ext = ".output.js"
@@ -320,6 +328,7 @@ appropiate task.
         gulp = tasks srcs, argv.output,
             self_test: argv['self-test']
             test: argv['test']
+            fatal_tests: argv['fatal-tests']
 
         task = if argv['watch'] then 'watch' else 'build'
         gulp.start task
