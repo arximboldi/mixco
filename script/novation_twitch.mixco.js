@@ -75,7 +75,7 @@ mixco.script.register(module, {
 	//
 	// * *Crossfader* slider.
 
-	c.slider(0x08, 0x07).does("[Master]", "crossfader")
+	c.input(0x08, 0x07).does("[Master]", "crossfader")
 
 	// #### Mic/aux and effects
 	//
@@ -95,13 +95,13 @@ mixco.script.register(module, {
 
 	// * Microphone *volume* control and *on/off* button.
 
-	c.knob(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "pregain"))
+	c.input(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "pregain"))
 	c.control(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
 
 	// * The first two knobs in the *Master FX* section are mapped
 	//   to *mix* and *super* of the first effect unit.
 
-        c.knob(ccIdFxBanks(0x0))
+        c.input(ccIdFxBanks(0x0))
             .does("[EffectRack1_EffectUnit1]", "mix")
 	c.input(ccIdFxBanks(0x1))
             .option(scaledDiff(1/2))
@@ -109,7 +109,7 @@ mixco.script.register(module, {
 
         // * The *beats* know can be used to change the selected effect.
 
-        c.knob(ccIdFxBanks(0x2))
+        c.input(ccIdFxBanks(0x2))
             .does("[EffectRack1_EffectUnit1]", "chain_selector")
 
         // * The *on/off* button of the FX section completley toggles
@@ -122,9 +122,9 @@ mixco.script.register(module, {
 	//
 	// * The *back* and *fwd* can be used to scroll the sidebar.
 
-	c.button(c.noteIds(0x54, 0x7)).does(
+	c.input(c.noteIds(0x54, 0x7)).does(
 	    "[Playlist]", "SelectPrevPlaylist")
-	c.button(c.noteIds(0x56, 0x7)).does(
+	c.input(c.noteIds(0x56, 0x7)).does(
 	    "[Playlist]", "SelectNextPlaylist")
 
 	// * The *scroll* encoder scrolles the current view.  When
@@ -132,8 +132,8 @@ mixco.script.register(module, {
 
 	scrollFaster = b.modifier()
 
-        c.button(c.noteIds(0x55, 0x7)).does(scrollFaster)
-	c.knob(0x55, 0x7)
+        c.input(c.noteIds(0x55, 0x7)).does(scrollFaster)
+	c.input(0x55, 0x7)
 	    .when (scrollFaster,
                    b.map("[Playlist]", "SelectTrackKnob")
 		       .option(scaledSelectKnob(8)))
@@ -186,15 +186,15 @@ mixco.script.register(module, {
 
 	// * *Volume* fader and *low*, *mid*, *high* and *trim* knobs.
 
-	c.slider(ccIdAll(0x07)).does(g, "volume")
-	c.knob(ccIdAll(0x46)).does(g, "filterLow")
-	c.knob(ccIdAll(0x47)).does(g, "filterMid")
-	c.knob(ccIdAll(0x48)).does(g, "filterHigh")
-	c.knob(ccIdAll(0x09)).does(g, "pregain")
+	c.input(ccIdAll(0x07)).does(g, "volume")
+	c.input(ccIdAll(0x46)).does(g, "filterLow")
+	c.input(ccIdAll(0x47)).does(g, "filterMid")
+	c.input(ccIdAll(0x48)).does(g, "filterHigh")
+	c.input(ccIdAll(0x09)).does(g, "pregain")
 
         // * *Volume* meters for each channel.
 
-        c.meter(noteIdAll(0x5f)).does(b.mapOut(g, "VuMeter").meter())
+        c.output(noteIdAll(0x5f)).does(b.mapOut(g, "VuMeter").meter())
 
 	// * The **fader FX** we use to control the quick filter.  The
 	//   **on/off** button below can be used to toggle it.
@@ -279,24 +279,24 @@ mixco.script.register(module, {
 	var coarseRateFactor = 1/10
 	var coarseRateOn     = b.modifier()
 
-	c.button(noteIdAll(0x03)).does(coarseRateOn)
-	c.knob(ccIdAll(0x03))
+	c.input(noteIdAll(0x03)).does(coarseRateOn)
+	c.input(ccIdAll(0x03))
 	    .when (coarseRateOn,
 		   b.map(g, "rate").option(scaledDiff(2)))
 	    .else_(b.map(g, "rate").option(scaledDiff(1/12)))
 
 	// * In *drop* mode, the touch strip scrolls through the song.
 
-	c.slider(ccId(0x34)).does(g, "playposition")
+	c.input(ccId(0x34)).does(g, "playposition")
 
 	// * In *swipe* mode, the touch strip nudges the pitch up and
 	//   down.  When *shift* is held it simulates scratching.
 
 	c.input(ccId(0x35)).does(g, "jog")
             .option(scaledSelectKnob(-1/3))
-	c.slider(ccIdShift(0x35)).does(b.scratchTick(i+1))
+	c.input(ccIdShift(0x35)).does(b.scratchTick(i+1))
 	    .options.selectknob,
-	c.button(noteIdShift(0x47))
+	c.input(noteIdShift(0x47))
 	    .does(b.scratchEnable(i+1, 128))
 	    .when(slipMode, b.map(g, "slip_enabled").options.switch_)
 

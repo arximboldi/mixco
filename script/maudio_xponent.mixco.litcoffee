@@ -40,11 +40,11 @@ Controls that do not have a per-deck functionality.
 
 * **27.** Pre-hear mix.
 
-            c.knob(ccId 0x0D).does g, "headMix"
+            c.input(ccId 0x0D).does g, "headMix"
 
 * **39.** Crossfader.
 
-            c.slider(ccId 0x07).does g, "crossfader"
+            c.input(ccId 0x07).does g, "crossfader"
 
 ### Effects
 
@@ -56,14 +56,14 @@ parameters are mapped globally:
   and *mix* of the first effect unit.  In the *right deck*, they do
   likewise for the second effect unit.
 
-            c.slider(0x0c, 0x00).does \
+            c.input(0x0c, 0x00).does \
                 b.soft "[EffectRack1_EffectUnit1]", "super1"
-            c.slider(0x0d, 0x00).does \
+            c.input(0x0d, 0x00).does \
                 b.soft "[EffectRack1_EffectUnit1]", "mix"
 
-            c.slider(0x0c, 0x01).does \
+            c.input(0x0c, 0x01).does \
                 b.soft "[EffectRack1_EffectUnit2]", "super1"
-            c.slider(0x0d, 0x01).does \
+            c.input(0x0d, 0x01).does \
                 b.soft "[EffectRack1_EffectUnit2]", "mix"
 
 * **16.** When in *MIDI mode*, the touch pad can be used to control the
@@ -86,7 +86,7 @@ parameters are mapped globally:
 
 * The *second knob* the *left deck* controls the microphone *volume*.
 
-            c.slider(0x0d, 0x00).does b.soft "[Microphone]", "volume"
+            c.input(0x0d, 0x00).does b.soft "[Microphone]", "volume"
 
 * The *second button* of the *left deck* controls the microphone
   *enable*.
@@ -135,14 +135,14 @@ channel.
 
 * **22.** Mixer EQ and gain.
 
-            c.knob(ccId 0x08).does g, "filterLow"
-            c.knob(ccId 0x09).does g, "filterMid"
-            c.knob(ccId 0x0A).does g, "filterHigh"
-            c.knob(ccId 0x0B).does b.soft g, "pregain"
+            c.input(ccId 0x08).does g, "filterLow"
+            c.input(ccId 0x09).does g, "filterMid"
+            c.input(ccId 0x0A).does g, "filterHigh"
+            c.input(ccId 0x0B).does b.soft g, "pregain"
 
 * **23.** Per deck volume meters.
 
-            c.meter(c.ccIds 0x12+i, 3)
+            c.output(c.ccIds 0x12+i, 3)
                 .does b.mapOut(g, "VuMeter").meter()
 
 * **34.** Sync button. Like the button in the UI, it can be held
@@ -152,7 +152,7 @@ channel.
 
 * **33.** Deck volume.
 
-            c.slider(ccId 0x07).does b.soft g, "volume"
+            c.input(ccId 0x07).does b.soft g, "volume"
 
 * **38.** Punch-in/transform. While pressed, lets this track be heard
   overriding the corssfader.
@@ -164,7 +164,7 @@ channel.
 * **29.** Song progress indication. When it approches the end of the
   playing song it starts blinking.
 
-            c.meter(c.ccIds 0x14+i, 3).does b.playhead g
+            c.output(c.ccIds 0x14+i, 3).does b.playhead g
 
 * **30.** Back and forward.
 
@@ -284,13 +284,13 @@ channel.
   the play position is restored when turned off.
 
             beatloop = b.beatEffect g, 'roll'
-            c.knob(ccId 0x0e).does beatloop.selector()
+            c.input(ccId 0x0e).does beatloop.selector()
             c.control(noteId 0x0e).does beatloop
 
 * The *fourth knob and button* in **24** and **25** enable the quick
   effect knob -- by default mapped to a filter sweep.
 
-            c.knob(ccId 0x0f)
+            c.input(ccId 0x0f)
                 .does "[QuickEffectRack1_#{g}]", 'super1'
             c.control(noteId 0x0f)
                 .does "[QuickEffectRack1_#{g}]", 'enabled'
@@ -326,7 +326,7 @@ channel.
             c.control(noteId 0x16)
                 .when v.and(v.not(shift), scratchMode), b.scratchEnable i+1
 
-            c.knob(ccId 0x16)
+            c.input(ccId 0x16)
                 .when(shift, b.map("[Playlist]", "SelectTrackKnob")
                     .transform selectTrackKnobTransform)
                 .else.when(scratchMode,
@@ -345,7 +345,7 @@ they do it in a smaller ammount.
 
 * **32.** Pitch slider, adjusts playing speed.
 
-            c.slider(c.pbIds i).does b.soft g, "rate"
+            c.input(c.pbIds i).does b.soft g, "rate"
 
 * **21.** Custom effects that include...
 

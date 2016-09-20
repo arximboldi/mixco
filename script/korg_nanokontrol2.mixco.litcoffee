@@ -77,38 +77,38 @@ the *transport section*. These are global buttons
 * The *cycle* button will be used as modifier.
 
             @cycle = b.modifier()
-            c.ledButton(0x2e).does @cycle
+            c.control(0x2e).does @cycle
 
 Most of the transport controls will have their behaviour defined
 per-deck. We define them here and add the behaviours later.
 
-            @backButton      = c.ledButton 0x3a
-            @fwdButton       = c.ledButton 0x3b
-            @nudgeDownButton = c.ledButton 0x2b
-            @nudgeUpButton   = c.ledButton 0x2c
+            @backButton      = c.control 0x3a
+            @fwdButton       = c.control 0x3b
+            @nudgeDownButton = c.control 0x2b
+            @nudgeUpButton   = c.control 0x2c
 
 * The *marker* section can be used to browse the library.  The left
   and right arrows browse the playlist up and down.  When *set* is
   pressed, they move the sidebar.
 
             @marker = b.modifier()
-            c.ledButton(0x3C).does @marker
+            c.control(0x3C).does @marker
 
             g = "[Playlist]"
-            c.ledButton(0x3D)
+            c.control(0x3D)
                 .when(@marker, g, "SelectPrevPlaylist")
                 .else g, "SelectPrevTrack"
-            c.ledButton(0x3E)
+            c.control(0x3E)
                 .when(@marker, g, "SelectNextPlaylist")
                 .else g, "SelectNextTrack"
 
-            @loadTrack = c.ledButton(0x2a)
+            @loadTrack = c.control(0x2a)
 
 Here are some more controls that get their actual functionallity
 defined later.
 
-            @sync = c.ledButton(0x29)
-            @syncTempo = c.ledButton(0x2d)
+            @sync = c.control(0x29)
+            @syncTempo = c.control(0x2d)
 
 ##### Channel sections
 
@@ -118,19 +118,19 @@ channel sliders.
 * The *prehear volume* is mapped to the 7th slider.
 
             g = "[Master]"
-            c.slider(0x06).does g, "headVolume"
+            c.input(0x06).does g, "headVolume"
 
 * The *prehear mix* is mapped to the 6th slider.
 
-            c.slider(0x05).does g, "headMix"
+            c.input(0x05).does g, "headMix"
 
 * The *crossfader* is mapped to the 2nd slider.
 
-            c.slider(0x02).does b.soft g, "crossfader"
+            c.input(0x02).does b.soft g, "crossfader"
 
 * The main *balance* is mapped to the 1st slider.
 
-            c.slider(0x01).does b.soft g, "balance"
+            c.input(0x01).does b.soft g, "balance"
 
 
 #### Deck controls
@@ -161,10 +161,10 @@ Finally we add the per-deck controls, that are defined in `addDeck`.
   4th and 5th knob control the low EQ filter, the 3rd and 6th knob
   control the mid EQ filter, and so on.
 
-            c.knob(0x10 + offset[0]).does g, "filterLow"
-            c.knob(0x10 + offset[1]).does g, "filterMid"
-            c.knob(0x10 + offset[2]).does g, "filterHigh"
-            c.knob(0x10 + offset[3]).does b.soft g, "pregain"
+            c.input(0x10 + offset[0]).does g, "filterLow"
+            c.input(0x10 + offset[1]).does g, "filterMid"
+            c.input(0x10 + offset[2]).does g, "filterHigh"
+            c.input(0x10 + offset[3]).does b.soft g, "pregain"
 
 * Then two central channel sections (4th and 5th) control the
   following parameters of the left and right deck:
@@ -174,10 +174,10 @@ Finally we add the per-deck controls, that are defined in `addDeck`.
   * R: *Play* button for the deck.
   * The fader controls the *volume* of the deck.
 
-            c.ledButton(0x20 + offset[0]).does @decks.add g, "pfl"
-            c.ledButton(0x30 + offset[0]).does g, "cue_default"
-            c.ledButton(0x40 + offset[0]).does g, "play"
-            c.slider(0x00 + offset[0]).does g, "volume"
+            c.control(0x20 + offset[0]).does @decks.add g, "pfl"
+            c.control(0x30 + offset[0]).does g, "cue_default"
+            c.control(0x40 + offset[0]).does g, "play"
+            c.input(0x00 + offset[0]).does g, "volume"
 
 * The two furthest channel sections (1st and 8th) control the pitch
 related stuff and effects of the two decks.
@@ -187,10 +187,10 @@ related stuff and effects of the two decks.
   * R: Sets the *beat grid* to match the current playhead position.
   * The fader controls the *pitch* of the deck.
 
-            c.ledButton(0x20 + offset[3]).does g, "bpm_tap", g, "beat_active"
-            c.ledButton(0x30 + offset[3]).does g, "keylock"
-            c.ledButton(0x40 + offset[3]).does g, "beats_translate_curpos"
-            c.slider(0x00 + offset[3]).does b.soft g, "rate"
+            c.control(0x20 + offset[3]).does g, "bpm_tap", g, "beat_active"
+            c.control(0x30 + offset[3]).does g, "keylock"
+            c.control(0x40 + offset[3]).does g, "beats_translate_curpos"
+            c.input(0x00 + offset[3]).does b.soft g, "rate"
 
 Then, we have some looping related buttons in the middle. Also, these
 are the hotcue trigger and clear with the *cycle* and *marker*
@@ -203,27 +203,27 @@ buttons of these sections control *loop double* and *halve.*
   * When the *cycle* button is held, they *launch hot-cues*.
   * When the *set* button is held, they *clear hot-cues*.
 
-            c.ledButton(0x20 + offset[1])
+            c.control(0x20 + offset[1])
                 .when(@cycle, g, "hotcue_1_activate", g, "hotcue_1_enabled")
                 .else.when(@marker, g, "hotcue_1_clear", g, "hotcue_1_enabled")
                 .else g, "beatloop_2_toggle", g, "beatloop_2_enabled"
-            c.ledButton(0x20 + offset[2])
+            c.control(0x20 + offset[2])
                 .when(@cycle, g, "hotcue_2_activate", g, "hotcue_2_enabled")
                 .else.when(@marker, g, "hotcue_2_clear", g, "hotcue_2_enabled")
                 .else g, "beatloop_4_toggle", g, "beatloop_4_enabled"
-            c.ledButton(0x30 + offset[1])
+            c.control(0x30 + offset[1])
                 .when(@cycle, g, "hotcue_3_activate", g, "hotcue_3_enabled")
                 .else.when(@marker, g, "hotcue_3_clear", g, "hotcue_3_enabled")
                 .else g, "beatloop_8_toggle", g, "beatloop_8_enabled"
-            c.ledButton(0x30 + offset[2])
+            c.control(0x30 + offset[2])
                 .when(@cycle, g, "hotcue_4_activate", g, "hotcue_4_enabled")
                 .else.when(@marker, g, "hotcue_4_clear", g, "hotcue_4_enabled")
                 .else g, "beatloop_16_toggle", g, "beatloop_16_enabled"
-            c.ledButton(0x40 + offset[1])
+            c.control(0x40 + offset[1])
                 .when(@cycle, g, "hotcue_5_activate", g, "hotcue_5_enabled")
                 .else.when(@marker, g, "hotcue_5_clear", g, "hotcue_5_enabled")
                 .else g, "loop_halve"
-            c.ledButton(0x40 + offset[2])
+            c.control(0x40 + offset[2])
                 .when(@cycle, g, "hotcue_6_activate", g, "hotcue_6_enabled")
                 .else.when(@marker, g, "hotcue_6_clear", g, "hotcue_6_enabled")
                 .else g, "loop_double"

@@ -84,8 +84,8 @@ describe 'mixco.script', ->
             expectedControls = []
             register testModule,
                 constructor: ->
-                    expectedControls.push control.knob()
-                    expectedControls.push control.ledButton()
+                    expectedControls.push control.input()
+                    expectedControls.push control.control()
 
             expect(expectedControls.length)
                 .to.be.eq 2
