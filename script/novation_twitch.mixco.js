@@ -93,9 +93,11 @@ mixco.script.register(module, {
 	    return ids
 	}
 
-	// * Microphone *volume* control and *on/off* button.
+	// * Microphone *volume* control and *on/off* button.  The
+	//   microphone cue (*headphones* icon) is controlled by the
+	//   internal soundcard.
 
-	c.knob(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "volume"))
+	c.knob(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "pregain"))
 	c.control(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
 
 	// * The knobs in the *Master FX* section are mapped to
