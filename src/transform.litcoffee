@@ -23,16 +23,26 @@ Utilities
         then 0.5 * linear.inverse v, min, center
         else 0.5 + 0.5 * linear.inverse v, center, max
 
-    transform = (f, args...) ->
-        result         = (v, oldv) -> f v / 127.0, args..., oldv
+    exports.transform  = (f, args...) ->
+        result         = (ev, oldv) -> f ev.value / 127.0, args..., oldv
+        result.inverse = (v)        -> 127 * f.inverse(v, args...)
+        result
+
+    exports.transformI = (f, args...) ->
+        result         = (ev, oldv) -> f ev.value, args..., oldv
+        result.inverse = (v)        -> f.inverse(v, args...)
+        result
+
+    exports.transformB = (f, args...) ->
+        result         = (ev, oldv) -> f ev.pressed / 127.0, args..., oldv
         result.inverse = (v)       -> 127 * f.inverse(v, args...)
         result
 
-    exports.identityT  = identityT  = exports.identity
-    exports.momentaryT = momentaryT = transform exports.momentary
-    exports.binaryT    = binaryT    = transform exports.binary
-    exports.linearT    = linearT    = -> transform exports.linear, arguments...
-    exports.centeredT  = centeredT  = -> transform exports.centered, arguments...
+    exports.identityT  = identityT  = exports.transformI exports.identity
+    exports.momentaryT = momentaryT = exports.transformB exports.momentary
+    exports.binaryT    = binaryT    = exports.transformB exports.binary
+    exports.linearT    = linearT    = -> exports.transform exports.linear, arguments...
+    exports.centeredT  = centeredT  = -> exports.transform exports.centered, arguments...
     exports.defaultT   = defaultT   = linearT 0.0, 1.0
 
 Mappings
@@ -83,6 +93,7 @@ needed. Please make sure to keep it in sync with the official
         crossfader:                     linearT -1.0, 1.0
         cue_default:                    momentaryT
         eject:                          momentaryT
+        enabled:                        binaryT
         filterHigh:                     centeredT 0.0, 1.0, 4.0
         filterHighKill:                 binaryT
         filterLow:                      centeredT 0.0, 1.0, 4.0
@@ -138,6 +149,7 @@ needed. Please make sure to keep it in sync with the official
         SelectPrevTrack:                momentaryT
         SelectTrackKnob:                identityT
         slip_enabled:                   binaryT
+        super1:                         linearT 0.0, 10.0
         talkover:                       binaryT
         ToggleSelectedSidebarItem:      momentaryT
         volume:                         defaultT

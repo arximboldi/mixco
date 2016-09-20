@@ -64,6 +64,7 @@ coming from Mixxx.
         status: status
         group: group
         message: -> @status >> 4
+        pressed: status >> 4 != MIDI_NOTE_OFF && value
 
 Controls
 --------
@@ -308,16 +309,6 @@ and maybe also eventually add specifics to these.
 
     exports.input  = factory exports.InControl
     exports.output = factory exports.OutControl
-    exports.knob   = exports.input
-    exports.slider = exports.knob
-    exports.button = ->
-        exports.input(arguments...)
-            .options.button
-    exports.encoder = ->
-        exports.input(arguments...)
-            .options.diff
-    exports.meter  = exports.output
-
 
 #### Input and output
 
@@ -328,10 +319,6 @@ is often the case for buttons that have a LED.
                                              exports.OutControl
 
     exports.control   = factory exports.InOutControl
-    exports.ledButton = ->
-        exports.control(arguments...)
-            .option behaviour.option.button
-
 
 
 License

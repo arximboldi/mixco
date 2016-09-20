@@ -54,8 +54,11 @@ mixco.script.register(module, {
     // to the user in the MIDI mapping chooser of Mixxx.
 
     info: {
-	name: "[mixco] Novation Twitch",
-	author: "Juan Pedro Bolivar Puente"
+	name:   "[mixco] Novation Twitch",
+	author: "Juan Pedro Bolivar Puente <raskolnikov@gnu.org>",
+        forums: 'https://github.com/arximboldi/mixco/issues',
+        wiki:   'https://sinusoid.es/mixco/script/korg_nanokontrol2.mixco.html',
+        description: "Controller mapping for Novation Twitch (in basic mode).",
     },
 
     // ### Constructor
@@ -75,7 +78,7 @@ mixco.script.register(module, {
 	//
 	// * *Crossfader* slider.
 
-	c.slider(0x08, 0x07).does("[Master]", "crossfader")
+	c.input(0x08, 0x07).does("[Master]", "crossfader")
 
 	// #### Mic/aux and effects
 	//
@@ -95,31 +98,36 @@ mixco.script.register(module, {
 
 	// * Microphone *volume* control and *on/off* button.
 
-	c.knob(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "volume"))
-	c.ledButton(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
+	c.input(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "pregain"))
+	c.control(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
 
-	// * The knobs in the *Master FX* section are mapped to
-	//   *depth*, *delay* and *period* -- in this order.
+	// * The first two knobs in the *Master FX* section are mapped
+	//   to *mix* and *super* of the first effect unit.
 
-	c.knob(ccIdFxBanks(0x0)).does("[Flanger]", "lfoDepth")
-	c.encoder(ccIdFxBanks(0x1)).does("[Flanger]", "lfoDelay")
-	    .option(scaledDiff(3))
-	c.encoder(3, ccIdFxBanks(0x2)).does("[Flanger]", "lfoPeriod")
-	    .option(scaledDiff(3))
+        c.input(ccIdFxBanks(0x0))
+            .does("[EffectRack1_EffectUnit1]", "mix")
+	c.input(ccIdFxBanks(0x1))
+            .option(scaledDiff(1/2))
+            .does("[EffectRack1_EffectUnit1]", "super1")
 
-        // * The *on/off* button of the FX section does a bilateral
-        //   *punch-in* -- i.e. temporarily moves the crossfader to
-        //   the center while held, if it was far from the center.
+        // * The *beats* know can be used to change the selected effect.
 
-        c.ledButton(c.noteIds(0x22, 0xB)).does(b.punchIn(-0.5, 0.5))
+        c.input(ccIdFxBanks(0x2))
+            .does("[EffectRack1_EffectUnit1]", "chain_selector")
+
+        // * The *on/off* button of the FX section completley toggles
+        //   the first effect unit.
+
+        c.control(c.noteIds(0x22, 0xB))
+            .does("[EffectRack1_EffectUnit1]", "enabled")
 
 	// #### Browse
 	//
 	// * The *back* and *fwd* can be used to scroll the sidebar.
 
-	c.button(c.noteIds(0x54, 0x7)).does(
+	c.input(c.noteIds(0x54, 0x7)).does(
 	    "[Playlist]", "SelectPrevPlaylist")
-	c.button(c.noteIds(0x56, 0x7)).does(
+	c.input(c.noteIds(0x56, 0x7)).does(
 	    "[Playlist]", "SelectNextPlaylist")
 
 	// * The *scroll* encoder scrolles the current view.  When
@@ -127,24 +135,23 @@ mixco.script.register(module, {
 
 	scrollFaster = b.modifier()
 
-        c.button(c.noteIds(0x55, 0x7)).does(scrollFaster)
-	c.knob(0x55, 0x7)
+        c.input(c.noteIds(0x55, 0x7)).does(scrollFaster)
+	c.input(0x55, 0x7)
 	    .when (scrollFaster,
                    b.map("[Playlist]", "SelectTrackKnob")
 		       .option(scaledSelectKnob(8)))
 	    .else_(b.map("[Playlist]", "SelectTrackKnob")
 		       .options.selectknob)
 
-	// * The *area* button expand or collapses the selected
-	//   element cathegory in the sidebar.
+	// * The *area* toggles the maximized library.
 
-	c.ledButton(c.noteIds(0x50, 0x7)).does(
-	    "[Playlist]", "ToggleSelectedSidebarItem")
+	c.control(c.noteIds(0x50, 0x7)).does(
+	    "[Master]", "maximize_library")
 
         // * The *view* button in the *browser* section lets you tap
         //   the tempo for the track that is currently on pre-hear.
 
-        this.viewButton = c.ledButton(c.noteIds(0x51, 0x7))
+        this.viewButton = c.control(c.noteIds(0x51, 0x7))
 
 	// ### Per deck controls
 	//
@@ -175,45 +182,50 @@ mixco.script.register(module, {
 	//
 	// * Pre-hear deck selection.
 
-	c.ledButton(noteIdAll(0x0A)).does(this.decks.add(g, "pfl"))
+	c.control(noteIdAll(0x0A)).does(this.decks.add(g, "pfl"))
 
         this.viewButton.when(this.decks.activator(i),
                              g, "bpm_tap", g, "beat_active")
 
 	// * *Volume* fader and *low*, *mid*, *high* and *trim* knobs.
 
-	c.slider(ccIdAll(0x07)).does(g, "volume")
-	c.knob(ccIdAll(0x46)).does(g, "filterLow")
-	c.knob(ccIdAll(0x47)).does(g, "filterMid")
-	c.knob(ccIdAll(0x48)).does(g, "filterHigh")
-	c.knob(ccIdAll(0x09)).does(g, "pregain")
+	c.input(ccIdAll(0x07)).does(g, "volume")
+	c.input(ccIdAll(0x46)).does(g, "filterLow")
+	c.input(ccIdAll(0x47)).does(g, "filterMid")
+	c.input(ccIdAll(0x48)).does(g, "filterHigh")
+	c.input(ccIdAll(0x09)).does(g, "pregain")
 
         // * *Volume* meters for each channel.
 
-        c.meter(noteIdAll(0x5f)).does(b.mapOut(g, "VuMeter").meter())
+        c.output(noteIdAll(0x5f)).does(b.mapOut(g, "VuMeter").meter())
 
-	// * The **fader FX** we use as a knob-controlled *beat
-	//   looproll effect*. Effect can be turned on by pressing the
-	//   knob or the on/off button.
+	// * The **fader FX** we use to control the quick filter.  The
+	//   **on/off** button below can be used to toggle it.
+	//   Likewise, pressing the knob momentarily toggles it.
 
-	var faderfx = b.beatEffect(g, 'roll')
-	c.encoder(ccIdAll(0x06)).does(faderfx.selector())
-	c.control(noteIdAll(0x06)).does(faderfx.momentary())
-	c.ledButton(noteIdAll(0x0D)).does(faderfx.options.switch_)
+	c.input(ccIdAll(0x06))
+            .option(scaledDiff(1/2))
+            .does("[QuickEffectRack1_"+g+"]", 'super1')
+	c.control(noteIdAll(0x06))
+            .does("[QuickEffectRack1_"+g+"]", 'enabled')
+	c.control(noteIdAll(0x0D))
+            .does("[QuickEffectRack1_"+g+"]", 'enabled')
 
 	// #### Effects
 	//
 	// * In the *Master FX* section, the *FX Select* left and
-	//   right enable the flanger in the direction of the arrow.
+	//   right enable the first effect unit on the deck in the
+	//   direction of the arrow.
 
-	c.ledButton(c.noteIds(0x20+i, 0xB)).does(g, "flanger")
+	c.control(c.noteIds(0x20+i, 0xB))
+            .does("[EffectRack1_EffectUnit1]", "group_"+g+"_enable")
 
 	// #### Browse
 	//
 	// * The *load A* or *load B* buttons load the selected track
 	//   to the given deck.
 
-	c.ledButton(c.noteIds(0x52+i, 0x7)).does(g, "LoadSelectedTrack")
+	c.control(c.noteIds(0x52+i, 0x7)).does(g, "LoadSelectedTrack")
 
 	// #### Deck transport
 	//
@@ -223,16 +235,16 @@ mixco.script.register(module, {
 	var redLed   = 0x00
 	var amberLed = 0x40
 	var greenLed = 0x70
-	var ledPad   = function (ids, color) {
-	    return c.ledButton(ids).states({
+	var pad      = function (ids, color) {
+	    return c.control(ids).states({
 		on:  color + 0xf,
 		off: color + 0x1
 	    })
 	}
 
-	ledPad(noteIdAll(0x17), greenLed).does(g, "play")
-	ledPad(noteId(0x16), redLed).does(g, "cue_default")
-	ledPad(noteIdShift(0x16), amberLed).does(g, "reverse")
+	pad(noteIdAll(0x17), greenLed).does(g, "play")
+	pad(noteId(0x16), redLed).does(g, "cue_default")
+	pad(noteIdShift(0x16), amberLed).does(g, "reverse")
 
 	// * The *keylock* button toggles the pitch-independent time
 	//   stretching.  On *shift*, it toggles *slip mode*, in which
@@ -241,27 +253,26 @@ mixco.script.register(module, {
 	//   been.
 
 	slipMode = b.switch_()
-	c.ledButton(noteId(0x12)).does(g, "keylock")
-	c.ledButton(noteIdShift(0x12)).does(slipMode)
+	c.control(noteId(0x12)).does(g, "keylock")
+	c.control(noteIdShift(0x12)).does(slipMode)
 
-	// * The *sync* button aligns phase and tempo of this track to
-	//   the one of the other deck.  On *shift*, it aligns tempo
-	//   only.
+	// * The *sync* button.  Like the button in the UI, it can be
+	//   held pressed to enable the deck in the *master sync*
+	//   group.
 
-	c.ledButton(noteId(0x13)).does(g, "beatsync")
-	c.ledButton(noteIdShift(0x13)).does(g, "beatsync_tempo")
+ 	c.control(noteIdAll(0x13)).does(g, "sync_enabled")
 
 	// #### Beat grid
 	//
 	// * The *adjust* button *aligns the beatgrid* to the current
 	//   play position.
 
-	c.ledButton(noteIdAll(0x11)).does(g, "beats_translate_curpos")
+	c.control(noteIdAll(0x11)).does(g, "beats_translate_curpos")
 
 	// * The *set* button toggles loop and hot-cue *quantization*
 	//   on or off.
 
-	c.ledButton(noteIdAll(0x10)).does(g, "quantize")
+	c.control(noteIdAll(0x10)).does(g, "quantize")
 
 	// #### Pitch and transport bar
 	//
@@ -271,24 +282,24 @@ mixco.script.register(module, {
 	var coarseRateFactor = 1/10
 	var coarseRateOn     = b.modifier()
 
-	c.button(noteIdAll(0x03)).does(coarseRateOn)
-	c.knob(ccIdAll(0x03))
+	c.input(noteIdAll(0x03)).does(coarseRateOn)
+	c.input(ccIdAll(0x03))
 	    .when (coarseRateOn,
 		   b.map(g, "rate").option(scaledDiff(2)))
 	    .else_(b.map(g, "rate").option(scaledDiff(1/12)))
 
 	// * In *drop* mode, the touch strip scrolls through the song.
 
-	c.slider(ccId(0x34)).does(g, "playposition")
+	c.input(ccId(0x34)).does(g, "playposition")
 
 	// * In *swipe* mode, the touch strip nudges the pitch up and
 	//   down.  When *shift* is held it simulates scratching.
 
 	c.input(ccId(0x35)).does(g, "jog")
-            .option(scaledSelectKnob(1/3))
-	c.slider(ccIdShift(0x35)).does(b.scratchTick(i+1))
+            .option(scaledSelectKnob(-1/3))
+	c.input(ccIdShift(0x35)).does(b.scratchTick(i+1))
 	    .options.selectknob,
-	c.button(noteIdShift(0x47))
+	c.input(noteIdShift(0x47))
 	    .does(b.scratchEnable(i+1, 128))
 	    .when(slipMode, b.map(g, "slip_enabled").options.switch_)
 
@@ -300,10 +311,10 @@ mixco.script.register(module, {
 	//   hot cues.  One may *clear* hot-cues with *shift*.
 
 	for (var j = 0; j < 8; ++j) {
-	    ledPad(noteId(0x60+j), amberLed).does(
+	    pad(noteId(0x60+j), amberLed).does(
 		g, "hotcue_" + (j+1) + "_activate",
 		g, "hotcue_" + (j+1) + "_enabled")
-	    ledPad(noteIdShift(0x60+j), amberLed).does(
+	    pad(noteIdShift(0x60+j), amberLed).does(
 		g, "hotcue_" + (j+1) + "_clear",
 		g, "hotcue_" + (j+1) + "_enabled")
         }
@@ -317,51 +328,57 @@ mixco.script.register(module, {
 	//   The sample plays as long as the button is held.
 
 	for (var j = 0; j < 4; ++j)
-	    ledPad(noteIdAll(0x68+j), redLed).does(
+	    pad(noteIdAll(0x68+j), redLed).does(
 		"[Sampler" + (j+1) + "]", "cue_preview")
 
 	// * The buttons *5 and 6* trigger a *spinback* and *brake*
 	//   effect respectively.
 
-	ledPad(noteIdAll(0x6C), greenLed).does(b.spinback(i+1))
-	ledPad(noteIdAll(0x6D), greenLed).does(b.brake(i+1))
+	pad(noteIdAll(0x6C), greenLed).does(b.spinback(i+1))
+	pad(noteIdAll(0x6D), greenLed).does(b.brake(i+1))
 
 	// * The buttons *7 and 7* perform a stutter effect at
 	//   different speeds.
 
-	ledPad(noteIdAll(0x6E), amberLed).does(b.stutter(g, 1/8))
-	ledPad(noteIdAll(0x6F), amberLed).does(b.stutter(g, 1/4))
+	pad(noteIdAll(0x6E), amberLed).does(b.stutter(g, 1/8))
+	pad(noteIdAll(0x6F), amberLed).does(b.stutter(g, 1/4))
 
 	// ##### Auto loop
 	//
 	// * In *auto-loop* mode, the pads select *loops* of sizes
-	//   1/16, 1/8, 1/4, 1/2, 1, 2, 4 or 8 beats.  On *shift*, it
-	//   creates loops of sizes 1, 2, 4, 8, 16, 32 or 64 beats.
+	//   0.5, 1, 2, 4, 8, 16, 32 or 64, beats.  On *shift*, it
+	//   creates loops of sizes 1/32, 1/16, 1/8, 1/4, 1/2, 1, 2,
+	//   or 4 beats.
 
-	loopSize = [ "0.0625", "0.125", "0.25", "0.5",
-		     "1",      "2",     "4",    "8",
-		     "16",     "32",    "64" ]
+	loopSize = [ "0.03125", "0.0625", "0.125", "0.25",
+                     "0.5",     "1",      "2",     "4",
+                     "8",      "16",      "32",    "64" ]
 	for (var j = 0; j < 8; ++j)
-	    ledPad(noteId(0x70+j), greenLed).does(
-		g, "beatloop_" + loopSize[j] + "_toggle",
-		g, "beatloop_" + loopSize[j] + "_enabled")
-	for (var j = 0; j < 7; ++j)
-	    ledPad(noteIdShift(0x70+j), greenLed).does(
+	    pad(noteId(0x70+j), greenLed).does(
 		g, "beatloop_" + loopSize[4+j] + "_toggle",
 		g, "beatloop_" + loopSize[4+j] + "_enabled")
+	for (var j = 0; j < 8; ++j)
+	    pad(noteIdShift(0x70+j), greenLed).does(
+		g, "beatloop_" + loopSize[j] + "_toggle",
+		g, "beatloop_" + loopSize[j] + "_enabled")
 
 	// ##### Loop roll
 	//
-	// * In *loop-roll* mode, it same as the beatloop mode but the
-	//   effect is momentary and returns the playhead to where it
-	//   would have been without looping.
+	// * In *loop-roll* mode, momentarily creates a loop and, on
+	//   release returns the playhead to where it would have been
+	//   without looping.  Loop sizes are 1/32, 1/16, 1/8, 1/4,
+	//   1/2, 1, 2, or 4 beats.  On *shift*, it is 0.5, 1, 2, 4,
+	//   8, 16, 32 or 64 beats.
 
-	for (var j = 0; j < 8; ++j)
-	    ledPad(noteId(0x78+j), greenLed).does(
+	loopSize = [ "0.03125", "0.0625", "0.125", "0.25",
+                     "0.5",     "1",      "2",     "4",
+                     "8",       "16",     "32",    "64" ]
+        for (var j = 0; j < 8; ++j)
+	    pad(noteId(0x78+j), greenLed).does(
 		g, "beatlooproll_" + loopSize[j] + "_activate",
 		g, "beatloop_" + loopSize[j] + "_enabled")
-	for (var j = 0; j < 7; ++j)
-	    ledPad(noteIdShift(0x78+j), greenLed).does(
+	for (var j = 0; j < 8; ++j)
+	    pad(noteIdShift(0x78+j), greenLed).does(
 		g, "beatlooproll_" + loopSize[4+j] + "_activate",
 		g, "beatloop_" + loopSize[4+j] + "_enabled")
 
@@ -406,12 +423,12 @@ mixco.script.register(module, {
 
 function scaledDiff (factor) {
     return function (v, v0) {
-	return (v0 + factor * (v > 64 ? v - 128 : v)).clamp(0, 128)
+        return (v0 + factor * (v > 64 ? v - 128 : v)).clamp(0, 128)
     }
 }
 
 function scaledSelectKnob (factor) {
-    return function (v, b) {
+    return function (v) {
 	return factor * (v > 64 ? v - 128 : v)
     }
 }
