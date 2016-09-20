@@ -93,27 +93,30 @@ mixco.script.register(module, {
 	    return ids
 	}
 
-	// * Microphone *volume* control and *on/off* button.  The
-	//   microphone cue (*headphones* icon) is controlled by the
-	//   internal soundcard.
+	// * Microphone *volume* control and *on/off* button.
 
 	c.knob(ccIdFxBanks(0x3)).does(b.soft("[Microphone]", "pregain"))
 	c.control(c.noteIds(0x23, 0xB)).does("[Microphone]", "talkover")
 
-	// * The knobs in the *Master FX* section are mapped to
-	//   *depth*, *delay* and *period* -- in this order.
+	// * The first two knobs in the *Master FX* section are mapped
+	//   to *mix* and *super* of the first effect unit.
 
-	c.knob(ccIdFxBanks(0x0)).does("[Flanger]", "lfoDepth")
-	c.encoder(ccIdFxBanks(0x1)).does("[Flanger]", "lfoDelay")
-	    .option(scaledDiff(3))
-	c.encoder(3, ccIdFxBanks(0x2)).does("[Flanger]", "lfoPeriod")
-	    .option(scaledDiff(3))
+        c.knob(ccIdFxBanks(0x0))
+            .does("[EffectRack1_EffectUnit1]", "mix")
+	c.input(ccIdFxBanks(0x1))
+            .option(scaledDiff(1/2))
+            .does("[EffectRack1_EffectUnit1]", "super1")
 
-        // * The *on/off* button of the FX section does a bilateral
-        //   *punch-in* -- i.e. temporarily moves the crossfader to
-        //   the center while held, if it was far from the center.
+        // * The *beats* know can be used to change the selected effect.
 
-        c.control(c.noteIds(0x22, 0xB)).does(b.punchIn(-0.5, 0.5))
+        c.knob(ccIdFxBanks(0x2))
+            .does("[EffectRack1_EffectUnit1]", "chain_selector")
+
+        // * The *on/off* button of the FX section completley toggles
+        //   the first effect unit.
+
+        c.control(c.noteIds(0x22, 0xB))
+            .does("[EffectRack1_EffectUnit1]", "enabled")
 
 	// #### Browse
 	//
@@ -209,9 +212,11 @@ mixco.script.register(module, {
 	// #### Effects
 	//
 	// * In the *Master FX* section, the *FX Select* left and
-	//   right enable the flanger in the direction of the arrow.
+	//   right enable the first effect unit on the deck in the
+	//   direction of the arrow.
 
-	c.control(c.noteIds(0x20+i, 0xB)).does(g, "flanger")
+	c.control(c.noteIds(0x20+i, 0xB))
+            .does("[EffectRack1_EffectUnit1]", "group_"+g+"_enable")
 
 	// #### Browse
 	//
@@ -249,12 +254,11 @@ mixco.script.register(module, {
 	c.control(noteId(0x12)).does(g, "keylock")
 	c.control(noteIdShift(0x12)).does(slipMode)
 
-	// * The *sync* button aligns phase and tempo of this track to
-	//   the one of the other deck.  On *shift*, it aligns tempo
-	//   only.
+	// * The *sync* button.  Like the button in the UI, it can be
+	//   held pressed to enable the deck in the *master sync*
+	//   group.
 
-	c.control(noteId(0x13)).does(g, "beatsync")
-	c.control(noteIdShift(0x13)).does(g, "beatsync_tempo")
+ 	c.control(noteIdAll(0x13)).does(g, "sync_enabled")
 
 	// #### Beat grid
 	//
