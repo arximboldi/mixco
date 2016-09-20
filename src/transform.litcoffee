@@ -93,6 +93,7 @@ needed. Please make sure to keep it in sync with the official
         crossfader:                     linearT -1.0, 1.0
         cue_default:                    momentaryT
         eject:                          momentaryT
+        enabled:                        binaryT
         filterHigh:                     centeredT 0.0, 1.0, 4.0
         filterHighKill:                 binaryT
         filterLow:                      centeredT 0.0, 1.0, 4.0
@@ -148,6 +149,7 @@ needed. Please make sure to keep it in sync with the official
         SelectPrevTrack:                momentaryT
         SelectTrackKnob:                identityT
         slip_enabled:                   binaryT
+        super1:                         linearT 0.0, 10.0
         talkover:                       binaryT
         ToggleSelectedSidebarItem:      momentaryT
         volume:                         defaultT

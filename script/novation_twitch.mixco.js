@@ -194,14 +194,17 @@ mixco.script.register(module, {
 
         c.meter(noteIdAll(0x5f)).does(b.mapOut(g, "VuMeter").meter())
 
-	// * The **fader FX** we use as a knob-controlled *beat
-	//   looproll effect*. Effect can be turned on by pressing the
-	//   knob or the on/off button.
+	// * The **fader FX** we use to control the quick filter.  The
+	//   **on/off** button below can be used to toggle it.
+	//   Likewise, pressing the knob momentarily toggles it.
 
-	var faderfx = b.beatEffect(g, 'roll')
-	c.encoder(ccIdAll(0x06)).does(faderfx.selector())
-	c.control(noteIdAll(0x06)).does(faderfx.momentary())
-	c.control(noteIdAll(0x0D)).does(faderfx.options.switch_)
+	c.input(ccIdAll(0x06))
+            .option(scaledDiff(1/2))
+            .does("[QuickEffectRack1_"+g+"]", 'super1')
+	c.control(noteIdAll(0x06))
+            .does("[QuickEffectRack1_"+g+"]", 'enabled')
+	c.control(noteIdAll(0x0D))
+            .does("[QuickEffectRack1_"+g+"]", 'enabled')
 
 	// #### Effects
 	//
@@ -408,7 +411,7 @@ mixco.script.register(module, {
 
 function scaledDiff (factor) {
     return function (v, v0) {
-	return (v0 + factor * (v > 64 ? v - 128 : v)).clamp(0, 128)
+        return (v0 + factor * (v > 64 ? v - 128 : v)).clamp(0, 128)
     }
 }
 
