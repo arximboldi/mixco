@@ -75,10 +75,12 @@ parameters are mapped globally:
                 .does "[EffectRack1_EffectUnit1_Effect1]", "parameter2"
 
 * **17.** and **18.** When in *MIDI mode*, the touch pad buttons *toggle
-   the flanger* effect for the left and right channel respectively.
+   the first effect unit* for the left and right channel respectively.
 
-            c.button(c.noteOnIds 0x00, 0x02).does "[Channel1]", "flanger"
-            c.button(c.noteOnIds 0x01, 0x02).does "[Channel2]", "flanger"
+            c.input(c.noteOnIds 0x00, 0x02)
+                .does "[EffectRack1_EffectUnit1]", "group_[Channel1]_enable"
+            c.input(c.noteOnIds 0x01, 0x02)
+                .does "[EffectRack1_EffectUnit1]", "group_[Channel2]_enable"
 
 ### Microphone
 
