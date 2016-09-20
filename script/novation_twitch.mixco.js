@@ -340,32 +340,38 @@ mixco.script.register(module, {
 	// ##### Auto loop
 	//
 	// * In *auto-loop* mode, the pads select *loops* of sizes
-	//   1/16, 1/8, 1/4, 1/2, 1, 2, 4 or 8 beats.  On *shift*, it
-	//   creates loops of sizes 1, 2, 4, 8, 16, 32 or 64 beats.
+	//   0.5, 1, 2, 4, 8, 16, 32 or 64, beats.  On *shift*, it
+	//   creates loops of sizes 1/32, 1/16, 1/8, 1/4, 1/2, 1, 2,
+	//   or 4 beats.
 
-	loopSize = [ "0.0625", "0.125", "0.25", "0.5",
-		     "1",      "2",     "4",    "8",
-		     "16",     "32",    "64" ]
+	loopSize = [ "0.03125", "0.0625", "0.125", "0.25",
+                     "0.5",     "1",      "2",     "4",
+                     "8",      "16",      "32",    "64" ]
 	for (var j = 0; j < 8; ++j)
 	    pad(noteId(0x70+j), greenLed).does(
-		g, "beatloop_" + loopSize[j] + "_toggle",
-		g, "beatloop_" + loopSize[j] + "_enabled")
-	for (var j = 0; j < 7; ++j)
-	    pad(noteIdShift(0x70+j), greenLed).does(
 		g, "beatloop_" + loopSize[4+j] + "_toggle",
 		g, "beatloop_" + loopSize[4+j] + "_enabled")
+	for (var j = 0; j < 8; ++j)
+	    pad(noteIdShift(0x70+j), greenLed).does(
+		g, "beatloop_" + loopSize[j] + "_toggle",
+		g, "beatloop_" + loopSize[j] + "_enabled")
 
 	// ##### Loop roll
 	//
-	// * In *loop-roll* mode, it same as the beatloop mode but the
-	//   effect is momentary and returns the playhead to where it
-	//   would have been without looping.
+	// * In *loop-roll* mode, momentarily creates a loop and, on
+	//   release returns the playhead to where it would have been
+	//   without looping.  Loop sizes are 1/32, 1/16, 1/8, 1/4,
+	//   1/2, 1, 2, or 4 beats.  On *shift*, it is 0.5, 1, 2, 4,
+	//   8, 16, 32 or 64 beats.
 
-	for (var j = 0; j < 8; ++j)
+	loopSize = [ "0.03125", "0.0625", "0.125", "0.25",
+                     "0.5",     "1",      "2",     "4",
+                     "8",       "16",     "32",    "64" ]
+        for (var j = 0; j < 8; ++j)
 	    pad(noteId(0x78+j), greenLed).does(
 		g, "beatlooproll_" + loopSize[j] + "_activate",
 		g, "beatloop_" + loopSize[j] + "_enabled")
-	for (var j = 0; j < 7; ++j)
+	for (var j = 0; j < 8; ++j)
 	    pad(noteIdShift(0x78+j), greenLed).does(
 		g, "beatlooproll_" + loopSize[4+j] + "_activate",
 		g, "beatloop_" + loopSize[4+j] + "_enabled")
