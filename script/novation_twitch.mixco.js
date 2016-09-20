@@ -293,7 +293,7 @@ mixco.script.register(module, {
 	//   down.  When *shift* is held it simulates scratching.
 
 	c.input(ccId(0x35)).does(g, "jog")
-            .option(scaledSelectKnob(1/3))
+            .option(scaledSelectKnob(-1/3))
 	c.slider(ccIdShift(0x35)).does(b.scratchTick(i+1))
 	    .options.selectknob,
 	c.button(noteIdShift(0x47))
