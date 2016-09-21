@@ -117,12 +117,12 @@ defined later.
 And finally, some of the master functionality are mapped to the
 channel sliders.
 
-* The *prehear volume* is mapped to the 7th slider.
+* The *headphone gain* is mapped to the 7th slider.
 
             g = "[Master]"
             c.input(0x06).does g, "headVolume"
 
-* The *prehear mix* is mapped to the 6th slider.
+* The *headphone mix* is mapped to the 6th slider.
 
             c.input(0x05).does g, "headMix"
 
@@ -137,7 +137,7 @@ channel sliders.
 
 #### Deck controls
 
-Then, we create a chooser object over the *pfl* (prehear) parameter,
+Then, we create a chooser object over the *pfl* (headphone) parameter,
 so we will have only one channel with prehear activated at a time.
 Also, this will let us change the behaviour of some *transport*
 controls depending on which deck is *selected* -- i.e, has prehear
@@ -182,7 +182,7 @@ Finally we add the per-deck controls, that are defined in `addDeck`.
             c.input(0x00 + offset[0]).does g, "volume"
 
 * The two furthest channel sections (1st and 8th) control the pitch
-related stuff and effects of the two decks.
+related stuff of the two decks.
 
   * S: *Bpm tap*, also shows the speed.
   * M: Toggles *key lock*.
