@@ -82,18 +82,6 @@ mapped globally:
             c.input(c.noteOnIds 0x01, 0x02)
                 .does "[EffectRack1_EffectUnit1]", "group_[Channel2]_enable"
 
-### Microphone
-
-* The *second knob* the *left deck* controls the microphone *volume*.
-
-            c.input(0x0d, 0x00).does b.soft "[Microphone]", "volume"
-
-* The *second button* of the *left deck* controls the microphone
-  *enable*.
-
-            c.control(c.noteOnIds 0x0d, 0x00).does \
-                "[Microphone]", "talkover"
-
 Per deck controls
 -----------------
 
