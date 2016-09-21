@@ -48,9 +48,9 @@ Controls that do not have a per-deck functionality.
 
 ### Effects
 
-Most of knobs and buttons in **24** and **25** are dedicated to effects.
-Some of them are mapped per-deck --see later-- but the *flanger
-parameters are mapped globally:
+Most of knobs and buttons in **24** and **25** are dedicated to
+effects.  Some of them are mapped per-deck --see later-- but some are
+mapped globally:
 
 * The *first and second knobs* of the *left deck* control the *super*
   and *mix* of the first effect unit.  In the *right deck*, they do
