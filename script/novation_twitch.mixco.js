@@ -13,8 +13,7 @@
 // language.
 //
 // If you want to modify this script, you may want to read the
-// [Novation Twitch Programmer
-// Guide](www.novationmusic.com/download/799/‎)
+// [Novation Twitch Programmer Guide](https://us.novationmusic.com/support/downloads/twitch-programmers-reference-guide)
 //
 // ### Note for Linux Users
 //
