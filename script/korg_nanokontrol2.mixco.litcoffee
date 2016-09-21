@@ -177,7 +177,7 @@ Finally we add the per-deck controls, that are defined in `addDeck`.
   * The fader controls the *volume* of the deck.
 
             c.control(0x20 + offset[0]).does @decks.add g, "pfl"
-            c.control(0x30 + offset[0]).does g, "cue_default"
+            c.control(0x30 + offset[0]).does g, "cue_default", g, "cue_indicator"
             c.control(0x40 + offset[0]).does g, "play"
             c.input(0x00 + offset[0]).does g, "volume"
 
@@ -265,10 +265,10 @@ condition.
             @loadTrack.when @decks.activator(i), g, "LoadSelectedTrack"
 
 * The *play* and *record* buttons synchronize to the other track.  The
-  later only synchronizes tempo, the former both tempo and phase.
+  *play* button can be held to enable master synchronization for the deck.
 
-            @sync.when @decks.activator(i), g, "beatsync"
-            @syncTempo.when @decks.activator(i), g, "beatsync_tempo"
+            @sync.when @decks.activator(i), g, "sync_enabled"
+            @syncTempo.when @decks.activator(i), g, "beatsync"
 
 ### Initialization
 
