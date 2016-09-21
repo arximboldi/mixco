@@ -242,7 +242,7 @@ mixco.script.register(module, {
 	}
 
 	pad(noteIdAll(0x17), greenLed).does(g, "play")
-	pad(noteId(0x16), redLed).does(g, "cue_default")
+	pad(noteId(0x16), redLed).does(g, "cue_default", g, "cue_indicator")
 	pad(noteIdShift(0x16), amberLed).does(g, "reverse")
 
 	// * The *keylock* button toggles the pitch-independent time
