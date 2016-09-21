@@ -718,26 +718,6 @@ engine scratch system.
             engine = @script.mixxx.engine
             engine.scratchTick deck, transform ev.value
 
-
-The **beatJump** tries to jump forward or backwards by a number of
-beats. Note that because of limitations in the engine it can get your
-tracks out of sync, specially while they play.
-
-    exports.beatJump = (group, delta) -> exports.action press: ->
-        engine    = @script.mixxx.engine
-        bpm       = engine.getValue group, "bpm"
-        duration  = engine.getValue group, "duration"
-        position  = engine.getValue group, "playposition"
-        rate      = engine.getValue group, "rate"
-        rateRange = engine.getValue group, "rateRange"
-        rate      = 1 + rate * rateRange
-        targetpos = position + 59.9 * rate / delta / bpm / duration
-        play      = engine.getValue group, "play"
-        if play
-            latency    = engine.getValue "[Master]", "latency"
-            targetpos += latency / 1000.0 / duration
-        engine.setValue group, "playposition", targetpos.clamp 0, 1
-
 The **spinback** and **brake** functionalities just call the
 equivalent methods in the engine.
 

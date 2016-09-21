@@ -87,6 +87,10 @@ needed. Please make sure to keep it in sync with the official
         beatlooproll_8_activate:        momentaryT
         beatloop_double:                momentaryT
         beatloop_halve:                 momentaryT
+        beatjump_4_forward:             momentaryT
+        beatjump_4_backward:            momentaryT
+        beatjump_1_forward:             momentaryT
+        beatjump_1_backward:            momentaryT
         beats_translate_curpos:         momentaryT
         beatsync:                       momentaryT
         beatsync_tempo:                 momentaryT

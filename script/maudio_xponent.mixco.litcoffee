@@ -178,11 +178,11 @@ channel.
   next item of the browser sidebar.
 
             c.control(noteId 0x1C)
-                .when(shift, "[Playlist]", "SelectPrevPlaylist")
-                .else b.beatJump g, -1
+                .when shift, g, "beatjump_1_backward"
+                .else g, "beatjump_4_backward"
             c.control(noteId 0x1D)
-                .when(shift, "[Playlist]", "SelectNextPlaylist")
-                .else b.beatJump g, 1
+                .when shift, g, "beatjump_1_forward"
+                .else g, "beatjump_4_forward"
 
 - The *lock* button does *key lock* -- i.e. makes tempo changes
   independent of pitch. When *shift* is pressed, it expands/collapses
