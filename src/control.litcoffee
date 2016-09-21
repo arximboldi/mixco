@@ -302,10 +302,9 @@ We should remove the send function before enabling behaviours.
 
 ### Concrete controls
 
-#### Aliases
+#### Factories
 
-Lets provide a series of aliases to make scripts read more natural,
-and maybe also eventually add specifics to these.
+Lets provide a series of factories to make scripts read more declarative.
 
     exports.input  = factory exports.InControl
     exports.output = factory exports.OutControl
@@ -318,7 +317,7 @@ is often the case for buttons that have a LED.
     class exports.InOutControl extends multi exports.InControl,
                                              exports.OutControl
 
-    exports.control   = factory exports.InOutControl
+    exports.control = factory exports.InOutControl
 
 
 License
