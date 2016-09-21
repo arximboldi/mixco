@@ -211,6 +211,10 @@ ul.sections > li > div {
 
 /*---------------------- Low resolutions (> 320px) ---------------------*/
 
+#container {
+    overflow-x: hidden;
+}
+
 .pilwrap { display: none; }
 
 ul.sections > li > div {
@@ -249,6 +253,7 @@ ul.sections > li > div.annotation p tt, .annotation code {
 @media only screen and (min-width: 681px) {
     #container {
 	position: relative;
+        overflow-x: inherit;
     }
     body {
 	background-color: #000;
@@ -303,7 +308,6 @@ ul.sections > li > div.annotation p tt, .annotation code {
 	display: inline-block;
     }
 
-
     ul.sections > li > div.annotation  {
 	border-top: 3px dashed #ddd;
 	max-width: 350px;
@@ -328,8 +332,8 @@ ul.sections > li > div.annotation p tt, .annotation code {
 
     ul.sections > li > div.content {
 	border-top: 3px dashed #222;
-	width: 100%;
 	padding: 0px;
+        min-width: calc(100% - 640px);
 	margin: 0;
 	vertical-align: top;
 	background: #000;
