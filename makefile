@@ -71,6 +71,9 @@ test-coverage: $(FRAMEWORK)
 upload-doc: doc
 	ncftpput -R -m -u u48595320 sinusoid.es /mixco doc/*
 
+copy-doc: doc
+	cp -rf doc/* ~/public/mixco/
+
 clean:
 	rm -rf ./doc
 	rm -rf ./out
