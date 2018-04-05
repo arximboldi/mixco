@@ -29,13 +29,25 @@ functionallity of the controls.
                 Controller mapping for the M-Audio Xponent DJ controller.
                 """
 
+        constructor: ->
+            @decks = b.chooser()
+            @addMaster 0
+            @addMaster 1
+            @addDeck 0
+            @addDeck 1
+            @addDeck 2
+            @addDeck 3
+
 Global section
 --------------
 
 Controls that do not have a per-deck functionality.
 
-        constructor: ->
-            ccId = (cc) -> c.ccIds cc, 2
+        addMaster: (bank) ->
+            assert bank in [0, 1]
+
+            offset = bank * 5
+            ccId = (cc) -> c.ccIds cc, 2 + offset
             g  = "[Master]"
 
 * **27.** Headphone mix.
@@ -56,14 +68,14 @@ mapped globally:
   and *mix* of the first effect unit.  In the *right deck*, they do
   likewise for the second effect unit.
 
-            c.input(0x0c, 0x00).does \
+            c.input(0x0c, 0x00 + offset).does \
                 b.soft "[EffectRack1_EffectUnit1]", "super1"
-            c.input(0x0d, 0x00).does \
+            c.input(0x0d, 0x00 + offset).does \
                 b.soft "[EffectRack1_EffectUnit1]", "mix"
 
-            c.input(0x0c, 0x01).does \
+            c.input(0x0c, 0x01 + offset).does \
                 b.soft "[EffectRack1_EffectUnit2]", "super1"
-            c.input(0x0d, 0x01).does \
+            c.input(0x0d, 0x01 + offset).does \
                 b.soft "[EffectRack1_EffectUnit2]", "mix"
 
 * **16.** When in *MIDI mode*, the touch pad can be used to control
@@ -71,17 +83,17 @@ mapped globally:
   enabled with the button labeled `MIDI` below the touch pad.
   Otherwise, the touch pad is used to control the computer mouse.
 
-            c.control(0x09, 0x02)
+            c.control(0x09, 0x02 + offset)
                 .does "[EffectRack1_EffectUnit1_Effect1]", "parameter1"
-            c.control(0x08, 0x02)
+            c.control(0x08, 0x02 + offset)
                 .does "[EffectRack1_EffectUnit1_Effect1]", "parameter2"
 
 * **17.** and **18.** When in *MIDI mode*, the touch pad buttons *toggle
    the first effect unit* for the first and second deck respectively.
 
-            c.input(c.noteOnIds 0x00, 0x02)
+            c.input(c.noteOnIds 0x00, 0x02 + offset)
                 .does "[EffectRack1_EffectUnit1]", "group_[Channel1]_enable"
-            c.input(c.noteOnIds 0x01, 0x02)
+            c.input(c.noteOnIds 0x01, 0x02 + offset)
                 .does "[EffectRack1_EffectUnit1]", "group_[Channel2]_enable"
 
 Per deck controls
@@ -91,16 +103,16 @@ We add the two decks with the `addDeck(idx)` function. In the
 *Xponent*, each MIDI message is repeated per-deck on a different
 channel.
 
-            @decks = b.chooser()
-            @addDeck 0
-            @addDeck 1
-
         addDeck: (i) ->
-            assert i in [0, 1]
+            assert i in [0, 1, 2, 3]
             g  = "[Channel#{i+1}]"
-            ccId = (cc) -> c.ccIds cc, i
-            noteId = (note) -> c.noteIds note, i
-            noteOnId = (note) -> c.noteOnIds note, i
+            bank = if i in [0, 1] then 0 else 1
+            lr = if i in [0, 2] then 0 else 1
+            offset = bank * 5
+            ccId = (cc) -> c.ccIds cc, i + bank * 3
+            outCcId = (cc) -> c.ccIds cc + lr, 3 + offset
+            noteId = (note) -> c.noteIds note, i + bank * 3
+            noteOnId = (note) -> c.noteOnIds note, i + bank * 3
 
 * **15.** Shift. It changes the behaviour of some controls.  Note
   that there is a shift button per-deck, which only affects the
@@ -132,7 +144,7 @@ channel.
 
 * **23.** Per deck volume meters.
 
-            c.output(c.ccIds 0x12+i, 3)
+            c.output(outCcId 0x12)
                 .does b.mapOut(g, "VuMeter").meter()
 
 * **34.** Sync button. Like the button in the UI, it can be held
@@ -154,7 +166,7 @@ channel.
 * **29.** Song progress indication. When it approches the end of the
   playing song it starts blinking.
 
-            c.output(c.ccIds 0x14+i, 3).does b.playhead g
+            c.output(outCcId 0x14).does b.playhead g
 
 * **30.** Back and forward.
 
