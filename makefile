@@ -54,6 +54,9 @@ framework: $(FRAMEWORK)
 script: $(FRAMEWORK)
 	$(MIXCO) --factory
 
+script-dev: $(FRAMEWORK)
+	$(MIXCO) --factory -w -o ~/.mixxx/controllers
+
 doc: $(DOCS)
 	cp -r ./pic ./doc/
 
