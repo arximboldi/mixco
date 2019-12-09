@@ -24,7 +24,7 @@ Script
 First, the **register** function registers a instance of the class
 `scriptTypeOrDefinition` instance into the given module.
 `scriptTypeOrDefinition` can be either a `Script` subclass or an
-object definining overrides for `name`, `constructor` and optionally
+object defining overrides for `name`, `constructor` and optionally
 `init` and `shutdown`. The script instance will be exported as
 `Script.name`, and if the parent module is main, it will be executed.
 
@@ -127,7 +127,7 @@ not have to care about it.
 ### Properties
 
 This is the metadata that is displayed in the Mixx preferences
-panel. Overide it with your details.
+panel. Override it with your details.
 
         info:
             name: "[mixco] Generic Script"
@@ -154,7 +154,7 @@ Use **add** to add controls to your script instance.
 
 ### Mixxx protocol
 
-These methos are called by Mixxx when the script is loaded or
+These methods are called by Mixxx when the script is loaded or
 unloaded.
 
         init: catching ->

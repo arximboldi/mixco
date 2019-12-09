@@ -100,7 +100,7 @@ describe 'scripts', ->
                 script.init()
                 script.shutdown()
 
-            # The next is specially usefull.  Missing entries in the
+            # The next is specially useful.  Missing entries in the
             # `mixco.transform` table are often found by these, among
             # other trivial problems in the user scripts.
             #

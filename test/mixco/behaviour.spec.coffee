@@ -160,7 +160,7 @@ describe 'mixco.behaviour', ->
             output.output.value = 1
             expect(actor.send).to.have.been.calledWith 'on'
 
-        it 'sends "on" value when value is bellow minimum', ->
+        it 'sends "on" value when value is below minimum', ->
             output.enable {}, actor
             output.output.value = 1
             output.output.value = 0
@@ -610,7 +610,7 @@ describe 'mixco.behaviour', ->
             script    = mocks.testScript()
             when_     = behaviour.when condition, wrapped
 
-        it "does nothing when enabled and condition not satisifed", ->
+        it "does nothing when enabled and condition not satisfied", ->
             when_.enable script, actor
             expect(wrapped.enable).
                 not.to.have.been.called
@@ -684,7 +684,7 @@ describe 'mixco.behaviour', ->
             expect(wrapped2.actor).not.to.exist
             expect(wrapped3.actor).to.exist
 
-        it "exposes wether it meets the condition on its 'value'", ->
+        it "exposes whether it meets the condition on its 'value'", ->
             when_.enable script, actor
             condition.value = true
             expect(when_.value).to.be.true
