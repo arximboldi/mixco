@@ -126,7 +126,7 @@ not have to care about it.
 
 ### Properties
 
-This is the metadata that is displayed in the Mixx preferences
+This is the metadata that is displayed in the Mixxx preferences
 panel. Override it with your details.
 
         info:
