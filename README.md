@@ -148,7 +148,7 @@ the future, other languages too.
 #### Generate beautiful documentation
 
 Documenting a script is hard but important: otherwise your users are
-clue-less about what each button of the controler does.  Mixco
+clue-less about what each button of the controller does.  Mixco
 encourages a style of programming known as
 [literate programming][litprog], which mixes code with documentation
 about what it does.  If you code in that style, it can generate
@@ -284,7 +284,7 @@ Please, log **bugs, questions or feature requests** in the
 
 We are also **happy to accept contributions**, either improvements to the
 frameworks, new factory scripts or documentation
-enhacements. [Fork us on GitHub][github] or by running:
+enhancements. [Fork us on GitHub][github] or by running:
 
 > ```
 > git clone https://github.com/arximboldi/mixco.git

@@ -310,7 +310,7 @@ extension for the main script, where `mixco.script.register` is called.
 
 The **main** function finally implements the meat of the command line
 script.  It parses the arguments, sets up the logger and starts the
-appropiate task.
+appropriate task.
 
     exports.main = ->
         argv = args()

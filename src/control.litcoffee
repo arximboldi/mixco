@@ -157,7 +157,7 @@ the scripts base class.
 
 ### Input
 
-An *input control* can proccess inputs from the hardware.
+An *input control* can process inputs from the hardware.
 
     class exports.InControl extends exports.Control
 

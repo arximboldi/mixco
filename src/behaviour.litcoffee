@@ -5,7 +5,7 @@ mixco.behaviour
 > - **View me [on a static web](http://sinusoid.es/mixco/src/behaviour.html)**
 > - **View me [on GitHub](https://github.com/arximboldi/mixco/blob/master/src/behaviour.litcoffee)**
 
-This module contains all the functionallity that lets you add
+This module contains all the functionality that lets you add
 *behaviour* to the hardware *controls* -- i.e. determine what they do.
 
     events    = require 'events'
@@ -51,7 +51,7 @@ This `option` object contains all the available options in Mixxx, with
 names converted to idiomatic JavaScript -- e.g. *soft-takeover* becomes
 *softTakeover*.
 
-These impementations are simplifications of what there is in
+These implementations are simplifications of what there is in
 `MidiController::computeValue` in Mixxx.  Please check them from time
 to time.  Also the way we implement non-linear transforms is
 inconsistent with how Mixxx does it, but it should be though.
@@ -122,7 +122,7 @@ Behaviours
 ----------
 
 A **Behaviour** determines how a control should behave under some
-circunstances. In general, behaviours are values also, so one can
+circumstances. In general, behaviours are values also, so one can
 listen to them.
 
     class exports.Behaviour extends value.Value
@@ -309,7 +309,7 @@ to listen to it.
                 key:   @key
 
 While in general mappings are done directly, bypassing the script,
-under some circunstances it might happen that they are proccessed in
+under some circumstances it might happen that they are processed in
 the script.  In this case, we define `onMidiEvent` to emulate the
 behaviour of a direct mapping.
 
@@ -383,7 +383,7 @@ handler to it.
     exports.mapOut = factory exports.MapOut
 
 
-#### Combinatios
+#### Combinations
 
 The **map** behaviour is the most common one.  It maps both input and
 output to a control in Mixxx.
@@ -421,7 +421,7 @@ enabled.
     exports.soft = ->
         exports.map(arguments...).option(option.softTakeover)
 
-The *set* behaviour sets a control to a spefic value whenever it is
+The *set* behaviour sets a control to a specific value whenever it is
 pressed.  The *toggle* behaviour instead sets it to two different
 value on press or release.
 
@@ -460,7 +460,7 @@ There are two ways of using it:
 
 The **add** method adds an option and returns the activator for
 it. The parameter *listen* is a second optional key that is used for
-retreiving the value as opposed to setting it.
+retrieving the value as opposed to setting it.
 
         add: (group, key, listen=null) ->
             idx       = @_chooseOptions.length
@@ -636,7 +636,7 @@ methods of the `control.Control` class.
 
 
 Conditional behaviours can not be directly mapped, as they have to
-determine, in the script, wether they are enabled or not.
+determine, in the script, whether they are enabled or not.
 
         directOutMapping: -> null
         directInMapping: -> null
@@ -730,7 +730,7 @@ equivalent methods in the engine.
             @script.mixxx.engine.brake deck, @value, args...
 
 The **playhead** sends the current position meter a MIDI value and
-blinks faster and faster as the play position aproaches the end of the
+blinks faster and faster as the play position approaches the end of the
 track.
 
     exports.playhead = (g) ->
