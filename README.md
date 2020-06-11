@@ -241,7 +241,7 @@ Documentation
   * [mixco.behaviour][mixco.behaviour]
   * [mixco.cli][mixco.cli]
   * [mixco.control][mixco.control]
-  * [mixco.console][mixco.control]
+  * [mixco.console][mixco.console]
   * [mixco.script][mixco.script]
   * [mixco.transform][mixco.transform]
   * [mixco.util][mixco.util]
